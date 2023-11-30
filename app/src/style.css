@@ -60,22 +60,29 @@ html, body {
 }
 
 #project-cards .card {
+  display: flex;
+  flex-direction: column;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 20px;
   margin: 10px;
   height: 200px;
+  width: 200px;
   text-align: center;
 }
 
 #project-cards .card .name {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #project-cards .card .date-info {
   font-size: 12px;
   color: grey;
+  margin-top: auto;
 }

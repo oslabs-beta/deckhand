@@ -20,7 +20,7 @@ export default function Projects() {
   }
 
   return <>
-    <h1>Projects</h1>
+    <h1>Projects <button>+ New Project</button></h1>
     <div id="project-cards">
       {projectBundle}
     </div>
