@@ -144,6 +144,7 @@ html {
   font-size: 28px;
   flex-grow: 1;
   border: 5px dotted #eee;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
