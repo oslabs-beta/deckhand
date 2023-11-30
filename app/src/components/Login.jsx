@@ -18,7 +18,7 @@ export default function Login() {
   return (
     <div id="login-container">
       <div className="image-section">
-        <img src={logo} />
+        <img src={logo} alt="Deckhand" />
       </div>
       <div className="login-section">
         <div className="button-container">
