@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
     name: 'deckhand',
     initialState: {
-        user: null, // {id, name, ...},
+        user: null, // {id, name, photo_url, ...},
         projectArr: null, // [ {id, name, created_date, modified_date, ...}, ... ]
         project: null, // id
     },
