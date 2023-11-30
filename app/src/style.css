@@ -1,6 +1,74 @@
-html, body {
-  margin:0px;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #edf6ff;
+}
+
+.top-bar {
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.top-bar .logo {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar .logo img  {
+  height: auto;
+  width: auto;
+}
+
+.top-bar .account {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: auto;
+  margin-right: 40px;
+}
+
+.top-bar .account:hover {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar .account span {
+  margin-right: 10px;
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.top-bar .account img {
+  height: 30px;
+  width: auto;
+}
+
+.content {
+  flex-grow: 1;
+  padding-top: 100px; /* includes height of top bar */
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 70%;
+  margin: auto;
+  overflow-y: auto;
 }
 
 /* Login Page */
@@ -59,17 +127,58 @@ html, body {
   flex-wrap: wrap;
 }
 
-#project-cards .card {
+#project-cards .new-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 10px;
   height: 200px;
   width: 200px;
   text-align: center;
+  background-color: white;
+}
+
+#project-cards .new-card div {
+  font-size: 28px;
+  flex-grow: 1;
+  border: 5px dotted #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
+#project-cards .new-card:hover {
+  background-color: #f9f9f9;
+  transform: scale(1.05);
+}
+
+#project-cards .new-card:active {
+  transform: scale(1.00);
+}
+
+#project-cards .card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 10px;
+  height: 200px;
+  width: 200px;
+  text-align: center;
+  background-color: white;
+}
+
+#project-cards .card:hover {
+  background-color: #f9f9f9;
+  transform: scale(1.05);
+}
+
+#project-cards .card:active {
+  transform: scale(1.00);
 }
 
 #project-cards .card .name {
@@ -83,6 +192,6 @@ html, body {
 
 #project-cards .card .date-info {
   font-size: 12px;
-  color: grey;
+  color: #bbb;
   margin-top: auto;
 }
