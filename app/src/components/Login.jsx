@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../deckhandSlice";
 import backgroundImage from '../assets/loginbackground.jpg';
+import logo from '../assets/logo.png';
 
 export default function Login() {
-  const state = useSelector((state) => state.main);
+  const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
       const containerStyle = {
@@ -18,7 +19,7 @@ export default function Login() {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         height: '100%',
-        paddingLeft: '20px'
+        padding: '20px'
     };
 
     const loginSectionStyle = {
@@ -26,7 +27,8 @@ export default function Login() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f4f4f4'
+        backgroundColor: '#f4f4f4',
+        boxShadow: '0px 0px 50px 0px rgba(0, 0, 0, 0.5)'
     };
 
     const buttonContainer = {
@@ -58,17 +60,17 @@ export default function Login() {
     };
 
   return (
-      <div style={containerStyle}>
-            <div style={imageSectionStyle}>
-                <h1>Deckhand</h1>
-            </div>
-            <div style={loginSectionStyle}>
-                <div style={buttonContainer}>
-                  <button style={buttonStyle} onClick={handleClick}>
-                    Sign in with GitHub
-                  </button>
-                </div>
+    <div style={containerStyle}>
+        <div style={imageSectionStyle}>
+            <img src={logo} />
+        </div>
+        <div style={loginSectionStyle}>
+            <div style={buttonContainer}>
+                <button style={buttonStyle} onClick={handleClick}>
+                Sign in with GitHub
+                </button>
             </div>
         </div>
+    </div>
   );
 }
