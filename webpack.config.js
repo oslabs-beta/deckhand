@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     mode: process.env.NODE_ENV,
@@ -17,6 +18,9 @@ module.exports = {
         },
         proxy: { // list every endpoint
             '/api': 'http://localhost:3000',
+            '/getAccessToken': 'http://localhost:3000',
+            '/getUserData': 'http://localhost:3000',
+            '/getOauth': 'http://localhost:3000'
         },
     },
     module: {
@@ -40,7 +44,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, './app/public/index.html'),
-        }),
+        })
     ],
     resolve: {
         extensions: ['.js', '.jsx'], // these files can be imported without specifying extension

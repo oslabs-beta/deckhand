@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../deckhandSlice";
 import backgroundImage from '../assets/loginbackground.jpg';
 
+import GitHub from '../GitHub_Login/GitHub.js';
+
 export default function Login() {
   const state = useSelector((state) => state.main);
   const dispatch = useDispatch();
@@ -67,6 +69,7 @@ export default function Login() {
                   <button style={buttonStyle} onClick={handleClick}>
                     Sign in with GitHub
                   </button>
+                  <GitHub />
                 </div>
             </div>
         </div>

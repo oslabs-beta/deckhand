@@ -10,7 +10,7 @@ export default function App() {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.deckhand);
 
-  if (!state.user) return <Login />;
+  if (!state.user) return <Login />
   else if (!state.project) return <Projects />;
   else return <Deckhand />;
 }
