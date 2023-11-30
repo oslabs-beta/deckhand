@@ -45,7 +45,11 @@ html, body {
 }
 
 #github-button:hover {
-  background-color: '#555';
+  background-color: #555;
+}
+
+#github-button:active {
+  transform: scale(0.98);
 }
 
 /* Projects Page */
