@@ -3,8 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
     name: 'deckhand',
     initialState: {
-        user: null, // {id, name, photo_url, ...},
-        projectArr: null, // [ {id, name, created_date, modified_date, ...}, ... ]
+        user: null,
+        // user: { name: 'John' }, // {id, name, photo_url, ...},
+
+        projectArr: [
+            { id: 0, name: 'Example App', created_date: 'Nov 29, 2023', modified_date: 'Nov 30, 2023' },
+            { id: 1, name: 'Test Environment', created_date: 'Oct 15, 2023', modified_date: 'Nov 28, 2023' },
+        ], // [ {id, name, created_date, modified_date, ...}, ... ]
+
         project: null, // id
     },
     reducers: {
