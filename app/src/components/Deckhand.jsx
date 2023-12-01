@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { /* reducers */ } from "../deckhandSlice";
-import logo from '../assets/logo.png';
-import account from '../assets/account.png';
+import FloatLogo from "./FloatLogo";
+import FloatTitle from "./FloatTitle";
+import FloatAccount from "./FloatAccount";
 
 export default function Deckhand() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   return <div className="container">
-    <div className="logo">
-      <img src={logo} alt="Deckhand" />
-    </div>
-    <div className="account">
-      <span>{state.user.name}</span>
-      <img src={account} alt="Account" />
-    </div>
-    <div className="page-title">
-      Example Project {state.project}
-    </div>
+    <FloatLogo />
+    <FloatTitle />
+    <FloatAccount />
     <div className="content-container">
       <div className="content">
         <h1>Cluster 1</h1>

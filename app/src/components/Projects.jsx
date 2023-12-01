@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProject } from "../deckhandSlice";
-import logo from '../assets/logo.png';
-import account from '../assets/account.png';
+import FloatLogo from "./FloatLogo";
+import FloatAccount from "./FloatAccount";
 
 export default function Projects() {
   const state = useSelector((state) => state.deckhand);
@@ -27,13 +27,8 @@ export default function Projects() {
   }
 
   return <div className="container">
-    <div className="logo">
-      <img src={logo} alt="Deckhand" />
-    </div>
-    <div className="account">
-      <span>{state.user.name}</span>
-      <img src={account} alt="Account" />
-    </div>
+    <FloatLogo />
+    <FloatAccount />
     <div className="content-container">
       <div className="content">
         <h1>Home</h1>
