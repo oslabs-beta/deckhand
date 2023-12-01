@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { /* reducers */ } from "../deckhandSlice";
+import { setProject } from "../deckhandSlice";
 import logo from '../assets/logo.png';
 import account from '../assets/account.png';
 
@@ -8,12 +8,17 @@ export default function Projects() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  const handleClick = (id) => (e) => {
+    e.preventDefault();
+    dispatch(setProject((id)));
+  };
+
   const projectBundle = [];
   for (const el of state.projectArr) {
     projectBundle.push(
-      <div key={el.id} class="card">
-        <div class="name">{el.name}</div>
-        <div class="date-info">
+      <div key={el.id} className="card" onClick={handleClick(el.id)}>
+        <div className="name">{el.name}</div>
+        <div className="date-info">
           Created: {el.created_date}<br />
           Last Modified: {el.modified_date}
         </div>
@@ -22,11 +27,11 @@ export default function Projects() {
   }
 
   return <div className="container">
-    <div class="top-bar">
-      <div class="logo">
+    <div className="top-bar">
+      <div className="logo">
         <img src={logo} alt="Deckhand" />
       </div>
-      <div class="account">
+      <div className="account">
         <span>{state.user.name}</span>
         <img src={account} alt="Account" />
       </div>
