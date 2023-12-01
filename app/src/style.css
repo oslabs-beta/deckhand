@@ -7,71 +7,63 @@ html {
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  position: relative;
+  height: 100vh;
   background-color: #edf6ff;
 }
 
-.top-bar {
+.logo {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 20px;
+  left: 20px;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.page-title {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-weight: bold;
+  font-size: 24px;
   padding: 10px;
-  text-align: center;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 100;
-  /* background-color: white;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); */
 }
 
-.top-bar .logo {
+.account {
+  position: absolute;
   display: flex;
   align-items: center;
+  top: 20px;
+  right: 20px;
 }
 
-.top-bar .logo img  {
-  height: 35px;
+.account img {
+  height: 40px;
   width: auto;
 }
 
-.top-bar .account {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  width: auto;
-  margin-right: 40px;
-}
-
-.top-bar .account:hover {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.top-bar .account span {
+.account span {
   margin-right: 10px;
   color: #333;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
 }
 
-.top-bar .account img {
-  height: 30px;
-  width: auto;
+.content-container {
+  padding-top: 100px;
 }
 
 .content {
-  flex-grow: 1;
-  padding-top: 100px; /* includes height of top bar */
-  padding-left: 20px;
-  padding-right: 20px;
-  width: 70%;
+  max-width: 1200px;
   margin: auto;
-  overflow-y: auto;
 }
 
 /* Login Page */

@@ -27,22 +27,22 @@ export default function Projects() {
   }
 
   return <div className="container">
-    <div className="top-bar">
-      <div className="logo">
-        <img src={logo} alt="Deckhand" />
-      </div>
-      <div className="account">
-        <span>{state.user.name}</span>
-        <img src={account} alt="Account" />
-      </div>
+    <div className="logo">
+      <img src={logo} alt="Deckhand" />
     </div>
-    <div className="content">
-      <h1>Home</h1>
-      <div id="project-cards">
-        <div className="new-card">
-          <div>New<br />Project</div>
+    <div className="account">
+      <span>{state.user.name}</span>
+      <img src={account} alt="Account" />
+    </div>
+    <div className="content-container">
+      <div className="content">
+        <h1>Home</h1>
+        <div id="project-cards">
+          <div className="new-card">
+            <div>New<br />Project</div>
+          </div>
+          {projectBundle}
         </div>
-        {projectBundle}
       </div>
     </div>
   </div>;
