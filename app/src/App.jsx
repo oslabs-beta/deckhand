@@ -11,6 +11,6 @@ export default function App() {
   const state = useSelector((state) => state.deckhand);
 
   if (!state.user) return <Login />;
-  else if (!state.project) return <Projects />;
+  else if (!state.projectId) return <Projects />;
   else return <Deckhand />;
 }
