@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../deckhandSlice";
-import logo from '../assets/logo.png';
+import logo from "../assets/logo.png";
 
 export default function Login() {
   const state = useSelector((state) => state.deckhand);
@@ -9,10 +9,15 @@ export default function Login() {
 
   const handleClick = (event) => {
     event.preventDefault();
-    const user = {
-      name: 'John', // get from Github
+    // fetch('/api/github-login')
+    //   .then(data => data.json())
+    //   .then(data => dispatch(setUser(data)))
+    const data = {
+      id: 1,
+      name: "John",
+      avatar_url: "http://example.com",
     };
-    dispatch(setUser(user));
+    dispatch(setUser(data));
   };
 
   return (
@@ -23,7 +28,7 @@ export default function Login() {
       <div className="login-section">
         <div className="button-container">
           <button id="github-button" onClick={handleClick}>
-          Sign in with GitHub
+            Sign in with GitHub
           </button>
         </div>
       </div>
