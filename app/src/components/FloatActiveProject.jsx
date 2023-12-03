@@ -7,5 +7,5 @@ export default function FloatActiveProject() {
   const dispatch = useDispatch();
   const project = state.projects.find((obj) => obj.id === state.projectId);
 
-  return <div className="page-title">{project.name}</div>;
+  return <div className="active-project">{project.name}</div>;
 }

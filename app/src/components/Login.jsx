@@ -15,7 +15,7 @@ export default function Login() {
     const data = {
       id: 1,
       name: "John",
-      avatar_url: "http://example.com",
+      avatarUrl: "http://example.com",
     };
     dispatch(setUser(data));
   };

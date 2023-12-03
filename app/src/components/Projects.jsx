@@ -19,9 +19,9 @@ export default function Projects() {
       <div key={el.id} className="card" onClick={handleClick(el.id)}>
         <div className="name">{el.name}</div>
         <div className="date-info">
-          Created: {el.created_date}
+          Created: {el.createdDate}
           <br />
-          Last Modified: {el.modified_date}
+          Last Modified: {el.modifiedDate}
         </div>
       </div>
     );
@@ -35,8 +35,8 @@ export default function Projects() {
         <div className="content">
           <h1>Home</h1>
           <div id="project-cards">
-            <div className="new-card">
-              <div>
+            <div className="card">
+              <div className="new-project">
                 New
                 <br />
                 Project
