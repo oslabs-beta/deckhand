@@ -25,11 +25,11 @@ html {
   height: 40px;
 }
 
-.page-title {
+.active-project {
   position: absolute;
   display: flex;
   align-items: center;
-  top: 20px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
   color: #333;
@@ -47,7 +47,7 @@ html {
 }
 
 .account img {
-  height: 40px;
+  height: 30px;
   width: auto;
 }
 
@@ -55,7 +55,7 @@ html {
   margin-right: 10px;
   color: #333;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .content-container {
@@ -128,40 +128,6 @@ html {
   flex-wrap: wrap;
 }
 
-#project-cards .new-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 10px;
-  height: 200px;
-  width: 200px;
-  text-align: center;
-  background-color: white;
-}
-
-#project-cards .new-card div {
-  font-size: 28px;
-  flex-grow: 1;
-  border: 5px dotted #eee;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-}
-
-#project-cards .new-card:hover {
-  background-color: #f9f9f9;
-  transform: scale(1.05);
-  cursor: pointer;
-}
-
-#project-cards .new-card:active {
-  transform: scale(1);
-}
-
 #project-cards .card {
   display: flex;
   flex-direction: column;
@@ -173,16 +139,28 @@ html {
   width: 200px;
   text-align: center;
   background-color: white;
+  transition: all 0.1s ease-in-out;
 }
 
 #project-cards .card:hover {
-  background-color: #f9f9f9;
+  filter: brightness(98%);
   transform: scale(1.05);
   cursor: pointer;
 }
 
 #project-cards .card:active {
   transform: scale(1);
+}
+
+#project-cards .card .new-project {
+  font-size: 28px;
+  flex-grow: 1;
+  border: 5px dotted #eee;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
 }
 
 #project-cards .card .name {
@@ -211,40 +189,16 @@ html {
   border: 0;
   border-radius: 5px;
   margin-top: 5px;
-  padding: 5px;
+  padding: 4px;
 }
 
 #pod-cards button:hover {
-  background-color: #ddd;
+  filter: brightness(80%);
   cursor: pointer;
 }
 
 #pod-cards button:active {
   transform: scale(0.98);
-}
-
-#pod-cards .new-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 10px;
-  height: 200px;
-  width: 200px;
-  text-align: center;
-  background-color: white;
-}
-
-#pod-cards .new-card div {
-  font-size: 28px;
-  flex-grow: 1;
-  border: 5px dotted #eee;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
 }
 
 #pod-cards .card {
@@ -260,11 +214,23 @@ html {
   background-color: white;
 }
 
+#pod-cards .card .new-pod {
+  font-size: 28px;
+  flex-grow: 1;
+  border: 5px dotted #eee;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
 #pod-cards .card .name {
-  font-size: 24px;
+  font-size: 16px;
   font-weight: bold;
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 5px;
 }
