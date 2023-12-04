@@ -22,7 +22,7 @@ export const deckhandSlice = createSlice({
                 id: 1,
                 name: 'Pod 1 (github)',
                 type: 'github',
-                config: null, // {url: 'http://example.com', build: '1.0.5', branch: 'main'}
+                config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
                 replicas: 1,
                 variables: null, // [{key: value, secret as Boolean}, ...]
                 ingress: null, // port number
