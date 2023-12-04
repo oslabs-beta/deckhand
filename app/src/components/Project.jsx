@@ -5,7 +5,7 @@ import FloatLogo from "./FloatLogo";
 import FloatActiveProject from "./FloatActiveProject";
 import FloatAccount from "./FloatAccount";
 
-export default function Deckhand() {
+export default function Project() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.id === state.projectId);

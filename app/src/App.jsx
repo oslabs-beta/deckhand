@@ -3,14 +3,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { setUser } from "./deckhandSlice";
 import Login from "./components/Login";
-import Projects from "./components/Projects";
-import Deckhand from "./components/Deckhand";
+import Home from "./components/Home";
+import Project from "./components/Project";
 
 export default function App() {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.deckhand);
 
   if (!state.user) return <Login />;
-  else if (!state.projectId) return <Projects />;
-  else return <Deckhand />;
+  else if (!state.projectId) return <Home />;
+  else return <Project />;
 }

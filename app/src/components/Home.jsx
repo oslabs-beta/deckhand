@@ -4,7 +4,7 @@ import { setProjectId, addProject, deleteProject } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatAccount from "./FloatAccount";
 
-export default function Projects() {
+export default function Home() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
