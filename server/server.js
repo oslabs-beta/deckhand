@@ -4,6 +4,11 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
+// require routers
+const apiRouter = require(path.join(__dirname, './routes/api.js'));
+const githubRouter = require(path.join(__dirname, './routes/github.js'));
+const terraformRouter = require(path.join(__dirname, './routes/terraform.js'));
+
 // parse incoming requests
 app.use(express.json());
 app.use(express.urlencoded());
@@ -11,6 +16,11 @@ app.use(cookieParser());
 
 // handle requests for static files
 app.use('/build', express.static(path.join(__dirname, '../app/build')));
+
+// define route handlers
+app.use('/api', apiRouter);
+app.use('/api/github', githubRouter);
+app.use('/api/terraform', terraformRouter);
 
 // route handler to respond with main app
 app.get('/', (req, res) => {
