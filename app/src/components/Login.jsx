@@ -7,11 +7,8 @@ export default function Login() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
-  const handleClick = (event) => {
-    event.preventDefault();
-    // fetch('/api/github-login')
-    //   .then(data => data.json())
-    //   .then(data => dispatch(setUser(data)))
+  const handleClick = () => {
+    // fetch data
     const data = {
       id: 1,
       name: "John",
