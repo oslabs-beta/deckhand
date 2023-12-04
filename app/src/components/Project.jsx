@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCluster, deleteCluster, addPod, deletePod } from "../deckhandSlice";
+import {
+  addCluster,
+  deleteCluster,
+  addPod,
+  deletePod,
+  configurePod,
+} from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatActiveProject from "./FloatActiveProject";
 import FloatAccount from "./FloatAccount";
@@ -22,12 +28,25 @@ export default function Project() {
           <div className="name">{pod.name}</div>
           {!pod.config ? (
             <>
-              <button>Configure</button>
+              <button
+                onClick={() =>
+                  dispatch(
+                    configurePod({
+                      projectId: project.id,
+                      clusterId: cluster.id,
+                      podId: pod.id,
+                      config: "placeholder",
+                    })
+                  )
+                }
+              >
+                Select Source
+              </button>
             </>
           ) : (
             <>
               <button>
-                <b>Edit Config</b>
+                <b>Edit Source</b>
               </button>
               <button>
                 <b>Edit Replicas ({pod.replicas})</b>
@@ -51,6 +70,22 @@ export default function Project() {
               ) : (
                 <button>
                   <b>Edit Volume</b>
+                </button>
+              )}
+              {pod.type === "github" ? (
+                <button>
+                  <b>Build</b>
+                </button>
+              ) : (
+                ""
+              )}
+              {!pod.deployed ? (
+                <button>
+                  <b>Deploy</b>
+                </button>
+              ) : (
+                <button>
+                  <b>Stop</b>
                 </button>
               )}
             </>
