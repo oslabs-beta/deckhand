@@ -18,7 +18,7 @@ router.post('/deleteCluster', terraformController.deleteCluster, (req, res) => {
   res.status(200)//.json(res.locals.data);
 });
 
-router.post('/updateCluster', terraformController.updateCluster, (req, res) => {
+router.post('/configureCluster', terraformController.configureCluster, (req, res) => {
   res.status(200)//.json(res.locals.data);
 });
 
