@@ -3,19 +3,19 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    // user: null,
-    user: {
-      id: 1,
-      name: 'John',
-      avatarUrl: 'http://example.com',
-      linkedAccounts: {
-        github: null,
-        aws: null,
-        gcp: null,
-        azure: null,
-        harbor: null,
-      }
-    },
+    user: null,
+    // user: {
+    //   id: 1,
+    //   name: 'John',
+    //   avatarUrl: 'http://example.com',
+    //   linkedAccounts: {
+    //     github: null,
+    //     aws: null,
+    //     gcp: null,
+    //     azure: null,
+    //     harbor: null,
+    //   }
+    // },
 
     projects: [
       {
@@ -103,6 +103,27 @@ export const deckhandSlice = createSlice({
       const project = state.projects.find(p => p.id === projectId);
       project.clusters = project.clusters.filter(c => c.id !== clusterId);
     },
+    addPod: (state, action) => { // payload: {projectId, clusterId, type}
+      const { projectId, clusterId, type } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      const cluster = project.clusters.find(c => c.id === clusterId);
+      cluster.pods.push({
+        id: cluster.pods.length + 1,
+        name: `Pod ${cluster.pods.length + 1} (${type})`,
+        type: type,
+        config: null,
+        replicas: 1,
+        variables: null,
+        ingress: null,
+        volume: null,
+      });
+    },
+    deletePod: (state, action) => { // payload: {projectId, clusterId, podId}
+      const { projectId, clusterId, podId } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      const cluster = project.clusters.find(c => c.id === clusterId);
+      cluster.pods = cluster.pods.filter(p => p.id !== podId)
+    },
   },
 });
 
@@ -115,6 +136,8 @@ export const {
   deleteProject,
   addCluster,
   deleteCluster,
+  addPod,
+  deletePod
 } = deckhandSlice.actions;
 
 // Export the reducer function for store configuration
