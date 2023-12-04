@@ -42,6 +42,30 @@ createYaml.deployment = (name, imageName, imageTag, replicas, port) => {
 // const deploymentYAML = createYaml.deployment('my-app', 'mydockerhubuser/myimage', 'latest', 3, 8080);
 // console.log(deploymentYAML);
 
+createYaml.service = (name, type, port, targetPort, selector) => {
+  const serviceConfig = {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      name: name
+    },
+    spec: {
+      type: type,
+      ports: [{
+        port: port,
+        targetPort: targetPort
+      }],
+      selector: selector
+    }
+  };
+
+  return YAML.stringify(serviceConfig);
+};
+
+// Example usage
+// const serviceYAML = createYaml.service('my-service', 'ClusterIP', 80, 8080, { app: 'my-app' });
+// console.log(serviceYAML);
+
 createYaml.ingress = (name, host, path, serviceName, servicePort) => {
   return YAML.stringify({
     apiVersion: 'networking.k8s.io/v1',
