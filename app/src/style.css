@@ -4,12 +4,28 @@ html {
   padding: 0;
   height: 100%;
   font-family: sans-serif;
+  background-color: #edf6ff;
+}
+
+button {
+  border: 0;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 4px;
+}
+
+button:hover {
+  filter: brightness(80%);
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 .container {
   position: relative;
   height: 100vh;
-  background-color: #edf6ff;
 }
 
 .logo {
@@ -67,7 +83,11 @@ html {
   margin: auto;
 }
 
-.red {
+.edit {
+  font-weight: bold;
+}
+
+.delete {
   background-color: darkred;
   color: white;
 }
@@ -148,10 +168,6 @@ html {
   cursor: pointer;
 }
 
-#project-cards .card:active {
-  transform: scale(1);
-}
-
 #project-cards .card .new-project {
   font-size: 28px;
   flex-grow: 1;
@@ -183,22 +199,6 @@ html {
 #pod-cards {
   display: flex;
   flex-wrap: wrap;
-}
-
-#pod-cards button {
-  border: 0;
-  border-radius: 5px;
-  margin-top: 5px;
-  padding: 4px;
-}
-
-#pod-cards button:hover {
-  filter: brightness(80%);
-  cursor: pointer;
-}
-
-#pod-cards button:active {
-  transform: scale(0.98);
 }
 
 #pod-cards .card {
@@ -233,4 +233,22 @@ html {
   align-items: center;
   justify-content: center;
   margin: 5px;
+}
+
+#new-cluster button {
+  border: 0px;
+  border-radius: 5px;
+  background: none;
+  opacity: 0.33;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 20px 0px 40px 20px;
+}
+
+#new-cluster button:hover {
+  opacity: 0.67;
+}
+
+#new-cluster button:active {
+  transform: scale(0.98);
 }
