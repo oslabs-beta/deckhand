@@ -3,33 +3,35 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    user: null,
-    // user: {
-    //   id: 1,
-    //   name: 'John',
-    //   email: 'john@example.com',
-    //   avatarUrl: 'http://example.com',
-    //   linkedAccounts: {
-    //     github: null,
-    //     aws: null,
-    //     gcp: null,
-    //     azure: null,
-    //     harbor: null,
-    //   }
-    // },
+    // user: null,
+    user: {
+      id: 1,
+      name: 'John',
+      email: 'john@example.com',
+      avatarUrl: 'http://example.com',
+      linkedAccounts: {
+        github: null,
+        aws: { accessKey: 'xyz', secretKey: 'xyz' },
+        gcp: null,
+        azure: null,
+        harbor: null,
+      },
+    },
 
     projects: [
       {
         id: 1,
+        externalId: null,
         name: 'Project 1',
-        config: { provider: 'AWS', name: 'Default VPC', region: 'US-East' },
+        config: { provider: 'aws', name: 'Default VPC', region: 'US-East' },
         createdDate: 'Nov 29, 2023',
         modifiedDate: 'Nov 30, 2023',
         clusters: [
           {
             id: 1,
+            externalId: null,
             name: 'Cluster 1',
-            config: { instanceType: 't2.micro', minNodes: 1, maxNodes: 3 }, // instanceType is immutable, min/max is adjustable
+            config: { name: 'Cluster 1', instanceType: 't2.micro', minNodes: 1, maxNodes: 3 }, // instanceType is immutable, min/max is adjustable
             pods: [
               {
                 id: 1,
@@ -74,7 +76,8 @@ export const deckhandSlice = createSlice({
     addProject: (state, action) => { // payload: {id, createdDate, modifiedDate}
       const { id, createdDate, modifiedDate } = action.payload;
       state.projects.push({
-        id: id, // change to projectId from SQL once connected
+        id: id,
+        externalId: null,
         name: `Project ${state.projects.length + 1}`,
         config: null,
         createdDate: createdDate,
@@ -82,6 +85,7 @@ export const deckhandSlice = createSlice({
         clusters: [
           {
             id: 1,
+            externalId: null,
             name: 'Cluster 1',
             config: null,
             pods: [],
@@ -95,9 +99,9 @@ export const deckhandSlice = createSlice({
     addCluster: (state, action) => { // payload: {projectId, clusterId}
       const { projectId, clusterId } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
-      // project.modifiedDate = (today's date) or get from SQL?
       project.clusters.push({
-        id: clusterId, // change to clusterId from SQL once connected
+        id: clusterId,
+        externalId: null,
         name: `Cluster ${project.clusters.length + 1}`,
         config: null,
         pods: [],
