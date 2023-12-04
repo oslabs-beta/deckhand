@@ -12,6 +12,7 @@ export default function Login() {
     const data = {
       id: 1,
       name: "John",
+      email: "john@example.com",
       avatarUrl: "http://example.com",
     };
     dispatch(setUser(data));
