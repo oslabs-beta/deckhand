@@ -99,6 +99,11 @@ export const deckhandSlice = createSlice({
       });
     },
   },
+  deleteCluster: (state, action) => { // payload: {projectId, clusterId}
+    const { projectId, clusterId } = action.payload;
+    const project = state.projects.find(p => p.id === projectId);
+    project.clusters = project.clusters.filter(c => c.id !== clusterId);
+  },
 });
 
 // Export actions for use in components
@@ -109,6 +114,7 @@ export const {
   addProject,
   deleteProject,
   addCluster,
+  deleteCluster,
 } = deckhandSlice.actions;
 
 // Export the reducer function for store configuration

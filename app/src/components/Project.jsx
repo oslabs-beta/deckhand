@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCluster } from "../deckhandSlice";
+import { addCluster, deleteCluster } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatActiveProject from "./FloatActiveProject";
 import FloatAccount from "./FloatAccount";
