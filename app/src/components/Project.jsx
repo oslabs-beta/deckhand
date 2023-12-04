@@ -147,7 +147,7 @@ export default function Project() {
                   addPod({
                     projectId: project.id,
                     clusterId: cluster.id,
-                    podId: cluster.pods.length + 1,
+                    podId: cluster.pods.length + 1, // get from SQL once connected
                     type: "docker-hub",
                   })
                 )

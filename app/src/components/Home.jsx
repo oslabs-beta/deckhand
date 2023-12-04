@@ -11,7 +11,7 @@ export default function Home() {
   const handleClickAddProject = (event) => {
     // fetch data
     const data = {
-      id: state.projects.length + 1,
+      id: state.projects.length + 1, // get from SQL once connected
       createdDate: "Dec 4, 2023",
       modifiedDate: "Dec 4, 2023",
     };
