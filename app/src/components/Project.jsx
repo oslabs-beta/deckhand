@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCluster, deleteCluster } from "../deckhandSlice";
+import { addCluster, deleteCluster, addPod, deletePod } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatActiveProject from "./FloatActiveProject";
 import FloatAccount from "./FloatAccount";
@@ -55,7 +55,20 @@ export default function Project() {
               )}
             </>
           )}
-          <button className="delete">Delete Pod</button>
+          <button
+            className="delete"
+            onClick={() =>
+              dispatch(
+                deletePod({
+                  projectId: project.id,
+                  clusterId: cluster.id,
+                  podId: pod.id,
+                })
+              )
+            }
+          >
+            Delete Pod
+          </button>
         </div>
       );
     }
@@ -82,8 +95,32 @@ export default function Project() {
         <div id="pod-cards">
           <div className="card">
             <div className="new-pod">New Pod</div>
-            <button>+ Add Github</button>
-            <button>+ Add Docker-Hub</button>
+            <button
+              onClick={() =>
+                dispatch(
+                  addPod({
+                    projectId: project.id,
+                    clusterId: cluster.id,
+                    type: "github",
+                  })
+                )
+              }
+            >
+              + Add Github
+            </button>
+            <button
+              onClick={() =>
+                dispatch(
+                  addPod({
+                    projectId: project.id,
+                    clusterId: cluster.id,
+                    type: "docker-hub",
+                  })
+                )
+              }
+            >
+              + Add Docker-Hub
+            </button>
           </div>
           {podBundle}
         </div>
