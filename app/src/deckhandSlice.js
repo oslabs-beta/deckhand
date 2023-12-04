@@ -7,6 +7,7 @@ export const deckhandSlice = createSlice({
     // user: {
     //   id: 1,
     //   name: 'John',
+    //   email: 'john@example.com',
     //   avatarUrl: 'http://example.com',
     //   linkedAccounts: {
     //     github: null,
@@ -21,20 +22,21 @@ export const deckhandSlice = createSlice({
       {
         id: 1,
         name: 'Project 1',
+        config: { provider: 'AWS', name: 'Default VPC', region: 'US-East' },
         createdDate: 'Nov 29, 2023',
         modifiedDate: 'Nov 30, 2023',
         clusters: [
           {
             id: 1,
             name: 'Cluster 1',
-            config: { provider: 'AWS', name: '', region: 'US-East' },
+            config: { instanceType: 't2.micro', minNodes: 1, maxNodes: 3 }, // instanceType is immutable, min/max is adjustable
             pods: [
               {
                 id: 1,
                 name: 'Pod 1 (github)',
                 type: 'github',
                 config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
-                replicas: 1,
+                replicas: 3,
                 variables: null, // [{key: value, secret as Boolean}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
@@ -60,7 +62,7 @@ export const deckhandSlice = createSlice({
     projectId: null, // id
   },
   reducers: {
-    setUser: (state, action) => { // payload: {id, name, avatarUrl}
+    setUser: (state, action) => { // payload: {id, name, email, avatarUrl}
       state.user = action.payload;
     },
     setProjects: (state, action) => { // payload: (full state object from SQL)
@@ -74,6 +76,7 @@ export const deckhandSlice = createSlice({
       state.projects.push({
         id: id, // change to projectId from SQL once connected
         name: `Project ${state.projects.length + 1}`,
+        config: null,
         createdDate: createdDate,
         modifiedDate: modifiedDate,
         clusters: [
@@ -105,12 +108,12 @@ export const deckhandSlice = createSlice({
       const project = state.projects.find(p => p.id === projectId);
       project.clusters = project.clusters.filter(c => c.id !== clusterId);
     },
-    addPod: (state, action) => { // payload: {projectId, clusterId, type}
-      const { projectId, clusterId, type } = action.payload;
+    addPod: (state, action) => { // payload: {projectId, clusterId, podId, type}
+      const { projectId, clusterId, podId, type } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods.push({
-        id: cluster.pods.length + 1,
+        id: podId,
         name: `Pod ${cluster.pods.length + 1} (${type})`,
         type: type,
         config: null,
