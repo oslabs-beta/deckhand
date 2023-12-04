@@ -3,8 +3,19 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    user: null,
-    // user: { id: 1, name: 'John', avatarUrl: 'http://example.com' },
+    // user: null,
+    user: {
+      id: 1,
+      name: 'John',
+      avatarUrl: 'http://example.com',
+      linkedAccounts: {
+        github: null,
+        aws: null,
+        gcp: null,
+        azure: null,
+        harbor: null,
+      }
+    },
 
     projects: [
       {
