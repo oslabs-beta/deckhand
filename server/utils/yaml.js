@@ -73,11 +73,39 @@ createYaml.secret = (name, data) => {
 };
 
 // Example usage
-const secretData = {
-  'username': 'admin',
-  'password': 'secretPassword'
+// const secretData = {
+//   'username': 'admin',
+//   'password': 'secretPassword'
+// };
+// const secretYAML = createYaml.secret('my-secret', secretData);
+// console.log(secretYAML);
+
+createYaml.persistentVolume = (name, storage, storageClassName, accessModes, hostPath) => {
+  const pvConfig = {
+    apiVersion: 'v1',
+    kind: 'PersistentVolume',
+    metadata: {
+      name: name
+    },
+    spec: {
+      capacity: {
+        storage: storage
+      },
+      volumeMode: 'Filesystem',
+      accessModes: accessModes,
+      persistentVolumeReclaimPolicy: 'Retain',
+      storageClassName: storageClassName,
+      hostPath: {
+        path: hostPath
+      }
+    }
+  };
+
+  return YAML.stringify(pvConfig);
 };
-const secretYAML = createYaml.secret('my-secret', secretData);
-console.log(secretYAML);
+
+// Example usage
+// const pvYAML = createYaml.persistentVolume('my-pv', '10Gi', 'standard', ['ReadWriteOnce'], '/mnt/data');
+// console.log(pvYAML);
 
 module.exports = createYaml;
