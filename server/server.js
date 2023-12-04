@@ -52,6 +52,24 @@ app.get('/getAccessToken', async (req, res) => {
 app.get('/getUserData', async (req, res) => {
 
     req.get('Authorization');
+    await fetch('https://api.github.com/user/repos', {
+        method: 'GET',
+        headers: {
+            'Authorization': req.get('Authorization'),
+            'scope': req.get('scope')
+    }
+    }).then(response => 
+      response.json())
+    .then(data =>
+        res.status(200).json(data)
+)
+    .catch(err => console.log(err));
+
+});
+
+app.get('/getUserInfo', async (req, res) => {
+
+    req.get('Authorization');
     await fetch('https://api.github.com/user', {
         method: 'GET',
         headers: {
@@ -65,10 +83,23 @@ app.get('/getUserData', async (req, res) => {
 
 });
 
+app.get('/searchInfo', async (req, res) => {
+
+    const search_request = req.get('search');
+
+    await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name+language:javascript&sort=stars&order=desc')
+    .then(response => 
+    response.json())
+    .then(data =>
+    res.status(200).json(data))
+    .catch(err => console.log(err));
+
+});
+
 // GitHub OAuth
 app.get('/getOauth', (req, res) => {
 
-    res.json('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=repo%20repo_deployment%20user:email')
+    res.json('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=user%20repo%20repo_deployment%20user:email')
 
 });
 

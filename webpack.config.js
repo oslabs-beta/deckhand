@@ -20,7 +20,9 @@ module.exports = {
             '/api': 'http://localhost:3000',
             '/getAccessToken': 'http://localhost:3000',
             '/getUserData': 'http://localhost:3000',
-            '/getOauth': 'http://localhost:3000'
+            '/getOauth': 'http://localhost:3000',
+            '/getUserInfo': 'http://localhost:3000',
+            '/searchInfo': 'http://localhost:3000'
         },
     },
     module: {

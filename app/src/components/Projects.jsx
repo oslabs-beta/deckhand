@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { /* reducers */ } from "../deckhandSlice";
+import { setUser } from "../deckhandSlice";
 
 export default function Projects() {
   const state = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  return <>Project list</>;
+  const handleClick = (e) => {
+
+    e.preventDefault();
+
+    localStorage.removeItem('accessToken');
+    dispatch(setUser(null));
+
+  };
+
+  return <>
+  <h1>Project list</h1>
+  <button onClick={handleClick}>
+    Log Out With GitHub
+  </button>
+  {/* <h2>Hi, {state.user}</h2> */}
+  </>;
 }
