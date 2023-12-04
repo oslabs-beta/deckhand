@@ -242,7 +242,7 @@ button:active {
   opacity: 0.33;
   font-weight: bold;
   font-size: 20px;
-  margin: 20px 0px 40px 20px;
+  margin: 20px 0px 40px 0px;
 }
 
 #new-cluster button:hover {
