@@ -5,7 +5,7 @@ import account from "../assets/account.png";
 import Icon from "@mdi/react";
 import { mdiChevronDown } from "@mdi/js";
 
-export default function Deckhand() {
+export default function FloatAccount() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 

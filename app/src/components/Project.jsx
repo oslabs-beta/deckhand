@@ -8,7 +8,7 @@ import {
   configurePod,
 } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
-import FloatActiveProject from "./FloatActiveProject";
+import FloatNav from "./FloatNav";
 import FloatAccount from "./FloatAccount";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
@@ -165,7 +165,7 @@ export default function Project() {
   return (
     <div className="container">
       <FloatLogo />
-      <FloatActiveProject />
+      <FloatNav />
       <FloatAccount />
       <div className="content-container">
         <div className="content">
