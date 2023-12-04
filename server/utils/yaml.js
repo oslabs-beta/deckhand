@@ -54,4 +54,30 @@ createYaml.configMap = (name, data) => {
 // const configMapYAML = createYaml.configMap('my-configmap', data);
 // console.log(configMapYAML);
 
+createYaml.secret = (name, data) => {
+  // Base64-encode all values in the data object
+  const encodedData = {};
+  for (const [key, value] of Object.entries(data)) {
+    encodedData[key] = Buffer.from(value).toString('base64');
+  }
+
+  return YAML.stringify({
+    apiVersion: 'v1',
+    kind: 'Secret',
+    metadata: {
+      name: name
+    },
+    type: 'Opaque', // Change this as needed for different types of secrets
+    data: encodedData
+  });
+};
+
+// Example usage
+const secretData = {
+  'username': 'admin',
+  'password': 'secretPassword'
+};
+const secretYAML = createYaml.secret('my-secret', secretData);
+console.log(secretYAML);
+
 module.exports = createYaml;
