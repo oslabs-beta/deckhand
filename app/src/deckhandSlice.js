@@ -27,7 +27,7 @@ export const deckhandSlice = createSlice({
           {
             id: 1,
             name: 'Cluster 1',
-            config: null, // {provider: 'AWS', name: '', region: 'US-East'},
+            config: { provider: 'AWS', name: '', region: 'US-East' },
             pods: [
               {
                 id: 1,
@@ -38,16 +38,18 @@ export const deckhandSlice = createSlice({
                 variables: null, // [{key: value, secret as Boolean}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
+                deployed: false,
               },
               {
                 id: 2,
                 name: 'Pod 2 (docker-hub)',
                 type: 'docker-hub',
-                config: null, // {url: 'http://example.com', version: '3.5.1'}
+                config: { url: 'http://example.com', version: '3.5.1' },
                 replicas: 1,
                 variables: null, // [{key: value, secret as Boolean}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
+                deployed: false,
               },
             ]
           },
@@ -116,6 +118,7 @@ export const deckhandSlice = createSlice({
         variables: null,
         ingress: null,
         volume: null,
+        deployed: false,
       });
     },
     deletePod: (state, action) => { // payload: {projectId, clusterId, podId}
@@ -123,6 +126,13 @@ export const deckhandSlice = createSlice({
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods = cluster.pods.filter(p => p.id !== podId)
+    },
+    configurePod: (state, action) => { // payload: {projectId, clusterId, podId, config}
+      const { projectId, clusterId, podId, config } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      const cluster = project.clusters.find(c => c.id === clusterId);
+      const pod = cluster.pods.find(p => p.id === podId);
+      pod.config = config;
     },
   },
 });
@@ -137,7 +147,8 @@ export const {
   addCluster,
   deleteCluster,
   addPod,
-  deletePod
+  deletePod,
+  configurePod,
 } = deckhandSlice.actions;
 
 // Export the reducer function for store configuration
