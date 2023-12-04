@@ -128,4 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-app/src/components/Deckhand.jsx
+
+# DS_STORE
+**/.DS_Store
