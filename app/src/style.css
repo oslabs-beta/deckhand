@@ -23,6 +23,18 @@ button:active {
   transform: scale(0.98);
 }
 
+.mdiTrashCanOutline {
+  color: #999;
+}
+
+.mdiTrashCanOutline:hover {
+  color: #000;
+}
+
+.mdiTrashCanOutline:active {
+  transform: scale(0.98);
+}
+
 .container {
   position: relative;
   height: 100vh;
