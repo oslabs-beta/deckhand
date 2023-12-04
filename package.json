@@ -11,6 +11,8 @@
   "author": "Omar Mirza, Dennis Corsi, Odin Olson, Jeff Gottstein",
   "license": "MIT",
   "dependencies": {
+    "@mdi/js": "^7.3.67",
+    "@mdi/react": "^1.6.1",
     "@reduxjs/toolkit": "^1.9.7",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
