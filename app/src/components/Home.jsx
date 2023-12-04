@@ -9,11 +9,14 @@ export default function Home() {
   const dispatch = useDispatch();
 
   const handleClickAddProject = (event) => {
-    const id = state.projects.length + 1;
-    const createdDate = "Dec 4, 2023";
-    const modifiedDate = "Dec 4, 2023";
-    dispatch(addProject({ id, createdDate, modifiedDate }));
-    dispatch(setProjectId(id));
+    // fetch data
+    const data = {
+      id: state.projects.length + 1,
+      createdDate: "Dec 4, 2023",
+      modifiedDate: "Dec 4, 2023",
+    };
+    dispatch(addProject(data));
+    dispatch(setProjectId(data.id));
   };
 
   const projectBundle = [];
