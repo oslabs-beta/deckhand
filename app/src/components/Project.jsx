@@ -4,6 +4,8 @@ import { addCluster, deleteCluster } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatActiveProject from "./FloatActiveProject";
 import FloatAccount from "./FloatAccount";
+import Icon from "@mdi/react";
+import { mdiTrashCanOutline } from "@mdi/js";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -62,8 +64,11 @@ export default function Project() {
     clusterBundle.push(
       <>
         <h2>
-          {cluster.name}&nbsp;
-          <button
+          {cluster.name}{" "}
+          <Icon
+            path={mdiTrashCanOutline}
+            size={0.75}
+            className="mdiTrashCanOutline"
             onClick={() =>
               dispatch(
                 deleteCluster({
@@ -72,9 +77,7 @@ export default function Project() {
                 })
               )
             }
-          >
-            Delete
-          </button>
+          />
         </h2>
         <div id="pod-cards">
           <div className="card">
