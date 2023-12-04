@@ -61,7 +61,21 @@ export default function Project() {
     // bundle clusters
     clusterBundle.push(
       <>
-        <h2>{cluster.name}</h2>
+        <h2>
+          {cluster.name}&nbsp;
+          <button
+            onClick={() =>
+              dispatch(
+                deleteCluster({
+                  projectId: project.id,
+                  clusterId: cluster.id,
+                })
+              )
+            }
+          >
+            Delete
+          </button>
+        </h2>
         <div id="pod-cards">
           <div className="card">
             <div className="new-pod">New Pod</div>

@@ -98,11 +98,11 @@ export const deckhandSlice = createSlice({
         pods: [],
       });
     },
-  },
-  deleteCluster: (state, action) => { // payload: {projectId, clusterId}
-    const { projectId, clusterId } = action.payload;
-    const project = state.projects.find(p => p.id === projectId);
-    project.clusters = project.clusters.filter(c => c.id !== clusterId);
+    deleteCluster: (state, action) => { // payload: {projectId, clusterId}
+      const { projectId, clusterId } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      project.clusters = project.clusters.filter(c => c.id !== clusterId);
+    },
   },
 });
 
