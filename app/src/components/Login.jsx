@@ -56,11 +56,17 @@ export default function Login() {
 
         useEffect(() => {
 
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const codeParam = urlParams.get('code');
+            // const queryString = window.location.search;
+            // const urlParams = new URLSearchParams(queryString);
+            // const codeParam = urlParams.get('code');
 
-            if (codeParam && localStorage.getItem('accessToken') === null) {
+            fetch('/grabCookie')
+            .then(response => response.json())
+            .then(data => {
+
+              const codeParam = data;
+
+              if (codeParam && localStorage.getItem('accessToken') === null) {
                 async function getAccessToken () {
                   await fetch('http://localhost:3000/getAccessToken?code=' + codeParam)
                   .then(response => response.json())
@@ -73,17 +79,25 @@ export default function Login() {
                 getAccessToken();
               }
 
+            })
+
+            // if (codeParam && localStorage.getItem('accessToken') === null) {
+            //     async function getAccessToken () {
+            //       await fetch('http://localhost:3000/getAccessToken?code=' + codeParam)
+            //       .then(response => response.json())
+            //       .then(data => {
+            //         if (data.access_token) {
+            //           localStorage.setItem('accessToken', data.access_token);
+            //         }
+            //       })
+            //     }
+            //     getAccessToken();
+            //   }
+
         }, []);
 
-  
       const handleClick = (event) => {
-        event.preventDefault();
-
-        // Original example being passed
-
-        // const user = {
-        //     name: 'John', // get from Github
-        // };
+        //event.preventDefault();
 
         // GitHub Updates -- Odin
 
@@ -91,24 +105,30 @@ export default function Login() {
 
         function githubLogin () {
 
-            fetch('/getOauth', {mode: 'no-cors'})
+          console.log('inside github login')
+
+          fetch('/getOauth', {mode: 'no-cors'})
             .then(res => res.json())
-            .then(data => {
+            .then(data => window.location.assign(data));
+          
+          // .then(response => response.json())
+          // .then(data => console.log("DATA:", data));
+            //window.location.assign(data));
+          // look at this more :)
+          // localStorage.setItem('cookie', data);
 
-            // look at this more :)
+          //?osjlkfhelnf
 
-            // localStorage.setItem('user', data);
-              window.location.assign(data);
-            // window.history.replaceState( {} , data );
-            });
-        
+            // window.history.replaceState(null, '', data);
+      
         };
 
-        githubLogin();
+        if (!localStorage.getItem('accessToken')) githubLogin();
         
         // Get the user's public data -- their profile pic, their name, their id.
 
         // For now, just the name
+
 
         async function getUserData () {
             
@@ -120,12 +140,13 @@ export default function Login() {
               }).then(response => response.json())
               .then(data => {
                 console.log('user', data);
+
                 dispatch(setUser(data.name));
               });
 
         };
 
-        getUserData();
+        if (localStorage.getItem('accessToken')) getUserData();
 
     };
 
@@ -139,7 +160,7 @@ export default function Login() {
                   <button style={buttonStyle} onClick={handleClick}>
                     Sign in with GitHub
                   </button>
-                  <GitHub />
+                  {/* <GitHub /> */}
                 </div>
             </div>
         </div>

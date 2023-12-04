@@ -12,7 +12,7 @@ export default function Projects() {
     e.preventDefault();
 
     localStorage.removeItem('accessToken');
-    dispatch(setUser(null));
+    location.reload();
 
   };
 
@@ -21,6 +21,5 @@ export default function Projects() {
   <button onClick={handleClick}>
     Log Out With GitHub
   </button>
-  {/* <h2>Hi, {state.user}</h2> */}
   </>;
 }

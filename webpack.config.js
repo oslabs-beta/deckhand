@@ -22,7 +22,9 @@ module.exports = {
             '/getUserData': 'http://localhost:3000',
             '/getOauth': 'http://localhost:3000',
             '/getUserInfo': 'http://localhost:3000',
-            '/searchInfo': 'http://localhost:3000'
+            '/searchInfo': 'http://localhost:3000',
+            '/grabCookie': 'http://localhost:3000',
+            '/github': 'http://localhost:3000'
         },
     },
     module: {
