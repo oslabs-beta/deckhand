@@ -46,9 +46,6 @@ export default function Project() {
           ) : (
             <>
               <button>
-                <b>Edit Source</b>
-              </button>
-              <button>
                 <b>Edit Replicas ({pod.replicas})</b>
               </button>
               {!pod.variables ? (
@@ -136,6 +133,7 @@ export default function Project() {
                   addPod({
                     projectId: project.id,
                     clusterId: cluster.id,
+                    podId: cluster.pods.length + 1,
                     type: "github",
                   })
                 )
@@ -149,6 +147,7 @@ export default function Project() {
                   addPod({
                     projectId: project.id,
                     clusterId: cluster.id,
+                    podId: cluster.pods.length + 1,
                     type: "docker-hub",
                   })
                 )
