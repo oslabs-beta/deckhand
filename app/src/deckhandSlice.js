@@ -64,6 +64,7 @@ export const deckhandSlice = createSlice({
     projectId: null, // selected project id
     clusterId: null, // selected cluster id
     podId: null, // selected pod id
+    modal: null, // active modal name
   },
   reducers: {
     setUser: (state, action) => { // payload: {id, name, email, avatarUrl}
@@ -80,6 +81,9 @@ export const deckhandSlice = createSlice({
     },
     setPodId: (state, action) => { // payload: podId
       state.podId = action.payload;
+    },
+    setPodId: (state, action) => { // payload: modal name
+      state.modal = action.payload;
     },
     addProject: (state, action) => { // payload: {id, createdDate, modifiedDate}
       const { id, createdDate, modifiedDate } = action.payload;
