@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -17,6 +18,13 @@ module.exports = {
     },
     proxy: { // list every endpoint
       '/api': 'http://localhost:3000',
+      '/getAccessToken': 'http://localhost:3000',
+      '/getUserData': 'http://localhost:3000',
+      '/getOauth': 'http://localhost:3000',
+      '/getUserInfo': 'http://localhost:3000',
+      '/searchInfo': 'http://localhost:3000',
+      '/grabCookie': 'http://localhost:3000',
+      '/github': 'http://localhost:3000'
     },
   },
   module: {
