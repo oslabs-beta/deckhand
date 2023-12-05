@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  setModal,
+  setClusterId,
+  setPodId,
   addCluster,
   deleteCluster,
   addPod,
   deletePod,
-  configurePod,
 } from "../deckhandSlice";
 import FloatLogo from "./FloatLogo";
 import FloatNav from "./FloatNav";
 import FloatAccount from "./FloatAccount";
-import ModalConfigureCluster from "./modals/ConfigureCluster";
+import ConfigureCluster from "./modals/ConfigureCluster";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 
 export default function Project() {
-  const [selectedClusterId, setSelectedClusterId] = useState(null);
-  const [selectedPodId, setSelectedPodId] = useState(null);
-  const [showModalConfigureCluster, setShowModalConfigureCluster] =
-    useState(false);
-
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.id === state.projectId);
@@ -118,8 +115,8 @@ export default function Project() {
           {cluster.name}{" "}
           <button
             onClick={() => {
-              setShowModalConfigureCluster(true);
-              setSelectedClusterId(cluster.id);
+              dispatch(setClusterId(cluster.id));
+              dispatch(setModal("ConfigureCluster"));
             }}
           >
             Configure
@@ -181,12 +178,7 @@ export default function Project() {
       <FloatLogo />
       <FloatNav />
       <FloatAccount />
-      <ModalConfigureCluster
-        showModal={showModalConfigureCluster}
-        setShowModal={setShowModalConfigureCluster}
-        projectId={project.id}
-        clusterId={selectedClusterId}
-      />
+      <ConfigureCluster />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
