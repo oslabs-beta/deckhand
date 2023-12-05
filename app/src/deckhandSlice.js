@@ -82,7 +82,7 @@ export const deckhandSlice = createSlice({
     setPodId: (state, action) => { // payload: podId
       state.podId = action.payload;
     },
-    setPodId: (state, action) => { // payload: modal name
+    setModal: (state, action) => { // payload: modal name
       state.modal = action.payload;
     },
     addProject: (state, action) => { // payload: {id, createdDate, modifiedDate}
