@@ -46,7 +46,7 @@ export const deckhandSlice = createSlice({
                 type: 'github',
                 config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
                 replicas: 3,
-                variables: null, // [{key: value, secret as Boolean}, ...]
+                variables: null, // [{key: value, secret: true}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -57,7 +57,7 @@ export const deckhandSlice = createSlice({
                 type: 'docker-hub',
                 config: { url: 'http://example.com', version: '3.5.1' },
                 replicas: 1,
-                variables: null, // [{key: value, secret as Boolean}, ...]
+                variables: null, // [{key: value, secret: false}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -74,7 +74,7 @@ export const deckhandSlice = createSlice({
     modal: null, // active modal name
   },
   reducers: {
-    setUser: (state, action) => { // payload: users (full state object from SQL, changed values thereafter)
+    setUser: (state, action) => { // payload: users (full state object)
       state.user = action.payload;
     },
     setProjects: (state, action) => { // payload: projects (full state object from SQL)
@@ -164,12 +164,12 @@ export const deckhandSlice = createSlice({
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods = cluster.pods.filter(p => p.id !== podId)
     },
-    configurePod: (state, action) => { // payload: {projectId, clusterId, podId, config}
-      const { projectId, clusterId, podId, config } = action.payload;
+    configurePod: (state, action) => { // payload: {projectId, clusterId, podId, mergePod}
+      const { projectId, clusterId, podId, mergePod } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
       const pod = cluster.pods.find(p => p.id === podId);
-      pod.config = config;
+      Object.assign(pod, mergePod);
     },
   },
 });
