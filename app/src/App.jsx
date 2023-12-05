@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { setUser } from "./deckhandSlice";
+import /* reducers */ "./deckhandSlice";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Project from "./components/Project";
