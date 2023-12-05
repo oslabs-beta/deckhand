@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const PORT = 3000;
+const { execSync } = require('child_process');
 
 // require routers
 const apiRouter = require(path.join(__dirname, './routes/api.js'));
@@ -132,6 +133,18 @@ app.get('/searchInfo', async (req, res) => {
 app.get('/getOauth', (req, res) => {
 
     res.status(200).json('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=user%20repo%20repo_deployment%20user:email')
+
+});
+
+// clones repos terminal to clone github repo
+
+app.post('', (req, res) => {
+
+  const url = req.body.url;
+
+  execSync('git clone' + url , {
+    cwd: path.resolve(__dirname, './testing')
+  })
 
 });
 
