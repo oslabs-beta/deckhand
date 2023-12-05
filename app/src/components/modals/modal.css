@@ -1,5 +1,5 @@
 .modal {
-  visibility: hidden; /* Use visibility instead of display: none */
+  visibility: hidden;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -22,7 +22,7 @@
   opacity: 1;
   transition:
     visibility 0s linear 0s,
-    opacity 0.2s ease; /* Remove delay when showing */
+    opacity 0.2s ease;
 }
 
 .modal-content {
