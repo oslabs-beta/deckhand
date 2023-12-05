@@ -67,7 +67,7 @@ export const deckhandSlice = createSlice({
     modal: null, // active modal name
   },
   reducers: {
-    setUser: (state, action) => { // payload: {id, name, email, avatarUrl}
+    setUser: (state, action) => { // payload: {id, name, email, avatarUrl, linkedAccounts}
       state.user = action.payload;
     },
     setProjects: (state, action) => { // payload: projects (full state object from SQL)
