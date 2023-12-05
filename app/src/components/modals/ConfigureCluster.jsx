@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { configureCluster } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ConfigureClusterModal({
+export default function ModalConfigureCluster({
   showModal,
   setShowModal,
   projectId,
