@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { configureCluster } from "../../deckhandSlice";
+import { setModal, configureCluster } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ModalConfigureCluster({
-  showModal,
-  setShowModal,
-  projectId,
-  clusterId,
-}) {
+export default function ConfigureCluster() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
-
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => dispatch(setModal(null));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,12 +17,21 @@ export default function ModalConfigureCluster({
       minNodes: formData.get("minNodes"),
       maxNodes: formData.get("maxNodes"),
     };
-    dispatch(configureCluster({ projectId, clusterId, config: data }));
+    dispatch(
+      configureCluster({
+        projectId: state.projectId,
+        clusterId: state.clusterId,
+        config: data,
+      })
+    );
     closeModal();
   };
 
   return (
-    <div className={`modal ${showModal ? "show" : ""}`} onClick={closeModal}>
+    <div
+      className={`modal ${state.modal === "ConfigureCluster" ? "show" : ""}`}
+      onClick={closeModal}
+    >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
