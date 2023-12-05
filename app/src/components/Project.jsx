@@ -13,6 +13,7 @@ import {
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
 import FloatAccount from "./floats/FloatAccount";
+import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
@@ -116,11 +117,18 @@ export default function Project() {
           {cluster.name}{" "}
           <button
             onClick={() => {
+              dispatch(setModal("ConfigureProject"));
+            }}
+          >
+            Configure Project
+          </button>{" "}
+          <button
+            onClick={() => {
               dispatch(setClusterId(cluster.id));
               dispatch(setModal("ConfigureCluster"));
             }}
           >
-            Configure
+            Configure Cluster
           </button>{" "}
           <Icon
             path={mdiTrashCanOutline}
@@ -179,6 +187,7 @@ export default function Project() {
       <FloatLogo />
       <FloatNav />
       <FloatAccount />
+      <ConfigureProject />
       <ConfigureCluster />
       <div className="content-container">
         <div className="content">
