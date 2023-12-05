@@ -3,20 +3,26 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    // user: null,
-    user: {
-      id: 1,
-      name: 'John',
-      email: 'john@example.com',
-      avatarUrl: 'http://example.com',
-      linkedAccounts: {
-        github: null,
-        aws: { accessKey: 'xyz', secretKey: 'xyz' },
-        gcp: null,
-        azure: null,
-        harbor: null,
-      },
-    },
+    user: null,
+    // user: {
+    //   id: 1,
+    //   name: 'John',
+    //   email: 'john@example.com',
+    //   avatarUrl: 'http://example.com',
+    //   oauth: {
+    //     github: true,
+    //     google: false,
+    //     microsoft: false,
+    //   },
+    //   repos: {
+    //     github: true,
+    //   },
+    //   cloudProviders: {
+    //     aws: { accessKey: 'xyz', secretKey: 'xyz' },
+    //     gcp: null,
+    //     azure: null,
+    //   },
+    // },
 
     projects: [
       {
