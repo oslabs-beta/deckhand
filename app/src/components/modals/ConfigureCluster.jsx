@@ -7,6 +7,13 @@ export default function ConfigureCluster() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
+  const project = state.projectId
+    ? state.projects.find((p) => p.id === state.projectId)
+    : null;
+  const cluster = state.clusterId
+    ? project.clusters.find((c) => c.id === state.clusterId)
+    : null;
+  const pod = state.podId ? cluster.pods.find((p) => p.id === podId) : null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +47,13 @@ export default function ConfigureCluster() {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input type="text" name="name" value="cluster1" />
+            <input
+              type="text"
+              name="name"
+              value={
+                cluster ? cluster.name.replace(/\s/g, "").toLowerCase() : ""
+              }
+            />
           </label>
           <label>
             Instance Type:
