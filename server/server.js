@@ -7,7 +7,7 @@ const PORT = 3000;
 // require routers
 const apiRouter = require(path.join(__dirname, './routes/api.js'));
 const githubRouter = require(path.join(__dirname, './routes/github.js'));
-const terraformRouter = require(path.join(__dirname, './routes/terraform.js'));
+const deploymentRouter = require(path.join(__dirname, './routes/deployment.js'));
 
 // parse incoming requests
 app.use(express.json());
@@ -20,7 +20,7 @@ app.use('/build', express.static(path.join(__dirname, '../app/build')));
 // define route handlers
 app.use('/api', apiRouter);
 app.use('/api/github', githubRouter);
-app.use('/api/terraform', terraformRouter);
+app.use('/api/deployment', deploymentRouter);
 
 // route handler to respond with main app
 app.get('/', (req, res) => {
