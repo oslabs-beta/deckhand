@@ -58,7 +58,7 @@ app.get('/getAccessToken', async (req, res) => {
 
 });
 
-// GitHub request for getting user's data
+// GitHub request for getting user's repos.
 app.get('/getUserData', async (req, res) => {
 
     req.get('Authorization');
@@ -77,6 +77,7 @@ app.get('/getUserData', async (req, res) => {
 
 });
 
+// this is a redirect that sets our token as a cookie needs for authentication.
 app.get('/github', (req, res) => {
 
     const code_token = req.query.code;
@@ -86,6 +87,7 @@ app.get('/github', (req, res) => {
 
 });
 
+// this is where we grab the token to do our authentication to get user's data and repos.
 app.get('/grabCookie', (req, res) => {
 
     const our_cookie = req.cookies.code_token;
@@ -93,6 +95,7 @@ app.get('/grabCookie', (req, res) => {
 
 })
 
+// this is where we get the user's personal data.
 app.get('/getUserInfo', async (req, res) => {
 
     req.get('Authorization');
@@ -109,6 +112,7 @@ app.get('/getUserInfo', async (req, res) => {
 
 });
 
+// this is where a user can search for any public repos on GitHub
 app.get('/searchInfo', async (req, res) => {
 
     console.log('in search info');
@@ -124,14 +128,12 @@ app.get('/searchInfo', async (req, res) => {
 
 });
 
-// GitHub OAuth
+// GitHub OAuth where we send a request to GitHub
 app.get('/getOauth', (req, res) => {
 
     res.status(200).json('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=user%20repo%20repo_deployment%20user:email')
 
 });
-
-
 
 // catch-all route handler for any requests to an unknown route
 app.use('*', (req, res) => {
