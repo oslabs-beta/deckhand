@@ -168,6 +168,7 @@ export const {
   setProjects,
   setProjectId,
   setClusterId,
+  setModal,
   setPodId,
   addProject,
   deleteProject,
