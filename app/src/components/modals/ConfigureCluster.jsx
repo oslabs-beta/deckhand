@@ -13,7 +13,9 @@ export default function ConfigureCluster() {
   const cluster = state.clusterId
     ? project.clusters.find((c) => c.id === state.clusterId)
     : null;
-  const pod = state.podId ? cluster.pods.find((p) => p.id === podId) : null;
+  const pod = state.podId
+    ? cluster.pods.find((p) => p.id === state.podId)
+    : null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,9 +52,7 @@ export default function ConfigureCluster() {
             <input
               type="text"
               name="name"
-              value={
-                cluster ? cluster.name.replace(/\s/g, "").toLowerCase() : ""
-              }
+              value={cluster?.name.replace(/\s/g, "").toLowerCase() || ""}
             />
           </label>
           <label>

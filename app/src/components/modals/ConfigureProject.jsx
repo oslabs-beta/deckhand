@@ -13,7 +13,9 @@ export default function ConfigureProject() {
   const cluster = state.clusterId
     ? project.clusters.find((c) => c.id === state.clusterId)
     : null;
-  const pod = state.podId ? cluster.pods.find((p) => p.id === podId) : null;
+  const pod = state.podId
+    ? cluster.pods.find((p) => p.id === state.podId)
+    : null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
