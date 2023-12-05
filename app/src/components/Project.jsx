@@ -10,10 +10,17 @@ import {
 import FloatLogo from "./FloatLogo";
 import FloatNav from "./FloatNav";
 import FloatAccount from "./FloatAccount";
+import ConfigureClusterModal from "./modals/ConfigureCluster";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 
 export default function Project() {
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [selectedClusterId, setSelectedClusterId] = useState(null);
+  const [selectedPodId, setSelectedPodId] = useState(null);
+  const [showConfigureClusterModal, setShowConfigureClusterModal] =
+    useState(false);
+
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.id === state.projectId);
@@ -110,6 +117,15 @@ export default function Project() {
       <>
         <h2>
           {cluster.name}{" "}
+          <button
+            onClick={() => {
+              setShowConfigureClusterModal(true);
+              setSelectedProjectId(project.id);
+              setSelectedClusterId(cluster.id);
+            }}
+          >
+            Configure
+          </button>{" "}
           <Icon
             path={mdiTrashCanOutline}
             size={0.75}
@@ -167,6 +183,12 @@ export default function Project() {
       <FloatLogo />
       <FloatNav />
       <FloatAccount />
+      <ConfigureClusterModal
+        showModal={showConfigureClusterModal}
+        setShowModal={setShowConfigureClusterModal}
+        projectId={selectedProjectId}
+        clusterId={selectedClusterId}
+      />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
