@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../deckhandSlice";
+
+import { setPhoto, userRepos, searchedRepos } from "../deckhandSlice";
+
 import backgroundImage from '../assets/loginbackground.jpg';
 import GitHub from "../GitHub_Login/GitHub";
 
 
 export default function Login() {
-  const state = useSelector((state) => state.main);
+  const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
     const containerStyle = {
@@ -56,13 +59,9 @@ export default function Login() {
 
         useEffect(() => {
 
-            // const queryString = window.location.search;
-            // const urlParams = new URLSearchParams(queryString);
-            // const codeParam = urlParams.get('code');
-
             fetch('/grabCookie')
-            .then(response => response.json())
-            .then(data => {
+              .then(response => response.json())
+              .then(data => {
 
               const codeParam = data;
 
@@ -79,20 +78,7 @@ export default function Login() {
                 getAccessToken();
               }
 
-            })
-
-            // if (codeParam && localStorage.getItem('accessToken') === null) {
-            //     async function getAccessToken () {
-            //       await fetch('http://localhost:3000/getAccessToken?code=' + codeParam)
-            //       .then(response => response.json())
-            //       .then(data => {
-            //         if (data.access_token) {
-            //           localStorage.setItem('accessToken', data.access_token);
-            //         }
-            //       })
-            //     }
-            //     getAccessToken();
-            //   }
+            });
 
         }, []);
 
@@ -109,17 +95,8 @@ export default function Login() {
 
           fetch('/getOauth', {mode: 'no-cors'})
             .then(res => res.json())
-            .then(data => window.location.assign(data));
-          
-          // .then(response => response.json())
-          // .then(data => console.log("DATA:", data));
-            //window.location.assign(data));
-          // look at this more :)
-          // localStorage.setItem('cookie', data);
-
-          //?osjlkfhelnf
-
-            // window.history.replaceState(null, '', data);
+            .then(data => window.location.assign(data))
+            .catch(err => console.log(err));
       
         };
 
@@ -131,6 +108,8 @@ export default function Login() {
 
 
         async function getUserData () {
+
+          // for user
             
             await fetch('http://localhost:3000/getUserInfo', {
                 method: 'GET',
@@ -142,7 +121,29 @@ export default function Login() {
                 console.log('user', data);
 
                 dispatch(setUser(data.name));
+                dispatch(setPhoto(data.avatar_url));
               });
+
+              // For repositories
+
+              await fetch('http://localhost:3000/getUserData', {
+                method: 'GET',
+                headers: {
+                  'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                  'scope': 'repo'
+                }
+              }).then(response => response.json())
+              .then(data => {
+                console.log('data', data)
+
+                const array_of_repos = [];
+                
+                for (let i = 0; i < data.length; i++) {
+                  array_of_repos.push(data[i].html_url)
+                }
+
+                dispatch(userRepos(array_of_repos));
+              })
 
         };
 

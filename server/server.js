@@ -69,8 +69,6 @@ app.get('/getUserData', async (req, res) => {
 
 app.get('/github', (req, res) => {
 
-    console.log('inside github backend')
-
     const code_token = req.query.code;
 
     res.cookie('code_token', code_token);
@@ -80,7 +78,6 @@ app.get('/github', (req, res) => {
 
 app.get('/grabCookie', (req, res) => {
 
-    // cookies.code_token
     const our_cookie = req.cookies.code_token;
     res.json(our_cookie);
 
@@ -104,6 +101,8 @@ app.get('/getUserInfo', async (req, res) => {
 
 app.get('/searchInfo', async (req, res) => {
 
+    console.log('in search info');
+
     const search_request = req.get('search');
 
     await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name+language:javascript&sort=stars&order=desc')
@@ -117,8 +116,6 @@ app.get('/searchInfo', async (req, res) => {
 
 // GitHub OAuth
 app.get('/getOauth', (req, res) => {
-
-    console.log('inside getOatuh')
 
     res.status(200).json('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=user%20repo%20repo_deployment%20user:email')
 
