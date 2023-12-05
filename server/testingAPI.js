@@ -1,11 +1,14 @@
 const terraform = require('./terraform/terraformapi');
+require('dotenv').config();
 
 terraform.connectToProvider(
   'AWS',
   'us-east-1',
-  'AKIAQ2YPHOD4DOYI52GP',
-  'DXx8VzKOuttbXy5SoNsLItwTyA9d3V4cKkq+yfng'
+  process.env.AWS_ACCESS_KEY,
+  process.env.AWS_SECRET_KEY
 );
+
+// Keys came from IAM. Create a key with specific permissions
 
 const vpc_idPromise = terraform.addVPC('AWS', 'dec-4-vpc');
 

@@ -36,7 +36,7 @@ const addVPC = async (provider, vpc_name) => {
     'cd terraform && terraform init && terraform apply --auto-approve && terraform output'
   );
 
-  // gets the vpc_id 
+  // gets the vpc_id
   const vpcId = JSON.parse(
     (await execProm('cd terraform && terraform output -json vpc_id')).stdout
   );
