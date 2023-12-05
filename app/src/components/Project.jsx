@@ -8,10 +8,11 @@ import {
   deleteCluster,
   addPod,
   deletePod,
+  configurePod,
 } from "../deckhandSlice";
-import FloatLogo from "./FloatLogo";
-import FloatNav from "./FloatNav";
-import FloatAccount from "./FloatAccount";
+import FloatLogo from "./floats/FloatLogo";
+import FloatNav from "./floats/FloatNav";
+import FloatAccount from "./floats/FloatAccount";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";

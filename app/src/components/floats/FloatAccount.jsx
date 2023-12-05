@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import { /* reducers */ } "../deckhandSlice";
-import account from "../assets/account.png";
+import account from "../../assets/account.png";
 import Icon from "@mdi/react";
 import { mdiChevronDown } from "@mdi/js";
 

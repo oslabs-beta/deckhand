@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProjectId, addProject, deleteProject } from "../deckhandSlice";
-import FloatLogo from "./FloatLogo";
-import FloatAccount from "./FloatAccount";
+import FloatLogo from "./floats/FloatLogo";
+import FloatAccount from "./floats/FloatAccount";
 
 export default function Home() {
   const state = useSelector((state) => state.deckhand);
