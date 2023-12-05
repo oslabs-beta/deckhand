@@ -3,33 +3,34 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    user: null,
-    // user: {
-    //   id: 1,
-    //   name: 'John',
-    //   email: 'john@example.com',
-    //   avatarUrl: 'http://example.com',
-    //   oauth: {
-    //     github: true,
-    //     google: false,
-    //     microsoft: false,
-    //   },
-    //   repos: {
-    //     github: true,
-    //   },
-    //   cloudProviders: {
-    //     aws: { accessKey: 'xyz', secretKey: 'xyz' },
-    //     gcp: null,
-    //     azure: null,
-    //   },
-    // },
+    // user: null,
+    user: {
+      id: 1,
+      name: 'John',
+      email: 'john@example.com',
+      avatarUrl: 'http://example.com',
+      oauth: {
+        github: true,
+        google: false,
+        microsoft: false,
+      },
+      repos: {
+        github: true,
+      },
+      cloudProviders: {
+        aws: { accessKey: 'xyz', secretKey: 'xyz' },
+        gcp: null,
+        azure: null,
+      },
+    },
 
+    // projects: [],
     projects: [
       {
         id: 1,
         externalId: null,
         name: 'Project 1',
-        config: { provider: 'aws', name: 'Default VPC', region: 'US-East' },
+        config: { name: 'Default VPC', provider: 'aws', region: 'US-East' },
         createdDate: 'Nov 29, 2023',
         modifiedDate: 'Nov 30, 2023',
         clusters: [
@@ -73,7 +74,7 @@ export const deckhandSlice = createSlice({
     modal: null, // active modal name
   },
   reducers: {
-    setUser: (state, action) => { // payload: {id, name, email, avatarUrl, linkedAccounts}
+    setUser: (state, action) => { // payload: users (full state object from SQL, changed values thereafter)
       state.user = action.payload;
     },
     setProjects: (state, action) => { // payload: projects (full state object from SQL)
@@ -112,7 +113,12 @@ export const deckhandSlice = createSlice({
       });
     },
     deleteProject: (state, action) => { // payload: id
-      state.projects = state.projects.filter(project => project.id !== action.payload)
+      state.projects = state.projects.filter(p => p.id !== action.payload)
+    },
+    configureProject: (state, action) => { // payload: {projectId, config}
+      const { projectId, config } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      project.config = config;
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
       const { projectId, clusterId } = action.payload;
@@ -178,6 +184,7 @@ export const {
   setModal,
   addProject,
   deleteProject,
+  configureProject,
   addCluster,
   deleteCluster,
   configureCluster,
