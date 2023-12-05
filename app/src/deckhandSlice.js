@@ -61,17 +61,25 @@ export const deckhandSlice = createSlice({
       },
     ],
 
-    projectId: null, // id
+    projectId: null, // selected project id
+    clusterId: null, // selected cluster id
+    podId: null, // selected pod id
   },
   reducers: {
     setUser: (state, action) => { // payload: {id, name, email, avatarUrl}
       state.user = action.payload;
     },
-    setProjects: (state, action) => { // payload: (full state object from SQL)
+    setProjects: (state, action) => { // payload: projects (full state object from SQL)
       state.projects = action.payload;
     },
-    setProjectId: (state, action) => { // payload: id
+    setProjectId: (state, action) => { // payload: projectId
       state.projectId = action.payload;
+    },
+    setClusterId: (state, action) => { // payload: clusterId
+      state.clusterId = action.payload;
+    },
+    setPodId: (state, action) => { // payload: podId
+      state.podId = action.payload;
     },
     addProject: (state, action) => { // payload: {id, createdDate, modifiedDate}
       const { id, createdDate, modifiedDate } = action.payload;
@@ -155,6 +163,8 @@ export const {
   setUser,
   setProjects,
   setProjectId,
+  setClusterId,
+  setPodId,
   addProject,
   deleteProject,
   addCluster,
