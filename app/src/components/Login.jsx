@@ -14,6 +14,19 @@ export default function Login() {
       name: "John",
       email: "john@example.com",
       avatarUrl: "http://example.com",
+      oauth: {
+        github: true,
+        google: false,
+        microsoft: false,
+      },
+      repos: {
+        github: true,
+      },
+      cloudProviders: {
+        aws: { accessKey: "xyz", secretKey: "xyz" },
+        gcp: null,
+        azure: null,
+      },
     };
     dispatch(setUser(data));
   };
