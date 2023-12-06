@@ -32,9 +32,9 @@ export const deckhandSlice = createSlice({
             pods: [
               {
                 id: 1,
-                name: 'Pod 1 (github)',
+                name: 'Pod 1',
                 type: 'github',
-                config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
+                config: { url: 'http://github.com/o-mirza/example-repo', build: '1.0.5', branch: 'main' },
                 replicas: 3,
                 variables: null, // [{key: value, secret: true}, ...]
                 ingress: null, // port number
@@ -43,9 +43,9 @@ export const deckhandSlice = createSlice({
               },
               {
                 id: 2,
-                name: 'Pod 2 (docker-hub)',
+                name: 'Pod 2',
                 type: 'docker-hub',
-                config: { url: 'http://example.com', version: '3.5.1' },
+                config: { image: 'mongo', version: 'latest' },
                 replicas: 1,
                 variables: null, // [{key: value, secret: false}, ...]
                 ingress: null, // port number
