@@ -16,6 +16,7 @@ import FloatAccount from "./floats/FloatAccount";
 import LinkdCloudProviders from "./modals/LinkedCloudProviders";
 import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
+import ConfigureGithubPod from "./modals/ConfigureGithubPod";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
@@ -33,27 +34,17 @@ export default function Project() {
     for (const pod of cluster.pods) {
       podBundle.push(
         <div className="card">
-          <div className="name">{pod.name}</div>
+          <div className="name">{`${pod.name} (${pod.type})`}</div>
           {!pod.config ? (
             <>
               <button
                 onClick={() => {
                   dispatch(setClusterId(cluster.id));
                   dispatch(setPodId(pod.id));
-                  dispatch(
-                    configurePod({
-                      projectId: project.id,
-                      clusterId: cluster.id,
-                      podId: pod.id,
-                      mergePod: {
-                        config: {
-                          url: "http://test.example.com",
-                          build: "1.0.6",
-                          branch: "develop",
-                        },
-                      },
-                    })
-                  );
+                  if (pod.type === "github")
+                    dispatch(setModal("ConfigureGithubPod"));
+                  if (pod.type === "docker-hub")
+                    dispatch(setModal("ConfigureDockerHubPod"));
                 }}
               >
                 Configure Pod
@@ -61,7 +52,18 @@ export default function Project() {
             </>
           ) : (
             <>
-              <button>Edit Configuration</button>
+              <button
+                onClick={() => {
+                  dispatch(setClusterId(cluster.id));
+                  dispatch(setPodId(pod.id));
+                  if (pod.type === "github")
+                    dispatch(setModal("ConfigureGithubPod"));
+                  if (pod.type === "docker-hub")
+                    dispatch(setModal("ConfigureDockerHubPod"));
+                }}
+              >
+                Edit Configuration
+              </button>
               <button>Create YAML</button>
               <button>
                 <b>Edit Replicas ({pod.replicas})</b>
@@ -210,6 +212,7 @@ export default function Project() {
       <LinkedCloudProviders />
       <ConfigureProject />
       <ConfigureCluster />
+      <ConfigureGithubPod />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
