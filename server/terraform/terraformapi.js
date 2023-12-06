@@ -27,6 +27,11 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
       }
     );
   }
+
+  // copy provider file from template directory into terraform directory
+  console.log('copying file');
+  execSync('cp server/templates/provider.tf server/terraform');
+  console.log('copied file!');
 };
 
 // Returns a promise that resolves to the VPC ID
@@ -44,6 +49,11 @@ const addVPC = async (provider, vpc_name) => {
     JSON.stringify(variables),
     () => console.log('Wrote VPC variable file')
   );
+
+  // copy VPC file from template directory into terraform directory
+  console.log('copying file');
+  execSync('cp server/templates/vpc.tf server/terraform');
+  console.log('copied file!');
 
   // applies the terraform files, provisioning a VPC
   await execProm(
