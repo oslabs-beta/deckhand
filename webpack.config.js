@@ -16,7 +16,8 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    proxy: { // list every endpoint
+    proxy: {
+      // list every endpoint
       '/api': 'http://localhost:3000',
     },
   },
