@@ -129,5 +129,13 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# terraform files
+**/.terraform/*
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/*.auto.tfvars.json
+
+
 # DS_STORE
 **/.DS_Store
