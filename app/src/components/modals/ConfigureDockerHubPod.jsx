@@ -17,6 +17,22 @@ export default function ConfigureDockerHubPod() {
     ? cluster.pods.find((p) => p.id === state.podId)
     : null;
 
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    if (state.modal === "ConfigureDockerHubPod") getImages();
+  }, [state.modal]);
+
+  const getImages = async () => {
+    await fetch("/api/dockerHubImages")
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => <option value={el}>{el}</option>);
+        setImages(arr);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -53,16 +69,20 @@ export default function ConfigureDockerHubPod() {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input type="text" name="name" value={pod ? pod.name : ""} />
+            <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
             Docker Hub Image:
-            <input type="text" name="image" value="mongo" />
+            <input type="text" name="image" defaultValue="mongo" />
+          </label>
+          <label>
+            TEST: Docker Hub Images (fetched):
+            <select name="image-test">{images}</select>
           </label>
           <label>
             Version:
             <select name="version">
-              <option value="latest">latest</option>
+              <option defaultValue="latest">latest</option>
             </select>
           </label>
           <div className="buttons">
