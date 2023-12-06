@@ -32,7 +32,7 @@ export const deckhandSlice = createSlice({
             pods: [
               {
                 id: 1,
-                name: 'Pod 1',
+                name: 'App',
                 type: 'github',
                 config: { url: 'http://github.com/o-mirza/example-repo', build: '1.0.5', branch: 'main' },
                 replicas: 3,
@@ -43,7 +43,7 @@ export const deckhandSlice = createSlice({
               },
               {
                 id: 2,
-                name: 'Pod 2',
+                name: 'Database',
                 type: 'docker-hub',
                 config: { image: 'mongo', version: 'latest' },
                 replicas: 1,
@@ -109,6 +109,7 @@ export const deckhandSlice = createSlice({
     configureProject: (state, action) => { // payload: {projectId, config}
       const { projectId, config } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
+      project.name = config.name;
       project.config = config;
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
@@ -131,6 +132,7 @@ export const deckhandSlice = createSlice({
       const { projectId, clusterId, config } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
+      cluster.name = config.name;
       cluster.config = config;
     },
     addPod: (state, action) => { // payload: {projectId, clusterId, podId, type}
