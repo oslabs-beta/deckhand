@@ -39,7 +39,6 @@ githubController.userData = async (req, res, next) => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         res.locals.data = {
           name: data.name || data.email || data.login,
           email: data.email,
