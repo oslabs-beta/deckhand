@@ -52,26 +52,26 @@ export default function ConfigureGithubPod() {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input type="text" name="name" value={pod ? pod.name : ""} />
+            <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
             Github Repo:
             <input
               type="text"
               name="url"
-              value="http://github.com/o-mirza/example-repo"
+              defaultValue="http://github.com/o-mirza/example-repo"
             />
           </label>
           <label>
             Build:
             <select name="build">
-              <option value="1.0.5">1.0.5</option>
+              <option defaultValue="1.0.5">1.0.5</option>
             </select>
           </label>
           <label>
             Branch:
             <select name="branch">
-              <option value="main">main</option>
+              <option defaultValue="main">main</option>
             </select>
           </label>
           <div className="buttons">
