@@ -13,10 +13,13 @@ import {
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
 import FloatAccount from "./floats/FloatAccount";
+import LinkdCloudProviders from "./modals/LinkedCloudProviders";
 import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
+import { Link } from "react-router-dom";
+import LinkedCloudProviders from "./modals/LinkedCloudProviders";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -129,7 +132,7 @@ export default function Project() {
               dispatch(setModal("LinkedCloudProviders"));
             }}
           >
-            Linked Cloud Providers
+            Link AWS Account
           </button>{" "}
           <button
             onClick={() => {
@@ -203,6 +206,7 @@ export default function Project() {
       <FloatLogo />
       <FloatNav />
       <FloatAccount />
+      <LinkedCloudProviders />
       <ConfigureProject />
       <ConfigureCluster />
       <div className="content-container">
