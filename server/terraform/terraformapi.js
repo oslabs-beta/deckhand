@@ -4,6 +4,8 @@ const util = require('util');
 const execProm = util.promisify(exec);
 require('dotenv').config();
 
+// Writes variables file
+// Does not yet run any Terraform scripts. Unnessecary until adding a VPC.
 const connectToProvider = async (provider, region, accessKey, secretKey) => {
   console.log('entered connectToProvider');
   console.log('Params:', provider, region, accessKey, secretKey);
@@ -27,7 +29,7 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
   }
 };
 
-// returns a promise that resolves to the VPC ID
+// Returns a promise that resolves to the VPC ID
 const addVPC = async (provider, vpc_name) => {
   console.log('entered addVPC');
   console.log('Params:', provider, vpc_name);
@@ -36,12 +38,14 @@ const addVPC = async (provider, vpc_name) => {
     vpc_name,
   };
 
+  // write the variables to a tfvars file
   await fs.writeFile(
     'server/terraform/vpc.auto.tfvars.json',
     JSON.stringify(variables),
     () => console.log('Wrote VPC variable file')
   );
 
+  // applies the terraform files, provisioning a VPC
   await execProm(
     'cd server/terraform && terraform init && terraform apply --auto-approve'
   );
@@ -56,7 +60,6 @@ const addVPC = async (provider, vpc_name) => {
 };
 
 const addCluster = async (clusterName, vpcId, min, max, instanceType) => {
-  //need a nodegroup id - make it the cluster name plus a random hash
   console.log('entered addCluster');
   console.log('Params:', clusterName, vpcId, min, max, instanceType);
 
@@ -65,9 +68,9 @@ const addCluster = async (clusterName, vpcId, min, max, instanceType) => {
   execSync('cp server/templates/eks.tf server/terraform');
   console.log('copied file!');
 
-  const nodeGroupName = clusterName + Math.floor(Math.random() * 100000); // generate a random name from the clusterName and a number
+  // generate a random name from the clusterName and a number
+  const nodeGroupName = clusterName + Math.floor(Math.random() * 100000);
 
-  //need to store the vpc id
   const variables = {
     clusterName,
     vpcId,
@@ -77,22 +80,29 @@ const addCluster = async (clusterName, vpcId, min, max, instanceType) => {
     nodeGroupName,
   };
 
+  // write the variables to a tfvars file
   await fs.writeFile(
     'server/terraform/eks.auto.tfvars.json',
     JSON.stringify(variables),
     () => console.log('Wrote eks variable file')
   );
 
-  const output = await execProm(
+  // applies the terraform files, provisioning a cluster
+  await execProm(
     'cd server/terraform && terraform init && terraform apply --auto-approve'
   );
-  //.stdout;
-  console.log('OUTPUT', output);
 
-  output.then((log) => {
-    console.log('FINISHED PROVISIONING CLUSTER');
-    console.log(log);
-  });
+  // this will eventually be written to get whatever necessary ids we need from the cluster
+  //   const output = JSON.parse(
+  //     (await execProm('cd server/terraform && terraform output -json <INSERT NEEDED OUTPUTS HERE>'))
+  //       .stdout
+  //   );
+  //   console.log('OUTPUT', output);
+
+  //   output.then((log) => {
+  //     console.log('FINISHED PROVISIONING CLUSTER');
+  //     console.log(log);
+  //   });
 };
 
 module.exports = { connectToProvider, addVPC, addCluster };
