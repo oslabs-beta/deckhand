@@ -3,16 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    // user: null,
-    user: {
-      id: 1,
-      name: 'John',
-      email: 'john@example.com',
-      avatarUrl: 'http://example.com',
-      githubId: null,
-      awsAccessKey: null,
-      awsSecretKey: null,
-    },
+    user: {},
+    // user: {
+    //   id: 1,
+    //   name: 'John',
+    //   email: 'john@example.com',
+    //   avatarUrl: 'http://example.com',
+    //   githubId: null,
+    //   awsAccessKey: null,
+    //   awsSecretKey: null,
+    // },
 
     // projects: [],
     projects: [
@@ -64,10 +64,11 @@ export const deckhandSlice = createSlice({
     modal: null, // active modal name
   },
   reducers: {
-    setUser: (state, action) => { // payload: users (full state object)
-      state.user = action.payload;
+    setUser: (state, action) => { // payload: users (merge properties)
+      const mergeUser = action.payload;
+      Object.assign(state.user, mergeUser);
     },
-    setProjects: (state, action) => { // payload: projects (full state object from SQL)
+    setProjects: (state, action) => { // payload: projects (fetch full state object from SQL)
       state.projects = action.payload;
     },
     setProjectId: (state, action) => { // payload: projectId
