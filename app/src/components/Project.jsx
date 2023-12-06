@@ -13,16 +13,17 @@ import {
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
 import FloatAccount from "./floats/FloatAccount";
-import LinkdCloudProviders from "./modals/LinkedCloudProviders";
+import LinkedCloudProviders from "./modals/LinkedCloudProviders";
 import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import ConfigureGithubPod from "./modals/ConfigureGithubPod";
 import ConfigureDockerHubPod from "./modals/ConfigureDockerHubPod";
 import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
+import ConfigurePodIngress from "./modals/ConfigurePodIngress";
+import ConfigurePodVolume from "./modals/ConfigurePodVolume";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
-import LinkedCloudProviders from "./modals/LinkedCloudProviders";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -66,7 +67,6 @@ export default function Project() {
               >
                 Edit Configuration
               </button>
-              <button>Create YAML</button>
               <button
                 onClick={() => {
                   dispatch(setClusterId(cluster.id));
@@ -84,16 +84,44 @@ export default function Project() {
                 </button>
               )}
               {!pod.ingress ? (
-                <button>Add Ingress</button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodIngress"));
+                  }}
+                >
+                  Add Ingress
+                </button>
               ) : (
-                <button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodIngress"));
+                  }}
+                >
                   <b>Edit Ingress</b>
                 </button>
               )}
               {!pod.volume ? (
-                <button>Add Volume</button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodVolume"));
+                  }}
+                >
+                  Add Volume
+                </button>
               ) : (
-                <button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodVolume"));
+                  }}
+                >
                   <b>Edit Volume</b>
                 </button>
               )}
@@ -113,6 +141,7 @@ export default function Project() {
                   <b>Stop</b>
                 </button>
               )}
+              <button>Create YAML</button>
             </>
           )}
           <button
@@ -223,6 +252,8 @@ export default function Project() {
       <ConfigureGithubPod />
       <ConfigureDockerHubPod />
       <ConfigurePodReplicas />
+      <ConfigurePodIngress />
+      <ConfigurePodVolume />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
