@@ -51,21 +51,19 @@ export default function ConfigureProject() {
             <input
               type="text"
               name="name"
-              value={
-                project ? project.name.replace(/\s/g, "").toLowerCase() : ""
-              }
+              defaultValue={project ? project.name : ""}
             />
           </label>
           <label>
             Provider:
             <select name="provider">
-              <option value="aws">Amazon Web Services (AWS)</option>
+              <option defaultValue="aws">Amazon Web Services (AWS)</option>
             </select>
           </label>
           <label>
             Provider:
             <select name="region">
-              <option value="US-East">US-East</option>
+              <option defaultValue="US-East">US-East</option>
             </select>
           </label>
           <div className="buttons">
