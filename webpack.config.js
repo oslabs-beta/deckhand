@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -15,7 +16,8 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    proxy: { // list every endpoint
+    proxy: {
+      // list every endpoint
       '/api': 'http://localhost:3000',
     },
   },
