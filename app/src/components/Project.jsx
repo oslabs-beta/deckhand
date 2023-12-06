@@ -56,11 +56,12 @@ export default function Project() {
                   );
                 }}
               >
-                Select Source
+                Configure Pod
               </button>
             </>
           ) : (
             <>
+              <button>Edit Configuration</button>
               <button>Create YAML</button>
               <button>
                 <b>Edit Replicas ({pod.replicas})</b>
