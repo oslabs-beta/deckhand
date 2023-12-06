@@ -17,6 +17,7 @@ import LinkdCloudProviders from "./modals/LinkedCloudProviders";
 import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import ConfigureGithubPod from "./modals/ConfigureGithubPod";
+import ConfigureDockerHubPod from "./modals/ConfigureDockerHubPod";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
@@ -213,6 +214,7 @@ export default function Project() {
       <ConfigureProject />
       <ConfigureCluster />
       <ConfigureGithubPod />
+      <ConfigureDockerHubPod />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
