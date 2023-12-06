@@ -18,6 +18,7 @@ import ConfigureProject from "./modals/ConfigureProject";
 import ConfigureCluster from "./modals/ConfigureCluster";
 import ConfigureGithubPod from "./modals/ConfigureGithubPod";
 import ConfigureDockerHubPod from "./modals/ConfigureDockerHubPod";
+import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
@@ -66,7 +67,13 @@ export default function Project() {
                 Edit Configuration
               </button>
               <button>Create YAML</button>
-              <button>
+              <button
+                onClick={() => {
+                  dispatch(setClusterId(cluster.id));
+                  dispatch(setPodId(pod.id));
+                  dispatch(setModal("ConfigurePodReplicas"));
+                }}
+              >
                 <b>Edit Replicas ({pod.replicas})</b>
               </button>
               {!pod.variables ? (
@@ -215,6 +222,7 @@ export default function Project() {
       <ConfigureCluster />
       <ConfigureGithubPod />
       <ConfigureDockerHubPod />
+      <ConfigurePodReplicas />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
