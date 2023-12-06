@@ -49,11 +49,7 @@ export default function ConfigureCluster() {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input
-              type="text"
-              name="name"
-              value={cluster?.name.replace(/\s/g, "").toLowerCase() || ""}
-            />
+            <input type="text" name="name" value={cluster?.name || ""} />
           </label>
           <label>
             Instance Type:
