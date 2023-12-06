@@ -139,7 +139,7 @@ export const deckhandSlice = createSlice({
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods.push({
         id: podId,
-        name: `Pod ${cluster.pods.length + 1} (${type})`,
+        name: `Pod ${cluster.pods.length + 1}`,
         type: type,
         config: null,
         replicas: 1,
