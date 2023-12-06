@@ -3,33 +3,24 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    user: null,
+    user: {},
     // user: {
     //   id: 1,
     //   name: 'John',
     //   email: 'john@example.com',
     //   avatarUrl: 'http://example.com',
-    //   oauth: {
-    //     github: true,
-    //     google: false,
-    //     microsoft: false,
-    //   },
-    //   repos: {
-    //     github: true,
-    //   },
-    //   cloudProviders: {
-    //     aws: { accessKey: 'xyz', secretKey: 'xyz' },
-    //     gcp: null,
-    //     azure: null,
-    //   },
+    //   githubId: null,
+    //   awsAccessKey: null,
+    //   awsSecretKey: null,
     // },
 
+    // projects: [],
     projects: [
       {
         id: 1,
         externalId: null,
         name: 'Project 1',
-        config: { provider: 'aws', name: 'Default VPC', region: 'US-East' },
+        config: { name: 'Default VPC', provider: 'aws', region: 'US-East' },
         createdDate: 'Nov 29, 2023',
         modifiedDate: 'Nov 30, 2023',
         clusters: [
@@ -45,7 +36,7 @@ export const deckhandSlice = createSlice({
                 type: 'github',
                 config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
                 replicas: 3,
-                variables: null, // [{key: value, secret as Boolean}, ...]
+                variables: null, // [{key: value, secret: true}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -56,7 +47,7 @@ export const deckhandSlice = createSlice({
                 type: 'docker-hub',
                 config: { url: 'http://example.com', version: '3.5.1' },
                 replicas: 1,
-                variables: null, // [{key: value, secret as Boolean}, ...]
+                variables: null, // [{key: value, secret: false}, ...]
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -73,10 +64,11 @@ export const deckhandSlice = createSlice({
     modal: null, // active modal name
   },
   reducers: {
-    setUser: (state, action) => { // payload: {id, name, email, avatarUrl, linkedAccounts}
-      state.user = action.payload;
+    setUser: (state, action) => { // payload: users (merge properties)
+      const mergeUser = action.payload;
+      Object.assign(state.user, mergeUser);
     },
-    setProjects: (state, action) => { // payload: projects (full state object from SQL)
+    setProjects: (state, action) => { // payload: projects (fetch full state object from SQL)
       state.projects = action.payload;
     },
     setProjectId: (state, action) => { // payload: projectId
@@ -112,7 +104,12 @@ export const deckhandSlice = createSlice({
       });
     },
     deleteProject: (state, action) => { // payload: id
-      state.projects = state.projects.filter(project => project.id !== action.payload)
+      state.projects = state.projects.filter(p => p.id !== action.payload)
+    },
+    configureProject: (state, action) => { // payload: {projectId, config}
+      const { projectId, config } = action.payload;
+      const project = state.projects.find(p => p.id === projectId);
+      project.config = config;
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
       const { projectId, clusterId } = action.payload;
@@ -158,12 +155,12 @@ export const deckhandSlice = createSlice({
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods = cluster.pods.filter(p => p.id !== podId)
     },
-    configurePod: (state, action) => { // payload: {projectId, clusterId, podId, config}
-      const { projectId, clusterId, podId, config } = action.payload;
+    configurePod: (state, action) => { // payload: {projectId, clusterId, podId, mergePod}
+      const { projectId, clusterId, podId, mergePod } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
       const pod = cluster.pods.find(p => p.id === podId);
-      pod.config = config;
+      Object.assign(pod, mergePod);
     },
   },
 });
@@ -178,6 +175,7 @@ export const {
   setModal,
   addProject,
   deleteProject,
+  configureProject,
   addCluster,
   deleteCluster,
   configureCluster,
