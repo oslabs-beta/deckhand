@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setModal, configurePod } from "../../deckhandSlice";
 import "./modal.css";
+import createYaml from "../../yaml";
 
 export default function ConfigurePodYaml() {
   const state = useSelector((state) => state.deckhand);
@@ -16,21 +17,23 @@ export default function ConfigurePodYaml() {
   const pod = state.podId
     ? cluster.pods.find((p) => p.id === state.podId)
     : null;
-  const yamlString = `Lorem ipsum dolor sit amet, 
-    consectetur adipiscing elit,
-        sed do eiusmod tempor
-        incididunt ut labore et
-    dolore magna aliqua. Ut
-      enim ad
-        minim veniam, quis nostrud exercitation ullamco laboris
-        nisi ut aliquip ex ea commodo consequat.
-  Duis aute irure dolor in reprehenderit in
-    voluptate velit esse cillum dolore
-      eu fugiat nulla pariatur. Excepteur
-        sint occaecat cupidatat non proident,
-        sunt in culpa qui officia
-      deserunt mollit anim id est
-        laborum`;
+
+  const examplePod = {
+    id: 2,
+    name: "Database",
+    type: "docker-hub",
+    config: true,
+    imageName: "mongo",
+    imageTag: "latest",
+    replicas: 1,
+    variables: [
+      { key: "user1", value: "abc123", secret: true },
+      { key: "PG_URI", value: "db_address", secret: false },
+    ],
+    ingress: null,
+    volume: null, // directory string
+    deployed: false,
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,7 +66,7 @@ export default function ConfigurePodYaml() {
           <label>
             {/* YAML: */}
             <pre className="yaml" name="yaml">
-              {yamlString}
+              {pod ? createYaml.all(pod) : ""}
             </pre>
           </label>
           {/* <div className="buttons">
