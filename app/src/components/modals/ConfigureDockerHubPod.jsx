@@ -93,20 +93,21 @@ export default function ConfigureDockerHubPod() {
             Name:
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
-          {/* <label>
-            Docker Hub Image:
-            <input type="text" name="image" defaultValue="mongo" />
-          </label> */}
           <label>
             Docker Hub Image:
-            <select
+            <input
+              type="text"
               name="image"
               defaultValue="mongo"
               onChange={(e) => getImageTags(e.target.value)}
-            >
+            />
+          </label>
+          {/* <label>
+            Docker Hub Image:
+            <select name="image" onChange={(e) => getImageTags(e.target.value)}>
               {images}
             </select>
-          </label>
+          </label> */}
           <label>
             Version:
             <select name="version">{imageTags}</select>
