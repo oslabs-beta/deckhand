@@ -59,11 +59,10 @@ export default function ConfigureDockerHubPod() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const mergePod = {
+      config: true,
       name: formData.get("name"),
-      config: {
-        image: formData.get("image"),
-        version: formData.get("version"),
-      },
+      imageName: formData.get("image"),
+      imageTag: formData.get("imageTag"),
     };
     dispatch(
       configurePod({
@@ -110,7 +109,7 @@ export default function ConfigureDockerHubPod() {
           </label> */}
           <label>
             Version:
-            <select name="version">{imageTags}</select>
+            <select name="imageTag">{imageTags}</select>
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
