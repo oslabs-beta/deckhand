@@ -90,12 +90,13 @@ button:active {
 }
 
 .account img {
-  height: 20px;
+  height: 30px;
   width: auto;
+  border-radius: 15px;
 }
 
 .account span {
-  margin-right: 10px;
+  margin-left: 10px;
   color: #333;
   font-weight: bold;
   font-size: 18px;

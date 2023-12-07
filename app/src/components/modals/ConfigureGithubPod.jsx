@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setModal, configureProject } from "../../deckhandSlice";
+import { setModal, configurePod } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ConfigureProject() {
+export default function ConfigureGithubPod() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
@@ -20,16 +20,18 @@ export default function ConfigureProject() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const data = {
+    const mergePod = {
+      config: true,
       name: formData.get("name"),
-      provider: formData.get("provider"),
-      region: formData.get("region"),
+      githubUrl: formData.get("url"),
+      githubBranch: formData.get("branch"),
     };
     dispatch(
-      configureProject({
+      configurePod({
         projectId: state.projectId,
         clusterId: state.clusterId,
-        config: data,
+        podId: state.podId,
+        mergePod: mergePod,
       })
     );
     closeModal();
@@ -37,35 +39,37 @@ export default function ConfigureProject() {
 
   return (
     <div
-      className={`modal ${state.modal === "ConfigureProject" ? "show" : ""}`}
+      className={`modal ${state.modal === "ConfigureGithubPod" ? "show" : ""}`}
       onClick={closeModal}
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>Configure Project</h2>
+        <h2>Configure Pod</h2>
         <form onSubmit={handleSubmit}>
           <label>
             Name:
+            <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
+          </label>
+          <label>
+            Github Repo URL:
             <input
               type="text"
-              name="name"
-              defaultValue={project ? project.name : ""}
+              name="url"
+              defaultValue="http://github.com/o-mirza/example-repo"
             />
           </label>
           <label>
-            Provider:
-            <select name="provider">
-              <option defaultValue="aws">Amazon Web Services (AWS)</option>
-            </select>
+            Branch:
+            <input type="text" name="branch" defaultValue="main" />
           </label>
-          <label>
-            Provider:
-            <select name="region">
-              <option defaultValue="US-East">US-East</option>
+          {/* <label>
+            Branch:
+            <select name="branch">
+              <option defaultValue="main">main</option>
             </select>
-          </label>
+          </label> */}
           <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel

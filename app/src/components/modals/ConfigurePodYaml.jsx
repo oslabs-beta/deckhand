@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setModal, configureProject } from "../../deckhandSlice";
+import { setModal, configurePod } from "../../deckhandSlice";
 import "./modal.css";
+import createYaml from "../../yaml";
 
-export default function ConfigureProject() {
+export default function ConfigurePodYaml() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
@@ -17,63 +18,65 @@ export default function ConfigureProject() {
     ? cluster.pods.find((p) => p.id === state.podId)
     : null;
 
+  const examplePod = {
+    id: 2,
+    name: "Database",
+    type: "docker-hub",
+    config: true,
+    imageName: "mongo",
+    imageTag: "latest",
+    replicas: 1,
+    variables: [
+      { key: "user1", value: "abc123", secret: true },
+      { key: "PG_URI", value: "db_address", secret: false },
+    ],
+    ingress: null,
+    volume: null, // directory string
+    deployed: false,
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = {
-      name: formData.get("name"),
-      provider: formData.get("provider"),
-      region: formData.get("region"),
-    };
-    dispatch(
-      configureProject({
-        projectId: state.projectId,
-        clusterId: state.clusterId,
-        config: data,
-      })
-    );
+    // const formData = new FormData(e.target);
+    // const mergePod = {
+    //   yaml: formData.get("yaml"),
+    // };
+    // dispatch(
+    //   configurePod({
+    //     projectId: state.projectId,
+    //     clusterId: state.clusterId,
+    //     podId: state.podId,
+    //     mergePod: mergePod,
+    //   })
+    // );
     closeModal();
   };
 
   return (
     <div
-      className={`modal ${state.modal === "ConfigureProject" ? "show" : ""}`}
+      className={`modal ${state.modal === "ConfigurePodYaml" ? "show" : ""}`}
       onClick={closeModal}
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>Configure Project</h2>
+        <h2>YAML File for {pod ? pod.name : ""}</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              defaultValue={project ? project.name : ""}
-            />
+            {/* YAML: */}
+            <pre className="yaml" name="yaml">
+              {pod ? createYaml.all(pod) : ""}
+            </pre>
           </label>
-          <label>
-            Provider:
-            <select name="provider">
-              <option defaultValue="aws">Amazon Web Services (AWS)</option>
-            </select>
-          </label>
-          <label>
-            Provider:
-            <select name="region">
-              <option defaultValue="US-East">US-East</option>
-            </select>
-          </label>
-          <div className="buttons">
+          {/* <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel
             </button>
             <button type="submit" className="blue">
               Submit
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

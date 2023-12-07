@@ -1,4 +1,5 @@
-const YAML = require('yaml');
+import YAML from 'yaml';
+import { Buffer } from 'buffer';
 
 const createYaml = {};
 
@@ -168,8 +169,59 @@ createYaml.persistentVolume = (name, storage, storageClassName, accessModes, hos
   return YAML.stringify(pvConfig);
 };
 
-// Example usage
-// const pvYAML = createYaml.persistentVolume('my-pv', '10Gi', 'standard', ['ReadWriteOnce'], '/mnt/data');
-// console.log(pvYAML);
+createYaml.all = (pod) => {
+  const yamlArr = [];
 
-module.exports = createYaml;
+  const appName = pod.name.replace(/[^A-Z0-9]/gi, "_").toLowerCase();
+  const imageName = pod.imageName;
+  const imageTag = pod.imageTag;
+  const replicas = pod.replicas;
+  const serviceType = 'ClusterIP';
+  const targetPort = 8080;
+  const host = pod.ingress ? pod.ingress.host : null;
+  const path = pod.ingress ? pod.ingress.path : null;
+  const configMapData = pod.variables
+    .filter(item => !item.secret)
+    .reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
+  const secretData = pod.variables
+    .filter(item => item.secret)
+    .reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
+  const pvStorage = '10Gi';
+  const storageClassName = 'standard';
+  const accessModes = ['ReadWriteOnce'];
+  const hostPath = pod.volume;
+
+  yamlArr.push(createYaml.deployment(appName, imageName, imageTag, replicas, targetPort));
+  yamlArr.push(createYaml.service(appName, serviceType, targetPort, targetPort, { app: appName }));
+  if (host && path) yamlArr.push(createYaml.ingress(`${appName}-ingress`, host, path, appName, targetPort));
+  if (Object.keys(configMapData).length) yamlArr.push(createYaml.configMap(`${appName}-config`, configMapData));
+  if (Object.keys(secretData).length) yamlArr.push(createYaml.secret(`${appName}-secret`, secretData));
+  if (hostPath) yamlArr.push(createYaml.persistentVolume(`${appName}-pv`, pvStorage, storageClassName, accessModes, hostPath));
+
+  return yamlArr.join('\n---\n\n');
+};
+
+// Example usage
+// const examplePod = {
+//   id: 2,
+//   name: 'Database',
+//   type: 'docker-hub',
+//   config: true,
+//   imageName: 'mongo',
+//   imageTag: 'latest',
+//   replicas: 1,
+//   variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
+//   ingress: null,
+//   volume: null, // directory string
+//   deployed: false,
+// }
+// const completeYaml = createYaml.all(examplePod);
+// console.log(completeYaml);
+
+export default createYaml;

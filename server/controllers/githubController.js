@@ -39,7 +39,6 @@ githubController.userData = async (req, res, next) => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         res.locals.data = {
           name: data.name || data.email || data.login,
           email: data.email,
@@ -57,7 +56,7 @@ githubController.userData = async (req, res, next) => {
 // get user repos
 githubController.userRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
-  await fetch('https://api.github.com/repos', {
+  await fetch('https://api.github.com/user/repos', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`
