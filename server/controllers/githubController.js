@@ -94,12 +94,13 @@ const docker_password = process.env.DOCKER_PASSWORD;
 githubController.cloneRepo = (req, res, next) => {
 
   const url = req.body.url;
+  const branch = req.body.branch;
   const splitIt = url.split('/');
   const repoName = splitIt.pop();
   const url_plus_git = url + '.git';
 
   execSync(
-    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':5 ' + url_plus_git + ' && docker push deckhandapp/' + repoName + ':5'
+    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':5 ' + url_plus_git + '#' + branch + ' && docker push deckhandapp/' + repoName + ':5'
   );
 
   return next();

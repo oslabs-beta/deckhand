@@ -366,7 +366,7 @@ export default function Project() {
             >
               + Add Cluster
             </button>
-            <button onClick={grab_my_repos}>Grab Repos
+            {/* <button onClick={grab_my_repos}>Grab Repos
             </button>
             {myRepos}
             <br /> <br />
@@ -378,7 +378,7 @@ export default function Project() {
             <form onSubmit={grab_public_repos}>
               <input id="search-public" placeholder="make search here" />
               <button>Submit</button>
-            </form>
+            </form> */}
           </div>
         </div>
       </div>
