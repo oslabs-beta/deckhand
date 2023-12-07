@@ -22,6 +22,7 @@ import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
 import ConfigurePodIngress from "./modals/ConfigurePodIngress";
 import ConfigurePodVolume from "./modals/ConfigurePodVolume";
 import ConfigurePodVariables from "./modals/ConfigurePodVariables";
+import ConfigurePodYaml from "./modals/ConfigurePodYaml";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
@@ -156,7 +157,15 @@ export default function Project() {
                   <b>Stop</b>
                 </button>
               )}
-              <button>Create YAML</button>
+              <button
+                onClick={() => {
+                  dispatch(setClusterId(cluster.id));
+                  dispatch(setPodId(pod.id));
+                  dispatch(setModal("ConfigurePodYaml"));
+                }}
+              >
+                Create YAML
+              </button>
             </>
           )}
           <button
@@ -270,6 +279,7 @@ export default function Project() {
       <ConfigurePodIngress />
       <ConfigurePodVolume />
       <ConfigurePodVariables />
+      <ConfigurePodYaml />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
