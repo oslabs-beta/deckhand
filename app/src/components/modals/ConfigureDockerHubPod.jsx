@@ -18,17 +18,39 @@ export default function ConfigureDockerHubPod() {
     : null;
 
   const [images, setImages] = useState([]);
+  const [imageTags, setImageTags] = useState([]);
 
   useEffect(() => {
-    if (state.modal === "ConfigureDockerHubPod") getImages();
+    if (state.modal === "ConfigureDockerHubPod") {
+      getImages();
+      getImageTags("centos");
+    }
   }, [state.modal]);
 
   const getImages = async () => {
     await fetch("/api/dockerHubImages")
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.map((el) => <option value={el}>{el}</option>);
+        const arr = data.map((el) => (
+          <option key={el} value={el}>
+            {el}
+          </option>
+        ));
         setImages(arr);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getImageTags = async (image) => {
+    await fetch(`/api/dockerHubImageTags/${image}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => (
+          <option key={el} value={el}>
+            {el}
+          </option>
+        ));
+        setImageTags(arr);
       })
       .catch((error) => console.log(error));
   };
@@ -71,19 +93,23 @@ export default function ConfigureDockerHubPod() {
             Name:
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
-          <label>
+          {/* <label>
             Docker Hub Image:
             <input type="text" name="image" defaultValue="mongo" />
-          </label>
+          </label> */}
           <label>
-            TEST: Docker Hub Images (fetched):
-            <select name="image-test">{images}</select>
+            Docker Hub Image:
+            <select
+              name="image"
+              defaultValue="mongo"
+              onChange={(e) => getImageTags(e.target.value)}
+            >
+              {images}
+            </select>
           </label>
           <label>
             Version:
-            <select name="version">
-              <option defaultValue="latest">latest</option>
-            </select>
+            <select name="version">{imageTags}</select>
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
