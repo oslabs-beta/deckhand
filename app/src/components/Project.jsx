@@ -8,7 +8,6 @@ import {
   deleteCluster,
   addPod,
   deletePod,
-  configurePod,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
@@ -25,7 +24,6 @@ import ConfigurePodVariables from "./modals/ConfigurePodVariables";
 import ConfigurePodYaml from "./modals/ConfigurePodYaml";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
-import { Link } from "react-router-dom";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
