@@ -21,12 +21,10 @@ export default function ConfigureGithubPod() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const mergePod = {
+      config: true,
       name: formData.get("name"),
-      config: {
-        url: formData.get("url"),
-        build: formData.get("build"),
-        branch: formData.get("branch"),
-      },
+      githubUrl: formData.get("url"),
+      githubBranch: formData.get("branch"),
     };
     dispatch(
       configurePod({
@@ -55,7 +53,7 @@ export default function ConfigureGithubPod() {
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
-            Github Repo:
+            Github Repo URL:
             <input
               type="text"
               name="url"
@@ -63,17 +61,15 @@ export default function ConfigureGithubPod() {
             />
           </label>
           <label>
-            Build:
-            <select name="build">
-              <option defaultValue="1.0.5">1.0.5</option>
-            </select>
+            Branch:
+            <input type="text" name="branch" defaultValue="main" />
           </label>
-          <label>
+          {/* <label>
             Branch:
             <select name="branch">
               <option defaultValue="main">main</option>
             </select>
-          </label>
+          </label> */}
           <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel
