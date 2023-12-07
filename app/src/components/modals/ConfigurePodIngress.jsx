@@ -21,7 +21,8 @@ export default function ConfigurePodIngress() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const mergePod = {
-      ingress: formData.get("ingress"),
+      host: formData.get("host"),
+      path: formData.get("path"),
     };
     dispatch(
       configurePod({
@@ -46,8 +47,12 @@ export default function ConfigurePodIngress() {
         <h2>Configure Ingress Route</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Enter port number:
-            <input type="text" name="ingress" defaultValue="8080" />
+            Host:
+            <input type="text" name="host" defaultValue="example.com" />
+          </label>
+          <label>
+            Path:
+            <input type="text" name="path" defaultValue="/path" />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
