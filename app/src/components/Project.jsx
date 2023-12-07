@@ -8,6 +8,7 @@ import {
   deleteCluster,
   addPod,
   deletePod,
+  configurePod,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
@@ -29,6 +30,28 @@ export default function Project() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.id === state.projectId);
+
+  const handleClickBuild = async (cluster, pod) => {
+    await fetch("/api/github/build", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: pod.githubUrl }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            projectId: state.projectId,
+            clusterId: cluster.id,
+            podId: pod.id,
+            mergePod: data,
+          })
+        );
+      })
+      .catch((err) => console.log(err));
+  };
 
   const clusterBundle = [];
   for (const cluster of project.clusters) {
@@ -140,7 +163,11 @@ export default function Project() {
                 </button>
               )}
               {pod.type === "github" ? (
-                <button>
+                <button
+                  onClick={() => {
+                    handleClickBuild(cluster, pod);
+                  }}
+                >
                   <b>Build</b>
                 </button>
               ) : (
