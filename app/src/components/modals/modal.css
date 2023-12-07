@@ -31,7 +31,7 @@
   padding: 20px 40px;
   border-radius: 20px;
   box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.1);
-  width: 30%;
+  width: 70%;
   max-width: 500px;
   max-height: 80vh;
   overflow: auto;
@@ -70,13 +70,27 @@
 }
 
 .modal select,
-.modal input {
+.modal input,
+.modal textarea {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+}
+
+.yaml {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  max-height: 500px;
+  overflow: auto;
+  background-color: #333;
+  color: white;
 }
 
 .modal .buttons {

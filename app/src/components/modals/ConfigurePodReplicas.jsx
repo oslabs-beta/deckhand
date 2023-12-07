@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setModal, configureCluster } from "../../deckhandSlice";
+import { setModal, configurePod } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ConfigureCluster() {
+export default function ConfigurePodReplicas() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
@@ -20,17 +20,15 @@ export default function ConfigureCluster() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const data = {
-      name: formData.get("name"),
-      instanceType: formData.get("instanceType"),
-      minNodes: formData.get("minNodes"),
-      maxNodes: formData.get("maxNodes"),
+    const mergePod = {
+      replicas: formData.get("replicas"),
     };
     dispatch(
-      configureCluster({
+      configurePod({
         projectId: state.projectId,
         clusterId: state.clusterId,
-        config: data,
+        podId: state.podId,
+        mergePod: mergePod,
       })
     );
     closeModal();
@@ -38,32 +36,24 @@ export default function ConfigureCluster() {
 
   return (
     <div
-      className={`modal ${state.modal === "ConfigureCluster" ? "show" : ""}`}
+      className={`modal ${
+        state.modal === "ConfigurePodReplicas" ? "show" : ""
+      }`}
       onClick={closeModal}
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>Configure Cluster</h2>
+        <h2>Configure Replicas</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Name:
-            <input type="text" name="name" defaultValue={cluster?.name || ""} />
-          </label>
-          <label>
-            Instance Type:
-            <select name="instanceType">
-              <option defaultValue="t2.micro">t2.micro</option>
-            </select>
-          </label>
-          <label>
-            Min Nodes:
-            <input type="text" name="minNodes" defaultValue="1" />
-          </label>
-          <label>
-            Max Nodes:
-            <input type="text" name="maxNodes" defaultValue="3" />
+            Enter number of pod replicas:
+            <input
+              type="text"
+              name="replicas"
+              defaultValue={pod ? pod.replicas : ""}
+            />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

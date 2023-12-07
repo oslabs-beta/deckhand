@@ -136,6 +136,8 @@ dist
 **/terraform.tfstate.backup
 **/*.auto.tfvars.json
 
-
 # DS_STORE
 **/.DS_Store
+
+##
+/build

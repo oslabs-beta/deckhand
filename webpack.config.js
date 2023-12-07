@@ -16,16 +16,10 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
+    hot: true,
     proxy: {
       // list every endpoint
-      '/api': 'http://localhost:3000',
-      '/getAccessToken': 'http://localhost:3000',
-      '/getUserData': 'http://localhost:3000',
-      '/getOauth': 'http://localhost:3000',
-      '/getUserInfo': 'http://localhost:3000',
-      '/searchInfo': 'http://localhost:3000',
-      '/grabCookie': 'http://localhost:3000',
-      '/github': 'http://localhost:3000'
+      '/api': 'http://localhost:3000'
     },
   },
   module: {
@@ -49,9 +43,13 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './app/public/index.html'),
-    }),
+    })
   ],
   resolve: {
     extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
   },
+  watch: true
+  // watchOptions: {
+  //   ignored: [path.resolve(__dirname, './server/toDocker')]
+  // }
 };
