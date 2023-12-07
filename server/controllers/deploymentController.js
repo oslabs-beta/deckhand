@@ -5,8 +5,12 @@ const deploymentController = {};
 deploymentController.addProject = (req, res, next) => {
   const { provider, name, region } = req.body.config;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  terraform.connectToProvider(provider, region, accessKey, secretKey);
   // add terraform function: create VPC
+  terraform.connectToProvider(provider, region, accessKey, secretKey)
+    .then((vpcId)=>{
+      
+    })
+    
   res.locals.data = { externalId }; // VPC ID
   next();
 };
