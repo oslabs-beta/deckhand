@@ -7,6 +7,35 @@ export default function ConfigureGithubPod() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
+
+  const [repos, setRepos] = useState([]);
+  const [reposInfo, setReposInfo] = useState([])
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    (async function grab_my_repos () {
+      
+      await fetch('/api/github/userRepos')
+        .then(res => res.json())
+        .then(information => {
+          const inside_array = []
+          console.log('information', information)
+
+          for (let i = 0; i < information.length; i++) {
+            inside_array.push(<>
+            <option value={i}>{information[i].name}
+            </option>
+            </>);
+          }
+
+          setReposInfo(information);
+          setRepos(inside_array);
+
+        })
+  
+    })();
+  }, []);
+
   const project = state.projectId
     ? state.projects.find((p) => p.id === state.projectId)
     : null;
@@ -37,6 +66,28 @@ export default function ConfigureGithubPod() {
     closeModal();
   };
 
+  const grabBranches = async (e) => {
+   const id = e.target.value;
+   console.log("target:", e.target)
+   console.log('reposInfo', reposInfo)
+   console.log('id', id);
+   const branchesUrlPre = reposInfo[id].branches_url;
+   const branchesURL = branchesUrlPre.split('{')[0];
+
+   const response = await fetch(branchesURL);
+   const branchesContent = await response.json();
+
+   const branchNames = [];
+
+   for (let i = 0; i < branchesContent.length; i++) {
+    branchNames.push(<option>{branchesContent[i].name}</option>)
+   }
+
+   setBranches(branchNames);
+
+
+  };
+
   return (
     <div
       className={`modal ${state.modal === "ConfigureGithubPod" ? "show" : ""}`}
@@ -54,15 +105,21 @@ export default function ConfigureGithubPod() {
           </label>
           <label>
             Github Repo URL:
-            <input
+            <select onChange={grabBranches}>
+              {repos}
+            </select>
+            {/* <input
               type="text"
               name="url"
               defaultValue="http://github.com/o-mirza/example-repo"
-            />
+            /> */}
           </label>
           <label>
             Branch:
-            <input type="text" name="branch" defaultValue="main" />
+            <select>
+              {branches}
+            </select>
+            {/* <input type="text" name="branch" defaultValue="main" /> */}
           </label>
           {/* <label>
             Branch:
