@@ -1,10 +1,13 @@
+const terraform = require('../terraform/terraformapi.js');
+
 const deploymentController = {};
 
 deploymentController.addProject = (req, res, next) => {
   const { provider, name, region } = req.body.config;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  terraform.connectToProvider(provider, region, accessKey, secretKey);
   // add terraform function: create VPC
-  res.locals.data = { externalId } // VPC ID
+  res.locals.data = { externalId }; // VPC ID
   next();
 };
 
@@ -20,7 +23,7 @@ deploymentController.addCluster = (req, res, next) => {
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { name, instanceType, minNodes, maxNodes } = req.body.config;
   // add terraform function: create cluster
-  res.locals.data = { externalId } // Cluster ID
+  res.locals.data = { externalId }; // Cluster ID
   next();
 };
 

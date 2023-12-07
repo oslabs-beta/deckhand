@@ -10,7 +10,7 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
   console.log('entered connectToProvider');
   console.log('Params:', provider, region, accessKey, secretKey);
 
-  if (provider === 'AWS') {
+  if (provider === 'aws') {
     const variables = {
       region,
       accessKey,
