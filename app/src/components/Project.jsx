@@ -299,7 +299,7 @@ export default function Project() {
             <br /> <br />
             {publicRepos}
             <form onSubmit={clone_repo_basic}>
-              <input id="searchbar" placeholder="put repo here" />
+              <input id="searchbar" placeholder="clone here" />
               <button>Submit</button>
             </form>
             <form onSubmit={grab_public_repos}>

@@ -91,45 +91,16 @@ githubController.searchRepos = async (req, res, next) => {
 const docker_username = process.env.DOCKER_USERNAME;
 const docker_password = process.env.DOCKER_PASSWORD;
 
-githubController.cloneRepo = async (req, res, next) => {
+githubController.cloneRepo = (req, res, next) => {
+
   const url = req.body.url;
   const splitIt = url.split('/');
   const repoName = splitIt.pop();
-  
-  // clones the repository and puts it in the folder "toDocker"
+  const url_plus_git = url + '.git';
 
-  // execSync('git clone ' + url, {
-  //   cwd: path.resolve(__dirname, '../toDocker')
-  // });
-  execSync('cd server && cd toDocker && git clone ' + url);
-
-  // console.log('first part');
-
-  execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ":2" + ' . && docker push deckhandapp/' + repoName + ":2" + '');
-
-  console.log('second part');
-
-  execSync('cd server && cd toDocker && rm -R ' + repoName);
-
-
-  console.log('third part');
-
-  
-    // execSync('cd server/toDocker && git clone ' + url + ' && docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName);
-
-  
-  // execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName)
-
-  
-  // + ' && docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName;
-
-  // execSync('git clone ' + url, {
-  //   cwd: path.resolve(__dirname, '../toDocker')
-  // });
-
-  // execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName);
-
-  // execSync('cd server && cd toDocker && rm -R ' + repoName);
+  execSync(
+    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':4 ' + url_plus_git + ' && docker push deckhandapp/' + repoName + ':4'
+  );
 
   return next();
 
