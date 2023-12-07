@@ -101,7 +101,7 @@ githubController.cloneRepo = async (req, res, next) => {
   // execSync('git clone ' + url, {
   //   cwd: path.resolve(__dirname, '../toDocker')
   // });
-  // execSync('cd server && cd toDocker && git clone ' + url);
+  execSync('cd server && cd toDocker && git clone ' + url);
 
   // console.log('first part');
 
