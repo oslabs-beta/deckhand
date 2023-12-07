@@ -19,6 +19,14 @@ const connectKubectltoEKS = (region, clusterName) => {
   );
 };
 
+// connectCLtoAWS(
+//   process.env.AWS_ACCESS_KEY,
+//   process.env.AWS_SECRET_KEY,
+//   'us-east-1'
+// );
+
+// connectKubectltoEKS('us-east-1', 'dec7cluster3');
+
 const deploy = (yamls) => {};
 
 module.exports = { connectCLtoAWS, connectKubectltoEKS };

@@ -22,7 +22,7 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
       'server/terraform/provider.auto.tfvars.json',
       JSON.stringify(variables),
       (err) => {
-        if (err) console.log(err);
+        if (err) console.log('ERROR!', err);
         else console.log('Wrote provider variable file');
       }
     );
