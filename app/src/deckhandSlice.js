@@ -32,23 +32,29 @@ export const deckhandSlice = createSlice({
             pods: [
               {
                 id: 1,
-                name: 'Pod 1 (github)',
+                name: 'App',
                 type: 'github',
-                config: { url: 'http://example.com', build: '1.0.5', branch: 'main' },
+                config: true,
+                githubUrl: 'http://github.com/o-mirza/example-repo',
+                githubBranch: 'main',
+                imageName: 'mongo',
+                imageTag: 'latest',
                 replicas: 3,
-                variables: null, // [{key: value, secret: true}, ...]
-                ingress: null, // port number
-                volume: null, // directory string
+                variables: [],
+                ingress: { host: 'example.com', path: '/path' },
+                volume: null,
                 deployed: false,
               },
               {
                 id: 2,
-                name: 'Pod 2 (docker-hub)',
+                name: 'Database',
                 type: 'docker-hub',
-                config: { url: 'http://example.com', version: '3.5.1' },
+                config: true,
+                imageName: 'mongo',
+                imageTag: 'latest',
                 replicas: 1,
-                variables: null, // [{key: value, secret: false}, ...]
-                ingress: null, // port number
+                variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
+                ingress: null,
                 volume: null, // directory string
                 deployed: false,
               },
@@ -109,6 +115,7 @@ export const deckhandSlice = createSlice({
     configureProject: (state, action) => { // payload: {projectId, config}
       const { projectId, config } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
+      project.name = config.name;
       project.config = config;
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
@@ -131,6 +138,7 @@ export const deckhandSlice = createSlice({
       const { projectId, clusterId, config } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
+      cluster.name = config.name;
       cluster.config = config;
     },
     addPod: (state, action) => { // payload: {projectId, clusterId, podId, type}
@@ -139,13 +147,11 @@ export const deckhandSlice = createSlice({
       const cluster = project.clusters.find(c => c.id === clusterId);
       cluster.pods.push({
         id: podId,
-        name: `Pod ${cluster.pods.length + 1} (${type})`,
+        name: `Pod ${cluster.pods.length + 1}`,
         type: type,
-        config: null,
-        replicas: 1,
-        variables: null,
-        ingress: null,
-        volume: null,
+        config: false,
+        replicas: 3,
+        variables: [],
         deployed: false,
       });
     },

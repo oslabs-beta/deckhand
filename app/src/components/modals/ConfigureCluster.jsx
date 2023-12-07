@@ -49,25 +49,21 @@ export default function ConfigureCluster() {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input
-              type="text"
-              name="name"
-              value={cluster?.name.replace(/\s/g, "").toLowerCase() || ""}
-            />
+            <input type="text" name="name" defaultValue={cluster?.name || ""} />
           </label>
           <label>
             Instance Type:
             <select name="instanceType">
-              <option value="t2.micro">t2.micro</option>
+              <option defaultValue="t2.micro">t2.micro</option>
             </select>
           </label>
           <label>
             Min Nodes:
-            <input type="text" name="minNodes" value="1" />
+            <input type="text" name="minNodes" defaultValue="1" />
           </label>
           <label>
             Max Nodes:
-            <input type="text" name="maxNodes" value="3" />
+            <input type="text" name="maxNodes" defaultValue="3" />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

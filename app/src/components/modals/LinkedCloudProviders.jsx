@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setModal, configureProject } from "../../deckhandSlice";
+import { setModal, setUser } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ConfigureProject() {
+export default function LinkedCloudProviders() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
@@ -21,50 +21,33 @@ export default function ConfigureProject() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = {
-      name: formData.get("name"),
-      provider: formData.get("provider"),
-      region: formData.get("region"),
+      awsAccessKey: formData.get("awsAccessKey"),
+      awsSecretKey: formData.get("awsSecretKey"),
     };
-    dispatch(
-      configureProject({
-        projectId: state.projectId,
-        clusterId: state.clusterId,
-        config: data,
-      })
-    );
+    dispatch(setUser(data));
     closeModal();
   };
 
   return (
     <div
-      className={`modal ${state.modal === "ConfigureProject" ? "show" : ""}`}
+      className={`modal ${
+        state.modal === "LinkedCloudProviders" ? "show" : ""
+      }`}
       onClick={closeModal}
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>Configure Project</h2>
+        <h2>Link AWS Account</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              defaultValue={project ? project.name : ""}
-            />
+            AWS Access Key:
+            <input type="password" name="awsAccessKey" />
           </label>
           <label>
-            Provider:
-            <select name="provider">
-              <option defaultValue="aws">Amazon Web Services (AWS)</option>
-            </select>
-          </label>
-          <label>
-            Provider:
-            <select name="region">
-              <option defaultValue="US-East">US-East</option>
-            </select>
+            AWS Secret Key:
+            <input type="password" name="awsSecretKey" />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

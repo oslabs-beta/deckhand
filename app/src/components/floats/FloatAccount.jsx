@@ -11,8 +11,8 @@ export default function FloatAccount() {
 
   return (
     <div className="account">
+      <img src={state.user.avatarUrl} alt="Account" />
       <span>{state.user.name}</span>
-      <img src={state.user.avatarUrl} alt="Account" />{" "}
       <Icon path={mdiChevronDown} size={1} />
     </div>
   );

@@ -3,6 +3,7 @@ const deploymentController = {};
 deploymentController.addProject = (req, res, next) => {
   const { provider, name, region } = req.body.config;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const cleanName = name.replace(/[^A-Z0-9]/ig, "_").toLowerCase();
   // add terraform function: create VPC
   res.locals.data = { externalId } // VPC ID
   next();
@@ -19,6 +20,7 @@ deploymentController.addCluster = (req, res, next) => {
   const { provider } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { name, instanceType, minNodes, maxNodes } = req.body.config;
+  const cleanName = name.replace(/[^A-Z0-9]/ig, "_").toLowerCase();
   // add terraform function: create cluster
   res.locals.data = { externalId } // Cluster ID
   next();
