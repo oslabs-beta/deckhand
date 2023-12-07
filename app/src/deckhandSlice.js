@@ -36,7 +36,7 @@ export const deckhandSlice = createSlice({
                 type: 'github',
                 config: { url: 'http://github.com/o-mirza/example-repo', build: '1.0.5', branch: 'main' },
                 replicas: 3,
-                variables: null, // [{key: value, secret: true}, ...]
+                variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -47,7 +47,7 @@ export const deckhandSlice = createSlice({
                 type: 'docker-hub',
                 config: { image: 'mongo', version: 'latest' },
                 replicas: 1,
-                variables: null, // [{key: value, secret: false}, ...]
+                variables: [],
                 ingress: null, // port number
                 volume: null, // directory string
                 deployed: false,
@@ -145,7 +145,7 @@ export const deckhandSlice = createSlice({
         type: type,
         config: null,
         replicas: 1,
-        variables: null,
+        variables: [],
         ingress: null,
         volume: null,
         deployed: false,
