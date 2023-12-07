@@ -23,7 +23,7 @@ router.get('/searchRepos', githubController.searchRepos, (req, res) => {
 });
 
 router.post('/cloneRepo', githubController.cloneRepo, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+  res.status(200) //.json(res.locals.data);
 });
 
 module.exports = router;

@@ -1,5 +1,7 @@
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 require('dotenv').config();
+
+const path = require('path');
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -39,7 +41,7 @@ githubController.userData = async (req, res, next) => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        // console.log('data', data)
         res.locals.data = {
           name: data.name || data.email || data.login,
           email: data.email,
@@ -57,7 +59,8 @@ githubController.userData = async (req, res, next) => {
 // get user repos
 githubController.userRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
-  await fetch('https://api.github.com/repos', {
+  // needs user/repos at the end!
+  await fetch('https://api.github.com/user/repos', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -74,7 +77,7 @@ githubController.userRepos = async (req, res, next) => {
 // search public repos
 githubController.searchRepos = async (req, res, next) => {
   const search_request = req.get('search');
-  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name+language:javascript&sort=stars&order=desc')
+  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name&sort=stars&order=desc')
     .then(res => res.json())
     .then(data => {
       res.locals.data = data;
@@ -84,11 +87,52 @@ githubController.searchRepos = async (req, res, next) => {
 };
 
 // clone repos
+
+const docker_username = process.env.DOCKER_USERNAME;
+const docker_password = process.env.DOCKER_PASSWORD;
+
 githubController.cloneRepo = async (req, res, next) => {
   const url = req.body.url;
-  execSync('git clone' + url, {
-    cwd: path.resolve(__dirname, './testing')
-  })
+  const splitIt = url.split('/');
+  const repoName = splitIt.pop();
+  
+  // clones the repository and puts it in the folder "toDocker"
+
+  // execSync('git clone ' + url, {
+  //   cwd: path.resolve(__dirname, '../toDocker')
+  // });
+  // execSync('cd server && cd toDocker && git clone ' + url);
+
+  // console.log('first part');
+
+  execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ":2" + ' . && docker push deckhandapp/' + repoName + ":2" + '');
+
+  console.log('second part');
+
+  execSync('cd server && cd toDocker && rm -R ' + repoName);
+
+
+  console.log('third part');
+
+  
+    // execSync('cd server/toDocker && git clone ' + url + ' && docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName);
+
+  
+  // execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName)
+
+  
+  // + ' && docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName;
+
+  // execSync('git clone ' + url, {
+  //   cwd: path.resolve(__dirname, '../toDocker')
+  // });
+
+  // execSync('docker login -u ' + docker_username + ' -p ' + docker_password + ' && cd server && cd toDocker && cd ' + repoName + ' && docker build -t deckhandapp/' + repoName + ' . && docker push deckhandapp/' + repoName + '' + '&& cd .. && rm -R ' + repoName);
+
+  // execSync('cd server && cd toDocker && rm -R ' + repoName);
+
+  return next();
+
 };
 
 module.exports = githubController;
