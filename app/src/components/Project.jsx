@@ -21,6 +21,7 @@ import ConfigureDockerHubPod from "./modals/ConfigureDockerHubPod";
 import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
 import ConfigurePodIngress from "./modals/ConfigurePodIngress";
 import ConfigurePodVolume from "./modals/ConfigurePodVolume";
+import ConfigurePodVariables from "./modals/ConfigurePodVariables";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { Link } from "react-router-dom";
@@ -36,7 +37,7 @@ export default function Project() {
     const podBundle = [];
     for (const pod of cluster.pods) {
       podBundle.push(
-        <div className="card">
+        <div key={pod.id} className="card">
           <div className="name">{`${pod.name} (${pod.type})`}</div>
           {!pod.config ? (
             <>
@@ -77,9 +78,23 @@ export default function Project() {
                 <b>Edit Replicas ({pod.replicas})</b>
               </button>
               {!pod.variables ? (
-                <button>Add Variables</button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodVariables"));
+                  }}
+                >
+                  Add Variables
+                </button>
               ) : (
-                <button>
+                <button
+                  onClick={() => {
+                    dispatch(setClusterId(cluster.id));
+                    dispatch(setPodId(pod.id));
+                    dispatch(setModal("ConfigurePodVariables"));
+                  }}
+                >
                   <b>Edit Variables</b>
                 </button>
               )}
@@ -164,7 +179,7 @@ export default function Project() {
 
     // bundle clusters
     clusterBundle.push(
-      <>
+      <div key={cluster.id}>
         <h2>
           {cluster.name}{" "}
           <button
@@ -237,7 +252,7 @@ export default function Project() {
           </div>
           {podBundle}
         </div>
-      </>
+      </div>
     );
   }
 
@@ -254,6 +269,7 @@ export default function Project() {
       <ConfigurePodReplicas />
       <ConfigurePodIngress />
       <ConfigurePodVolume />
+      <ConfigurePodVariables />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
