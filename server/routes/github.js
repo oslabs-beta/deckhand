@@ -22,8 +22,8 @@ router.get('/searchRepos', githubController.searchRepos, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-router.post('/cloneRepo', githubController.cloneRepo, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+router.post('/build', githubController.build, (req, res) => {
+  res.status(200).json(res.locals.data);
 });
 
 module.exports = router;

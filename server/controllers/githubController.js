@@ -82,12 +82,14 @@ githubController.searchRepos = async (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-// clone repos
-githubController.cloneRepo = async (req, res, next) => {
-  const url = req.body.url;
-  execSync('git clone' + url, {
-    cwd: path.resolve(__dirname, './testing')
-  })
+// build docker image from github repo
+githubController.build = async (req, res, next) => {
+  const { url } = req.body;
+  // execSync('git clone' + url, {
+  //   cwd: path.resolve(__dirname, './testing')
+  // })
+  res.locals.data = { imageName: 'example', imageTag: 'example' };
+  next();
 };
 
 module.exports = githubController;
