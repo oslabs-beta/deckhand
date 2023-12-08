@@ -10,23 +10,34 @@ const githubController = {};
 
 // redirect to github login
 githubController.login = (req, res) => {
-  res.redirect(`https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`);
+  res.redirect(
+    `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
+  );
 };
 
 // set github_token and redirect home
 githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
-  await fetch('https://github.com/login/oauth/access_token?client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&code=' + auth_code, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json'
+  await fetch(
+    'https://github.com/login/oauth/access_token?client_id=' +
+      CLIENT_ID +
+      '&client_secret=' +
+      CLIENT_SECRET +
+      '&code=' +
+      auth_code,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+      },
     }
-  }).then(res => res.json())
-    .then(data => {
+  )
+    .then((res) => res.json())
+    .then((data) => {
       res.cookie('github_token', data.access_token, { httpOnly: true });
       res.redirect('/');
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 // get user data
@@ -36,11 +47,11 @@ githubController.userData = async (req, res, next) => {
     await fetch('https://api.github.com/user', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         // console.log('data', data)
         res.locals.data = {
           name: data.name || data.email || data.login,
@@ -50,9 +61,9 @@ githubController.userData = async (req, res, next) => {
         };
         next();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   } else {
-    res.status(401).json("Unauthorized");
+    res.status(401).json('Unauthorized');
   }
 };
 
@@ -63,27 +74,31 @@ githubController.userRepos = async (req, res, next) => {
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       res.locals.data = data;
       next();
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 // search public repos
 githubController.searchRepos = async (req, res, next) => {
   const search_request = req.get('search');
-  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name&sort=stars&order=desc')
-    .then(res => res.json())
-    .then(data => {
+  await fetch(
+    'https://api.github.com/search/repositories?q=' +
+      search_request +
+      '+in:name&sort=stars&order=desc'
+  )
+    .then((res) => res.json())
+    .then((data) => {
       res.locals.data = data;
       next();
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 // clone repos
@@ -92,7 +107,6 @@ const docker_username = process.env.DOCKER_USERNAME;
 const docker_password = process.env.DOCKER_PASSWORD;
 
 githubController.cloneRepo = (req, res, next) => {
-
   const url = req.body.url;
   const branch = req.body.branch;
   const splitIt = url.split('/');
@@ -100,11 +114,43 @@ githubController.cloneRepo = (req, res, next) => {
   const url_plus_git = url + '.git';
 
   execSync(
-    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':5 ' + url_plus_git + '#' + branch + ' && docker push deckhandapp/' + repoName + ':5'
+    'docker login -u ' +
+      docker_username +
+      ' -p ' +
+      docker_password +
+      ' && docker build -t deckhandapp/' +
+      repoName +
+      ':5 ' +
+      url_plus_git +
+      '#' +
+      branch +
+      ' && docker push deckhandapp/' +
+      repoName +
+      ':5'
   );
 
   return next();
+};
 
+// Find all env variables in repo
+githubController.scanRepo = (req, res, next) => {
+  // name of repo will be on request body
+  const { repo } = req.body;
+
+  const repoUrl = '...'; //will need to turn name into url
+
+  const envs = [];
+  // clone repo
+  execSync(`git clone ${repoUrl}`);
+  // iterate through files
+  const files = [];
+  
+  // search through each file for process.env
+  // add the variable name to the envs array
+  // put the array on locals and go to next
+
+  res.locals.envs = envs;
+  return next();
 };
 
 module.exports = githubController;
