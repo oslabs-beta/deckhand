@@ -6,7 +6,7 @@ deploymentController.addProject = (req, res, next) => {
   const { provider, name, region } = req.body.config;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
-  
+
   // Connect AWS credentials to Terraform state, then provision the VPC
   terraform
     .connectToProvider(provider, region, accessKey, secretKey)
@@ -19,6 +19,8 @@ deploymentController.addProject = (req, res, next) => {
       res.locals.data = { externalId }; // VPC ID
       return next();
     });
+
+  //Add error handling
 };
 
 deploymentController.deleteProject = (req, res, next) => {
@@ -29,11 +31,22 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
+  // needs the VPCId in the request body
   const { provider } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { name, instanceType, minNodes, maxNodes } = req.body.config;
+  // needs desire nodes in body.config
+  const { name, instanceType, minNodes, maxNodes, desiredNodes } =
+    req.body.config;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
   // add terraform function: create cluster
+  terraform.addCluster(
+    cleanName,
+    VPCId,
+    minNodes,
+    maxNodes,
+    desiredNodes,
+    instanceType
+  );
   res.locals.data = { externalId }; // Cluster ID
   next();
 };

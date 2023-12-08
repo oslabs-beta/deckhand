@@ -14,6 +14,10 @@ variable "max" {
   type = number
 }
 
+variable "desired" {
+  type = number
+}
+
 variable "instanceType" {
   type = string
 }
@@ -61,7 +65,7 @@ module "eks" {
       name = var.nodeGroupName
       min_size     = var.min
       max_size     = var.max
-      desired_size = 2
+      desired_size = var.desired
 
       instance_types = [var.instanceType]
       //capacity_type  = "SPOT" // options are spot or on-demand ... I don't yet understand the difference
