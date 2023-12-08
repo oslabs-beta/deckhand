@@ -7,35 +7,6 @@ export default function ConfigureGithubPod() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => dispatch(setModal(null));
-
-  const [repos, setRepos] = useState([]);
-  const [reposInfo, setReposInfo] = useState([])
-  const [branches, setBranches] = useState([]);
-
-  useEffect(() => {
-    (async function grab_my_repos () {
-      
-      await fetch('/api/github/userRepos')
-        .then(res => res.json())
-        .then(information => {
-          const inside_array = []
-          console.log('information', information)
-
-          for (let i = 0; i < information.length; i++) {
-            inside_array.push(<>
-            <option value={i}>{information[i].name}
-            </option>
-            </>);
-          }
-
-          setReposInfo(information);
-          setRepos(inside_array);
-
-        })
-  
-    })();
-  }, []);
-
   const project = state.projectId
     ? state.projects.find((p) => p.id === state.projectId)
     : null;
@@ -46,13 +17,55 @@ export default function ConfigureGithubPod() {
     ? cluster.pods.find((p) => p.id === state.podId)
     : null;
 
+  const [userRepos, setUserRepos] = useState([]);
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    if (state.modal === "ConfigureGithubPod") {
+      getUserRepos();
+    }
+  }, [state.modal]);
+
+  const getUserRepos = async () => {
+    await fetch("/api/github/userRepos")
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => (
+          <option key={el.full_name} value={el.full_name}>
+            {el.full_name}
+          </option>
+        ));
+        setUserRepos(arr);
+      });
+  };
+
+  const getBranches = async (repo) => {
+    await fetch("/api/github/branches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ repo }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => (
+          <option key={el.name} value={el.name}>
+            {el.name}
+          </option>
+        ));
+        setBranches(arr);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const mergePod = {
       config: true,
       name: formData.get("name"),
-      githubUrl: formData.get("url"),
+      githubRepo: formData.get("userRepo"),
       githubBranch: formData.get("branch"),
     };
     dispatch(
@@ -64,28 +77,6 @@ export default function ConfigureGithubPod() {
       })
     );
     closeModal();
-  };
-
-  const grabBranches = async (e) => {
-   const id = e.target.value;
-   console.log("target:", e.target)
-   console.log('reposInfo', reposInfo)
-   console.log('id', id);
-   const branchesUrlPre = reposInfo[id].branches_url;
-   const branchesURL = branchesUrlPre.split('{')[0];
-
-   const response = await fetch(branchesURL);
-   const branchesContent = await response.json();
-
-   const branchNames = [];
-
-   for (let i = 0; i < branchesContent.length; i++) {
-    branchNames.push(<option>{branchesContent[i].name}</option>)
-   }
-
-   setBranches(branchNames);
-
-
   };
 
   return (
@@ -104,9 +95,12 @@ export default function ConfigureGithubPod() {
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
-            Github Repo URL:
-            <select onChange={grabBranches}>
-              {repos}
+            Github User Repo:
+            <select
+              name="userRepo"
+              onChange={(e) => getBranches(e.target.value)}
+            >
+              {userRepos}
             </select>
             {/* <input
               type="text"
@@ -116,9 +110,7 @@ export default function ConfigureGithubPod() {
           </label>
           <label>
             Branch:
-            <select>
-              {branches}
-            </select>
+            <select name="branch">{branches}</select>
             {/* <input type="text" name="branch" defaultValue="main" /> */}
           </label>
           {/* <label>
