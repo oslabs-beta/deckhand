@@ -35,7 +35,7 @@ export const deckhandSlice = createSlice({
                 name: 'App',
                 type: 'github',
                 config: true,
-                githubUrl: 'http://github.com/o-mirza/example-repo',
+                githubRepo: 'http://github.com/o-mirza/example-repo',
                 githubBranch: 'main',
                 imageName: 'mongo',
                 imageTag: 'latest',
