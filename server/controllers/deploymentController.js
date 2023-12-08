@@ -26,8 +26,6 @@ deploymentController.addProject = (req, res, next) => {
       };
       return next(errObj);
     });
-
-  //Add error handling
 };
 
 deploymentController.deleteProject = (req, res, next) => {
@@ -38,7 +36,7 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  const { provider, VPCId } = req.body;
+  const { provider, externalId } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { name, instanceType, minNodes, maxNodes, desiredNodes } =
     req.body.config;
@@ -47,7 +45,7 @@ deploymentController.addCluster = (req, res, next) => {
   terraform
     .addCluster(
       cleanName,
-      VPCId,
+      externalId,
       minNodes,
       maxNodes,
       desiredNodes,
