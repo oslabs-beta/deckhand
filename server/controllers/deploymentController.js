@@ -31,24 +31,25 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  // needs the VPCId in the request body
-  const { provider } = req.body;
+  const { provider, VPCId } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  // needs desire nodes in body.config
   const { name, instanceType, minNodes, maxNodes, desiredNodes } =
     req.body.config;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
-  // add terraform function: create cluster
-  terraform.addCluster(
-    cleanName,
-    VPCId,
-    minNodes,
-    maxNodes,
-    desiredNodes,
-    instanceType
-  );
-  res.locals.data = { externalId }; // Cluster ID
-  next();
+
+  terraform
+    .addCluster(
+      cleanName,
+      VPCId,
+      minNodes,
+      maxNodes,
+      desiredNodes,
+      instanceType
+    )
+    .then(() => {
+      res.locals.data = {}; // Put a cluster ID here if needed ... may not need
+      return next();
+    });
 };
 
 deploymentController.deleteCluster = (req, res, next) => {
