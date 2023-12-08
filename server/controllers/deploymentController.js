@@ -18,6 +18,13 @@ deploymentController.addProject = (req, res, next) => {
       console.log('Successfully provisioned VPC with id:', externalId);
       res.locals.data = { externalId }; // VPC ID
       return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.addProject:' + err,
+        message: { err: 'An error occured trying to create a VPC' },
+      };
+      return next(errObj);
     });
 
   //Add error handling
@@ -49,6 +56,13 @@ deploymentController.addCluster = (req, res, next) => {
     .then(() => {
       res.locals.data = {}; // Put a cluster ID here if needed ... may not need
       return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.addCluster:' + err,
+        message: { err: 'An error occured trying to create a cluster' },
+      };
+      return next(errObj);
     });
 };
 
