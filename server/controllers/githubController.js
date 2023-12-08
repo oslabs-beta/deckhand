@@ -1,5 +1,7 @@
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 require('dotenv').config();
+
+const path = require('path');
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -39,6 +41,7 @@ githubController.userData = async (req, res, next) => {
     })
       .then(res => res.json())
       .then(data => {
+        // console.log('data', data)
         res.locals.data = {
           name: data.name || data.email || data.login,
           email: data.email,
@@ -56,6 +59,7 @@ githubController.userData = async (req, res, next) => {
 // get user repos
 githubController.userRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
+  // needs user/repos at the end!
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
     headers: {
@@ -73,7 +77,7 @@ githubController.userRepos = async (req, res, next) => {
 // search public repos
 githubController.searchRepos = async (req, res, next) => {
   const search_request = req.get('search');
-  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name+language:javascript&sort=stars&order=desc')
+  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name&sort=stars&order=desc')
     .then(res => res.json())
     .then(data => {
       res.locals.data = data;
@@ -82,14 +86,25 @@ githubController.searchRepos = async (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-// build docker image from github repo
-githubController.build = async (req, res, next) => {
-  const { url } = req.body;
-  // execSync('git clone' + url, {
-  //   cwd: path.resolve(__dirname, './testing')
-  // })
-  res.locals.data = { imageName: 'example', imageTag: 'example' };
-  next();
+// clone repos
+
+const docker_username = process.env.DOCKER_USERNAME;
+const docker_password = process.env.DOCKER_PASSWORD;
+
+githubController.cloneRepo = (req, res, next) => {
+
+  const url = req.body.url;
+  const branch = req.body.branch;
+  const splitIt = url.split('/');
+  const repoName = splitIt.pop();
+  const url_plus_git = url + '.git';
+
+  execSync(
+    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':5 ' + url_plus_git + '#' + branch + ' && docker push deckhandapp/' + repoName + ':5'
+  );
+
+  return next();
+
 };
 
 module.exports = githubController;
