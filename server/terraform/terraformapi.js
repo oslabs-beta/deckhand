@@ -29,7 +29,7 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
   }
 
   // copy provider file from template directory into terraform directory
-  console.log('copying file');
+  console.log('copying provider.tf file');
   execSync('cp server/templates/provider.tf server/terraform');
   console.log('copied file!');
 };
