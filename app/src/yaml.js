@@ -178,8 +178,8 @@ createYaml.all = (pod) => {
   const replicas = pod.replicas;
   const serviceType = 'ClusterIP';
   const targetPort = 8080;
-  const host = pod.ingress ? pod.ingress.host : null;
-  const path = pod.ingress ? pod.ingress.path : null;
+  const host = pod.host;
+  const path = pod.path;
   const configMapData = pod.variables
     .filter(item => !item.secret)
     .reduce((acc, item) => {

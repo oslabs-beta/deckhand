@@ -18,39 +18,38 @@ export const deckhandSlice = createSlice({
     projects: [
       {
         id: 1,
-        externalId: null,
         name: 'Project 1',
-        config: { name: 'Default VPC', provider: 'aws', region: 'US-East' },
         createdDate: 'Fri Dec 06 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        externalId: null,
+        config: { provider: 'aws', awsRegion: 'US-East' },
         clusters: [
           {
             id: 1,
             name: 'Cluster 1',
-            config: { name: 'Cluster 1', instanceType: 't2.micro', minNodes: 1, maxNodes: 3, desiredNodes: 2 }, // instanceType is immutable, min/max is adjustable
+            config: { instanceType: 't2.micro', minNodes: 1, maxNodes: 3, desiredNodes: 2 }, // instanceType is immutable, min/max is adjustable
             pods: [
               {
                 id: 1,
-                name: 'App',
+                name: 'Moodsight',
                 type: 'github',
                 config: true,
-                githubRepo: 'http://github.com/o-mirza/example-repo',
+                githubRepo: 'o-mirza/Moodsight',
                 githubBranch: 'main',
-                imageName: 'mongo',
-                imageTag: 'latest',
                 replicas: 3,
                 variables: [],
-                ingress: { host: 'example.com', path: '/path' },
+                host: 'moodsight.io',
+                path: '/path',
                 volume: null,
                 deployed: false,
               },
               {
                 id: 2,
-                name: 'Database',
+                name: 'postgres',
                 type: 'docker-hub',
                 config: true,
-                imageName: 'mongo',
-                imageTag: 'latest',
+                imageName: 'postgres',
+                imageTag: 'bullseye',
                 replicas: 1,
                 variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
                 ingress: null,
