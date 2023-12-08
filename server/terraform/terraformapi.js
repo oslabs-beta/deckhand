@@ -5,12 +5,12 @@ const execProm = util.promisify(exec);
 require('dotenv').config();
 
 // Writes variables file
-// Does not yet run any Terraform scripts. Unnessecary until adding a VPC.
+// Does not run any Terraform scripts. Unnessecary until adding a VPC.
 const connectToProvider = async (provider, region, accessKey, secretKey) => {
   console.log('entered connectToProvider');
   console.log('Params:', provider, region, accessKey, secretKey);
 
-  if (provider === 'AWS') {
+  if (provider === 'aws') {
     const variables = {
       region,
       accessKey,
@@ -22,14 +22,14 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
       'server/terraform/provider.auto.tfvars.json',
       JSON.stringify(variables),
       (err) => {
-        if (err) console.log(err);
+        if (err) console.log('ERROR!', err);
         else console.log('Wrote provider variable file');
       }
     );
   }
 
   // copy provider file from template directory into terraform directory
-  console.log('copying file');
+  console.log('copying provider.tf file');
   execSync('cp server/templates/provider.tf server/terraform');
   console.log('copied file!');
 };
@@ -51,7 +51,7 @@ const addVPC = async (provider, vpc_name) => {
   );
 
   // copy VPC file from template directory into terraform directory
-  console.log('copying file');
+  console.log('copying vpc.tf file');
   execSync('cp server/templates/vpc.tf server/terraform');
   console.log('copied file!');
 
@@ -69,12 +69,20 @@ const addVPC = async (provider, vpc_name) => {
   return vpcId;
 };
 
-const addCluster = async (clusterName, vpcId, min, max, instanceType) => {
+// Creates and EKS cluster with nodes
+const addCluster = async (
+  clusterName,
+  vpcId,
+  min,
+  max,
+  desired,
+  instanceType
+) => {
   console.log('entered addCluster');
-  console.log('Params:', clusterName, vpcId, min, max, instanceType);
+  console.log('Params:', clusterName, vpcId, min, max, desired, instanceType);
 
   // copy eks file from template directory into terraform directory
-  console.log('copying file');
+  console.log('copying eks.tf file');
   execSync('cp server/templates/eks.tf server/terraform');
   console.log('copied file!');
 
@@ -86,6 +94,7 @@ const addCluster = async (clusterName, vpcId, min, max, instanceType) => {
     vpcId,
     min,
     max,
+    desired,
     instanceType,
     nodeGroupName,
   };

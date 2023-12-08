@@ -1,12 +1,31 @@
+const terraform = require('../terraform/terraformapi.js');
+
 const deploymentController = {};
 
 deploymentController.addProject = (req, res, next) => {
   const { provider, name, region } = req.body.config;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const cleanName = name.replace(/[^A-Z0-9]/ig, "_").toLowerCase();
-  // add terraform function: create VPC
-  res.locals.data = { externalId } // VPC ID
-  next();
+  const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
+
+  // Connect AWS credentials to Terraform state, then provision the VPC
+  terraform
+    .connectToProvider(provider, region, accessKey, secretKey)
+    .then(() => {
+      console.log('Successfully connected to provider');
+      terraform.addVPC(region, cleanName);
+    })
+    .then((externalId) => {
+      console.log('Successfully provisioned VPC with id:', externalId);
+      res.locals.data = { externalId }; // VPC ID
+      return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.addProject:' + err,
+        message: { err: 'An error occured trying to create a VPC' },
+      };
+      return next(errObj);
+    });
 };
 
 deploymentController.deleteProject = (req, res, next) => {
@@ -17,13 +36,32 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  const { provider } = req.body;
+  const { provider, externalId } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { name, instanceType, minNodes, maxNodes } = req.body.config;
-  const cleanName = name.replace(/[^A-Z0-9]/ig, "_").toLowerCase();
-  // add terraform function: create cluster
-  res.locals.data = { externalId } // Cluster ID
-  next();
+  const { name, instanceType, minNodes, maxNodes, desiredNodes } =
+    req.body.config;
+  const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
+
+  terraform
+    .addCluster(
+      cleanName,
+      externalId,
+      minNodes,
+      maxNodes,
+      desiredNodes,
+      instanceType
+    )
+    .then(() => {
+      res.locals.data = {}; // Put a cluster ID here if needed ... may not need
+      return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.addCluster:' + err,
+        message: { err: 'An error occured trying to create a cluster' },
+      };
+      return next(errObj);
+    });
 };
 
 deploymentController.deleteCluster = (req, res, next) => {
