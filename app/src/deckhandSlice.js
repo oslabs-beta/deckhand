@@ -21,14 +21,13 @@ export const deckhandSlice = createSlice({
         externalId: null,
         name: 'Project 1',
         config: { name: 'Default VPC', provider: 'aws', region: 'US-East' },
-        createdDate: 'Nov 29, 2023',
-        modifiedDate: 'Nov 30, 2023',
+        createdDate: 'Fri Dec 06 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        modifiedDate: 'Fri Dec 08 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         clusters: [
           {
             id: 1,
-            externalId: null,
             name: 'Cluster 1',
-            config: { name: 'Cluster 1', instanceType: 't2.micro', minNodes: 1, maxNodes: 3 }, // instanceType is immutable, min/max is adjustable
+            config: { name: 'Cluster 1', instanceType: 't2.micro', minNodes: 1, maxNodes: 3, desiredNodes: 2 }, // instanceType is immutable, min/max is adjustable
             pods: [
               {
                 id: 1,
@@ -96,8 +95,8 @@ export const deckhandSlice = createSlice({
         externalId: null,
         name: `Project ${state.projects.length + 1}`,
         config: null,
-        createdDate: createdDate,
-        modifiedDate: modifiedDate,
+        createdDate: new Date(),
+        modifiedDate: new Date(),
         clusters: [
           {
             id: 1,
@@ -116,6 +115,7 @@ export const deckhandSlice = createSlice({
       const { projectId, config } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       project.name = config.name;
+      project.modifiedDate = new Date()
       project.config = config;
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
@@ -123,7 +123,6 @@ export const deckhandSlice = createSlice({
       const project = state.projects.find(p => p.id === projectId);
       project.clusters.push({
         id: clusterId,
-        externalId: null,
         name: `Cluster ${project.clusters.length + 1}`,
         config: null,
         pods: [],

@@ -19,6 +19,15 @@ export default function Home() {
     dispatch(setProjectId(data.id));
   };
 
+  const daysAgo = (date) => {
+    const diffDays = Math.round(
+      (new Date() - new Date(date)) / (1000 * 3600 * 24)
+    );
+    if (diffDays === 0) return "just now";
+    else if (diffDays === 1) return "today";
+    else return diffDays + " days ago";
+  };
+
   const projectBundle = [];
   for (const el of [...state.projects].reverse()) {
     projectBundle.push(
@@ -29,9 +38,9 @@ export default function Home() {
       >
         <div className="name">{el.name}</div>
         <div className="date-info">
-          Created: {el.createdDate}
+          Created: {daysAgo(el.createdDate)}
           <br />
-          Last Modified: {el.modifiedDate}
+          Last Modified: {daysAgo(el.modifiedDate)}
           <br />
           <br />
         </div>

@@ -37,7 +37,10 @@ export default function Project() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ url: pod.githubUrl }),
+      body: JSON.stringify({
+        repo: pod.githubRepo,
+        branch: pod.githubBranch,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -290,77 +293,35 @@ export default function Project() {
     );
   }
 
+  // odin's practice
 
-    // odin's practice
+  const [publicRepos, setPublicRepos] = useState([]);
 
-    const [myRepos, setMyRepos] = useState([]);
-    const [publicRepos, setPublicRepos] = useState([]);
+  async function grab_public_repos(e) {
+    e.preventDefault();
 
-    async function grab_public_repos (e) {
+    await fetch("/api/github/searchRepos", {
+      method: "GET",
+      headers: {
+        search: document.getElementById("search-public").value,
+      },
+    })
+      .then((res) => res.json())
+      .then((information) => {
+        const inside_array = [];
+        console.log("public info", information);
 
-      e.preventDefault();
-      
-      await fetch('/api/github/searchRepos', {
-        method: 'GET',
-        headers: {
-          'search': document.getElementById('search-public').value
+        for (let i = 0; i < 7; i++) {
+          inside_array.push(
+            <>
+              <p>{information.items[i].html_url}</p>
+            </>
+          );
         }
-      })
-        .then(res => res.json())
-        .then(information => {
-          const inside_array = []
-          console.log('public info', information)
 
-          for (let i = 0; i < 7; i++) {
-            inside_array.push(<>
-            <p>{information.items[i].html_url}
-            </p>
-            </>);
-          }
-
-          setPublicRepos(inside_array);
-
-        })
-  
-    };
-
-    async function grab_my_repos () {
-      
-      await fetch('/api/github/userRepos')
-        .then(res => res.json())
-        .then(information => {
-          const inside_array = []
-          console.log('information', information)
-
-          for (let i = 0; i < information.length; i++) {
-            inside_array.push(<>
-            <p>{information[i].html_url}
-            </p>
-            </>);
-          }
-
-          setMyRepos(inside_array);
-
-        })
-  
-    };
-
-    async function clone_repo_basic (e) {
-
-      e.preventDefault();
-
-      await fetch('/api/github/cloneRepo', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: document.getElementById('searchbar').value,
-        })
-      }).then(res => res.json())
-      .then(data => console.log('worked'));
-
-    };
+        setPublicRepos(inside_array);
+      });
+  }
 
   return (
     <div className="container">
@@ -393,15 +354,7 @@ export default function Project() {
             >
               + Add Cluster
             </button>
-            {/* <button onClick={grab_my_repos}>Grab Repos
-            </button>
-            {myRepos}
-            <br /> <br />
-            {publicRepos}
-            <form onSubmit={clone_repo_basic}>
-              <input id="searchbar" placeholder="clone here" />
-              <button>Submit</button>
-            </form>
+            {/* {publicRepos}
             <form onSubmit={grab_public_repos}>
               <input id="search-public" placeholder="make search here" />
               <button>Submit</button>
