@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync, exec } = require('child_process');
 
+// Test data
 const repoUrl = 'https://github.com/denniscorsi/envs.git';
 const repoName = 'envs';
 
@@ -42,19 +43,27 @@ filePaths.forEach((filePath) => {
 });
 
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
-fileContents.forEach((file) => {
+fileContents.forEach((fileString) => {
   const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
-  let result = regex.exec(file);
-  while (result) {
-    envs.push(result[1]);
-    result = regex.exec(file);
-  }
+  // let result = regex.exec(fileString);
+
+  // fix this to concat each result to the final array 
+  let envs2 = fileString.match(regex);
+  console.log('ENVS:', envs2);
+  // while (result) {
+  //   console.log(result);
+  //   envs.push(result[1]);
+  //   result = regex.exec(fileString);
+  // }
 });
 
-console.log('ENVS:', envs); // should be [key, $val_2, validation, secret_messsage, uri]
+// should be [key, $val_2, validation, secret_messsage, uri]
 
 // Regex parameters:
 // [any character that is NOT a letter, number, underscore, or dollar sign]
 // [then a string of characters that ARE a letter, number, underscore, or dollar sign]
 // [then either a space or an equal sign (any number of these)]
 // [then the full string 'process.env.']
+
+// delelte folder once done
+// look into which part of variable need in configmap
