@@ -6,10 +6,19 @@ const { execSync, exec } = require('child_process');
 
 const repoUrl = 'https://github.com/denniscorsi/envs.git';
 const repoName = 'envs';
-// execSync(`git clone ${repoUrl}`);
 
-const repoPath = path.join(__dirname, repoName);
-const fileNames = fs.readdirSync(repoPath);
+// Clones repo into the temps folder
+const tempsPath = path.join(__dirname, 'server', 'temps');
+execSync(`cd ${tempsPath} git clone ${repoUrl}`);
+
+const repoPath = path.join(tempsPath, repoName);
+
+// will fill an array of all file names nested within the repo
+const fileNames = [];
+const getFiles = (dir) => {
+  fs.readdirSync(repoPath);
+};
+
 console.log(fileNames);
 
 // check if directory or file
