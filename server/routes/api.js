@@ -10,7 +10,7 @@ router.get('/dockerHubImages', apiController.getDockerHubImages, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-router.get('/dockerHubImageTags/:image', apiController.getDockerHubImageTags, (req, res) => {
+router.post('/dockerHubImageTags/:image', apiController.getDockerHubImageTags, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
