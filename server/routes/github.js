@@ -18,12 +18,11 @@ router.get('/userRepos', githubController.userRepos, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-router.post('/branches', githubController.branches, (req, res) => {
+router.post('/publicRepos', githubController.publicRepos, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-
-router.get('/searchRepos', githubController.searchRepos, (req, res) => {
+router.post('/branches', githubController.branches, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 

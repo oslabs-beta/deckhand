@@ -293,36 +293,6 @@ export default function Project() {
     );
   }
 
-  // odin's practice
-
-  const [publicRepos, setPublicRepos] = useState([]);
-
-  async function grab_public_repos(e) {
-    e.preventDefault();
-
-    await fetch("/api/github/searchRepos", {
-      method: "GET",
-      headers: {
-        search: document.getElementById("search-public").value,
-      },
-    })
-      .then((res) => res.json())
-      .then((information) => {
-        const inside_array = [];
-        console.log("public info", information);
-
-        for (let i = 0; i < 7; i++) {
-          inside_array.push(
-            <>
-              <p>{information.items[i].html_url}</p>
-            </>
-          );
-        }
-
-        setPublicRepos(inside_array);
-      });
-  }
-
   return (
     <div className="container">
       <FloatLogo />
@@ -354,11 +324,6 @@ export default function Project() {
             >
               + Add Cluster
             </button>
-            {/* {publicRepos}
-            <form onSubmit={grab_public_repos}>
-              <input id="search-public" placeholder="make search here" />
-              <button>Submit</button>
-            </form> */}
           </div>
         </div>
       </div>

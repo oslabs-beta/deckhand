@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setModal, configurePod } from "../../deckhandSlice";
+import AsyncSelect from "react-select/async";
 import "./modal.css";
 
 export default function ConfigureGithubPod() {
@@ -18,6 +19,7 @@ export default function ConfigureGithubPod() {
     : null;
 
   const [userRepos, setUserRepos] = useState([]);
+  const [publicRepos, setPublicRepos] = useState([]);
   const [branches, setBranches] = useState([]);
 
   useEffect(() => {
@@ -32,12 +34,64 @@ export default function ConfigureGithubPod() {
       .then((data) => {
         const arr = data.map((el) => (
           <option key={el.full_name} value={el.full_name}>
-            {el.full_name}
+            {el.name + " by " + el.owner.login}
           </option>
         ));
         setUserRepos(arr);
       });
   };
+
+  const getPublicRepos = async (input) => {
+    return fetch("/api/github/publicRepos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ input }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.items.map((item) => ({
+          value: item.full_name,
+          label: item.full_name,
+          stars: item.stargazers_count,
+          description: item.description,
+        }));
+        return arr;
+      });
+  };
+
+  function formatStars(starCount) {
+    if (starCount < 1000) return starCount;
+    else if (starCount < 1000000) return (starCount / 1000).toFixed(1) + "k";
+    else return (starCount / 1000000).toFixed(1) + "M";
+  }
+
+  const OptionComponent = ({ innerProps, data }) => (
+    <>
+      <div
+        {...innerProps}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "5",
+        }}
+      >
+        <span style={{ color: "#333" }}>{data.label}</span>
+        <span>{"⭐ " + formatStars(data.stars)}</span>
+      </div>
+      <div
+        {...innerProps}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "0 5 20 5",
+        }}
+      >
+        <span>{data.description}</span>
+      </div>
+    </>
+  );
 
   const getBranches = async (repo) => {
     await fetch("/api/github/branches", {
@@ -64,7 +118,7 @@ export default function ConfigureGithubPod() {
     const formData = new FormData(e.target);
     const mergePod = {
       config: true,
-      name: formData.get("name"),
+      name: formData.get("userRepo").split("/")[1],
       githubRepo: formData.get("userRepo"),
       githubBranch: formData.get("branch"),
     };
@@ -95,30 +149,27 @@ export default function ConfigureGithubPod() {
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
-            Github User Repo:
+            My Repos:
             <select
               name="userRepo"
               onChange={(e) => getBranches(e.target.value)}
             >
               {userRepos}
             </select>
-            {/* <input
-              type="text"
-              name="url"
-              defaultValue="http://github.com/o-mirza/example-repo"
-            /> */}
+          </label>
+          <label>
+            Public Repos:
+            <AsyncSelect
+              cacheOptions
+              loadOptions={getPublicRepos}
+              defaultOptions
+              components={{ Option: OptionComponent }}
+            />
           </label>
           <label>
             Branch:
             <select name="branch">{branches}</select>
-            {/* <input type="text" name="branch" defaultValue="main" /> */}
           </label>
-          {/* <label>
-            Branch:
-            <select name="branch">
-              <option defaultValue="main">main</option>
-            </select>
-          </label> */}
           <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel

@@ -1,7 +1,6 @@
 const { execSync, exec } = require('child_process');
-require('dotenv').config();
-
 const path = require('path');
+require('dotenv').config();
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -75,15 +74,15 @@ githubController.userRepos = async (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-// get user branches
-githubController.branches = async (req, res, next) => {
-  const { repo } = req.body;
+// get public repos
+githubController.publicRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
-  await fetch(`https://api.github.com/repos/${repo}/branches`, {
+  const { input } = req.body;
+  await fetch('https://api.github.com/search/repositories?q=' + input + '+in:name&sort=stars&order=desc', {
     method: 'GET',
-    // headers: {
-    //   'Authorization': `Bearer ${token}`
-    // }
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
   })
     .then(res => res.json())
     .then(data => {
@@ -93,10 +92,16 @@ githubController.branches = async (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-// search public repos
-githubController.searchRepos = async (req, res, next) => {
-  const search_request = req.get('search');
-  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name&sort=stars&order=desc')
+// get user branches
+githubController.branches = async (req, res, next) => {
+  const { repo } = req.body;
+  const token = req.cookies.github_token;
+  await fetch(`https://api.github.com/repos/${repo}/branches`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
     .then(res => res.json())
     .then(data => {
       res.locals.data = data;
@@ -108,12 +113,16 @@ githubController.searchRepos = async (req, res, next) => {
 // build repos
 githubController.build = (req, res, next) => {
   const { repo, branch } = req.body;
-  const repoName = repo.split('/')[1].toLowerCase();
-  if (!repo || !branch) next('Missing repo and/or branch')
+  if (!repo || !branch) console.log('Missing repo and/or branch')
 
-  execSync(`docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && docker build -t deckhandapp/${repoName} https://github.com/${repo}.git#${branch} && docker push deckhandapp/${repoName}`);
+  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
 
-  res.locals.data = { imageName: `deckhandapp / ${repoName}`, imageTag: branch };
+  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+  execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  execSync(`docker push ${imageName}`);
+
+  res.locals.data = { imageName: imageName, imageTag: 'latest' };
   return next();
 };
 
