@@ -19,13 +19,16 @@ export default function Home() {
     dispatch(setProjectId(data.id));
   };
 
-  const daysAgo = (date) => {
-    const diffDays = Math.round(
-      (new Date() - new Date(date)) / (1000 * 3600 * 24)
-    );
-    if (diffDays === 0) return "just now";
-    else if (diffDays === 1) return "today";
-    else return diffDays + " days ago";
+  const timeAgo = (date) => {
+    const minutes = (new Date() - new Date(date)) / (1000 * 60);
+    const hours = minutes / 60;
+    const days = hours / 24;
+    if (Math.round(minutes) === 1) return "1 minute ago";
+    else if (minutes < 60) return Math.round(minutes) + " minutes ago";
+    else if (Math.round(hours) === 1) return "1 hour ago";
+    else if (hours < 24) return Math.round(hours) + " hours ago";
+    else if (Math.round(days) < 1.5) return "1 day ago";
+    else return Math.round(days) + " days ago";
   };
 
   const projectBundle = [];
@@ -37,13 +40,19 @@ export default function Home() {
         onClick={() => dispatch(setProjectId(el.id))}
       >
         <div className="name">{el.name}</div>
-        <div className="date-info">
-          Created: {daysAgo(el.createdDate)}
-          <br />
-          Last Modified: {daysAgo(el.modifiedDate)}
-          <br />
-          <br />
+        <div
+          className="date-info"
+          title={"Created: " + new Date(el.createdDate).toString()}
+        >
+          Created: {timeAgo(el.createdDate)}
         </div>
+        <div
+          className="date-info"
+          title={"Last Modified: " + new Date(el.modifiedDate).toString()}
+        >
+          Last Modified: {timeAgo(el.modifiedDate)}
+        </div>
+        <br />
         <button
           className="delete"
           onClick={(e) => {
