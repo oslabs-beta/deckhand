@@ -1,15 +1,51 @@
 const fs = require('fs');
+const path = require('path');
+const { execSync, exec } = require('child_process');
+
+//need nested files too
+
+const repoUrl = 'https://github.com/denniscorsi/envs.git';
+const repoName = 'envs';
+// execSync(`git clone ${repoUrl}`);
+
+const repoPath = path.join(__dirname, repoName);
+const fileNames = fs.readdirSync(repoPath);
+console.log(fileNames);
+
+// check if directory or file
+const isDir = [];
+fileNames.forEach((fileName) => {
+  const info = fs.statSync(repoPath + '/' + fileName);
+  isDir.push(info.isDirectory());
+});
+
+console.log(isDir);
+
+const files = [];
 const envs = [];
 
-const contents = fs.readFileSync('./testfile.js', 'utf8');
-//console.log(contents);
+// TODO: clean some of this up with path.join
 
-const regex = /process.env./g; // g tag means find all matches
-let result;
-const indices = [];
-while ((result = regex.exec(contents))) {
-  //result will be null if there are no more to be found
-  indices.push(result.index);
-}
+// fileNames.forEach((fileName) => {
+//   files.push(fs.readFileSync(`${path}/${filename}`, 'utf8'));
+// });
 
-console.log(indices);
+// files.forEach((file) => {
+//   const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g; // g tag means find all matches
+//   let result;
+//   while ((result = regex.exec(contents))) {
+//     //result will be null if there are no more to be found
+//     envs.push(result[1]);
+//   }
+// });
+
+// console.log(envs);
+
+// [any character that is NOT a letter, number, underscore, or dollar sign]
+// [then a string of characters that ARE a letter, number, underscore, or dollar sign]
+// [then either a space or an equal sign (any number of these)]
+// [then the full string 'process.env.']
+
+// we need the variable *in front* of the process.env
+
+// indices.push(result.index);

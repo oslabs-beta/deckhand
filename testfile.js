@@ -17,9 +17,11 @@ const longestCommonPrefix = (strs) => {
 
     let dog = process.env.DOG + 2;
 
+    const $val_2 = process.env.value;
+
     sharedPrefix += strs[0][i];
   }
 };
 
-if (process.env.true) console.log(hello);
-return process.env.RETURN;
+let validation = process.env.VALID;
+const aws_key = process.env.awskey;
