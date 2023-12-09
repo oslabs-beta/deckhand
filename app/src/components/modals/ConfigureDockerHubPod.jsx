@@ -61,7 +61,7 @@ export default function ConfigureDockerHubPod() {
     const formData = new FormData(e.target);
     const mergePod = {
       config: true,
-      name: formData.get("name"),
+      name: formData.get("image"),
       imageName: formData.get("image"),
       imageTag: formData.get("imageTag"),
     };

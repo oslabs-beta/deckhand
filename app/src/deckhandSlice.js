@@ -19,10 +19,11 @@ export const deckhandSlice = createSlice({
       {
         id: 1,
         name: 'Project 1',
-        createdDate: 'Fri Dec 06 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
-        modifiedDate: 'Fri Dec 08 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
-        externalId: null,
-        config: { provider: 'aws', awsRegion: 'US-East' },
+        createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
+        provider: 'aws',
+        vpcId: 'xyz',
+        vpcRegion: 'US-East',
         clusters: [
           {
             id: 1,
@@ -91,31 +92,19 @@ export const deckhandSlice = createSlice({
       const { id, createdDate, modifiedDate } = action.payload;
       state.projects.push({
         id: id,
-        externalId: null,
         name: `Project ${state.projects.length + 1}`,
-        config: null,
-        createdDate: new Date(),
-        modifiedDate: new Date(),
-        clusters: [
-          {
-            id: 1,
-            externalId: null,
-            name: 'Cluster 1',
-            config: null,
-            pods: [],
-          }
-        ],
+        createdDate: new Date().toString(),
+        modifiedDate: new Date().toString(),
+        clusters: [],
       });
     },
     deleteProject: (state, action) => { // payload: id
       state.projects = state.projects.filter(p => p.id !== action.payload)
     },
-    configureProject: (state, action) => { // payload: {projectId, config}
-      const { projectId, config } = action.payload;
+    configureProject: (state, action) => { // payload: {projectId, mergeProject}
+      const { projectId, mergeProject } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
-      project.name = config.name;
-      project.modifiedDate = new Date()
-      project.config = config;
+      Object.assign(project, mergeProject);
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
       const { projectId, clusterId } = action.payload;
@@ -123,7 +112,7 @@ export const deckhandSlice = createSlice({
       project.clusters.push({
         id: clusterId,
         name: `Cluster ${project.clusters.length + 1}`,
-        config: null,
+        config: false,
         pods: [],
       });
     },

@@ -20,16 +20,17 @@ export default function ConfigureProject() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const data = {
+    const mergeProject = {
       name: formData.get("name"),
-      provider: formData.get("provider"),
-      region: formData.get("region"),
+      config: {
+        provider: formData.get("provider"),
+        region: formData.get("region"),
+      },
     };
     dispatch(
       configureProject({
         projectId: state.projectId,
-        clusterId: state.clusterId,
-        config: data,
+        mergeProject: mergeProject,
       })
     );
     closeModal();
