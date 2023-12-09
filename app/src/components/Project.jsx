@@ -370,7 +370,7 @@ export default function Project() {
             </button>
             {myRepos}
             <br /> <br />
-            {publicRepos}
+            {publicRepos} */}
             <form onSubmit={clone_repo_basic}>
               <input id="searchbar" placeholder="clone here" />
               <button>Submit</button>
@@ -378,7 +378,7 @@ export default function Project() {
             <form onSubmit={grab_public_repos}>
               <input id="search-public" placeholder="make search here" />
               <button>Submit</button>
-            </form> */}
+            </form>
           </div>
         </div>
       </div>

@@ -98,9 +98,10 @@ githubController.cloneRepo = (req, res, next) => {
   const splitIt = url.split('/');
   const repoName = splitIt.pop();
   const url_plus_git = url + '.git';
+  console.log(url_plus_git)
 
   execSync(
-    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':5 ' + url_plus_git + '#' + branch + ' && docker push deckhandapp/' + repoName + ':5'
+    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':7 ' + url_plus_git + '#' + "main" + ' && docker push deckhandapp/' + repoName + ':7'
   );
 
   return next();
