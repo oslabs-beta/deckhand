@@ -8,6 +8,7 @@ import {
   deleteCluster,
   addPod,
   deletePod,
+  configurePod,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatNav from "./floats/FloatNav";
@@ -29,6 +30,31 @@ export default function Project() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.id === state.projectId);
+
+  const handleClickBuild = async (cluster, pod) => {
+    await fetch("/api/github/build", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        repo: pod.githubRepo,
+        branch: pod.githubBranch,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            projectId: state.projectId,
+            clusterId: cluster.id,
+            podId: pod.id,
+            mergePod: data,
+          })
+        );
+      })
+      .catch((err) => console.log(err));
+  };
 
   const clusterBundle = [];
   for (const cluster of project.clusters) {
@@ -140,7 +166,11 @@ export default function Project() {
                 </button>
               )}
               {pod.type === "github" ? (
-                <button>
+                <button
+                  onClick={() => {
+                    handleClickBuild(cluster, pod);
+                  }}
+                >
                   <b>Build</b>
                 </button>
               ) : (
@@ -263,78 +293,6 @@ export default function Project() {
     );
   }
 
-
-    // odin's practice
-
-    const [myRepos, setMyRepos] = useState([]);
-    const [publicRepos, setPublicRepos] = useState([]);
-
-    async function grab_public_repos (e) {
-
-      e.preventDefault();
-      
-      await fetch('/api/github/searchRepos', {
-        method: 'GET',
-        headers: {
-          'search': document.getElementById('search-public').value
-        }
-      })
-        .then(res => res.json())
-        .then(information => {
-          const inside_array = []
-          console.log('public info', information)
-
-          for (let i = 0; i < 7; i++) {
-            inside_array.push(<>
-            <p>{information.items[i].html_url}
-            </p>
-            </>);
-          }
-
-          setPublicRepos(inside_array);
-
-        })
-  
-    };
-
-    async function grab_my_repos () {
-      
-      await fetch('/api/github/userRepos')
-        .then(res => res.json())
-        .then(information => {
-          const inside_array = []
-          console.log('information', information)
-
-          for (let i = 0; i < information.length; i++) {
-            inside_array.push(<>
-            <p>{information[i].html_url}
-            </p>
-            </>);
-          }
-
-          setMyRepos(inside_array);
-
-        })
-  
-    };
-
-    async function clone_repo_basic (e) {
-
-      e.preventDefault();
-
-      await fetch('/api/github/cloneRepo', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: document.getElementById('searchbar').value,
-        })
-      }).then(res => res.json())
-      .then(data => console.log('worked'));
-
-    };
-
   return (
     <div className="container">
       <FloatLogo />
@@ -366,19 +324,6 @@ export default function Project() {
             >
               + Add Cluster
             </button>
-            {/* <button onClick={grab_my_repos}>Grab Repos
-            </button>
-            {myRepos}
-            <br /> <br />
-            {publicRepos} */}
-            <form onSubmit={clone_repo_basic}>
-              <input id="searchbar" placeholder="clone here" />
-              <button>Submit</button>
-            </form>
-            <form onSubmit={grab_public_repos}>
-              <input id="search-public" placeholder="make search here" />
-              <button>Submit</button>
-            </form>
           </div>
         </div>
       </div>

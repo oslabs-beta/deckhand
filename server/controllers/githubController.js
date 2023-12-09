@@ -1,10 +1,11 @@
 const { execSync, exec } = require('child_process');
-require('dotenv').config();
-
 const path = require('path');
+require('dotenv').config();
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
+const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
 const githubController = {};
 
@@ -48,7 +49,7 @@ githubController.userData = async (req, res, next) => {
           avatarUrl: data.avatar_url,
           githubId: data.id,
         };
-        next();
+        return next();
       })
       .catch(err => console.log(err));
   } else {
@@ -59,7 +60,6 @@ githubController.userData = async (req, res, next) => {
 // get user repos
 githubController.userRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
-  // needs user/repos at the end!
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
     headers: {
@@ -69,43 +69,61 @@ githubController.userRepos = async (req, res, next) => {
     .then(res => res.json())
     .then(data => {
       res.locals.data = data;
-      next();
+      return next();
     })
     .catch(err => console.log(err));
 };
 
-// search public repos
-githubController.searchRepos = async (req, res, next) => {
-  const search_request = req.get('search');
-  await fetch('https://api.github.com/search/repositories?q=' + search_request + '+in:name&sort=stars&order=desc')
+// get public repos
+githubController.publicRepos = async (req, res, next) => {
+  const token = req.cookies.github_token;
+  const { input } = req.body;
+  await fetch('https://api.github.com/search/repositories?q=' + input + '+in:name&sort=stars&order=desc', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
     .then(res => res.json())
     .then(data => {
       res.locals.data = data;
-      next();
+      return next();
     })
     .catch(err => console.log(err));
 };
 
-// clone repos
+// get user branches
+githubController.branches = async (req, res, next) => {
+  const { repo } = req.body;
+  const token = req.cookies.github_token;
+  await fetch(`https://api.github.com/repos/${repo}/branches`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      res.locals.data = data;
+      return next();
+    })
+    .catch(err => console.log(err));
+};
 
-const docker_username = process.env.DOCKER_USERNAME;
-const docker_password = process.env.DOCKER_PASSWORD;
+// build repos
+githubController.build = (req, res, next) => {
+  const { repo, branch } = req.body;
+  if (!repo || !branch) console.log('Missing repo and/or branch')
 
-githubController.cloneRepo = (req, res, next) => {
+  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
 
-  const url = req.body.url;
-  const branch = req.body.branch;
-  const splitIt = url.split('/');
-  const repoName = splitIt.pop();
-  const url_plus_git = url + '.git';
-  console.log(url_plus_git)
+  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+  execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  execSync(`docker push ${imageName}`);
 
-  execSync(
-    'docker login -u ' + docker_username + ' -p ' + docker_password + ' && docker build -t deckhandapp/' + repoName + ':7 ' + url_plus_git + '#' + "main" + ' && docker push deckhandapp/' + repoName + ':7'
-  );
-
+  res.locals.data = { imageName: imageName, imageTag: 'latest' };
   return next();
-
 };
 
 module.exports = githubController;
