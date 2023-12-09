@@ -9,31 +9,30 @@ const repoName = 'envs';
 
 // Clones repo into the temps folder
 const tempsPath = path.join(__dirname, 'server', 'temps');
-execSync(`cd ${tempsPath} git clone ${repoUrl}`);
+console.log(tempsPath);
+execSync(`cd ${tempsPath} && git clone ${repoUrl}`);
 
 const repoPath = path.join(tempsPath, repoName);
 
 // will fill an array of all file names nested within the repo
 const fileNames = [];
 const getFiles = (dir) => {
-  fs.readdirSync(repoPath);
+  const contents = fs.readdirSync(repoPath); // This will return an array with names of all files and directories, not differentiated
+  contents.forEach((content) => { 
+    const contentPath = path.join(dir, content);
+    const stats = fs.statSync(contentPath);
+    if (stats.isDirectory()) {
+      getFiles(contentPath);
+    } else fileNames.push(contentPath);
+  });
 };
+
+getFiles(repoPath);
 
 console.log(fileNames);
 
-// check if directory or file
-const isDir = [];
-fileNames.forEach((fileName) => {
-  const info = fs.statSync(repoPath + '/' + fileName);
-  isDir.push(info.isDirectory());
-});
-
-console.log(isDir);
-
 const files = [];
 const envs = [];
-
-// TODO: clean some of this up with path.join
 
 // fileNames.forEach((fileName) => {
 //   files.push(fs.readFileSync(`${path}/${filename}`, 'utf8'));
