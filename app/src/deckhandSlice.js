@@ -18,17 +18,20 @@ export const deckhandSlice = createSlice({
     projects: [
       {
         id: 1,
-        name: 'Project 1',
+        name: 'Project 1', // store as tag in AWS to allow renaming
         createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
-        provider: 'aws',
-        vpcId: 'xyz',
-        vpcRegion: 'US-East',
+        provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
+        vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
+        vpcRegion: 'US-East', // immutable once VPC provisioned (destroying and recreating will break external connections)
         clusters: [
           {
-            id: 1,
-            name: 'Cluster 1',
-            config: { instanceType: 't2.micro', minNodes: 1, maxNodes: 3, desiredNodes: 2 }, // instanceType is immutable, min/max is adjustable
+            id: 1, // store as unique identifier in AWS
+            name: 'Cluster 1', // store as tag in AWS to allow renaming
+            instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
+            minNodes: 1,
+            maxNodes: 3,
+            desiredNodes: 2,
             pods: [
               {
                 id: 1,
@@ -121,12 +124,11 @@ export const deckhandSlice = createSlice({
       const project = state.projects.find(p => p.id === projectId);
       project.clusters = project.clusters.filter(c => c.id !== clusterId);
     },
-    configureCluster: (state, action) => { // payload: {projectId, clusterId, config}
-      const { projectId, clusterId, config } = action.payload;
+    configureCluster: (state, action) => { // payload: {projectId, clusterId, mergeCluster}
+      const { projectId, clusterId, mergeCluster } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       const cluster = project.clusters.find(c => c.id === clusterId);
-      cluster.name = config.name;
-      cluster.config = config;
+      Object.assign(cluster, mergeCluster);
     },
     addPod: (state, action) => { // payload: {projectId, clusterId, podId, type}
       const { projectId, clusterId, podId, type } = action.payload;
