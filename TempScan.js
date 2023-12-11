@@ -35,7 +35,7 @@ const getFiles = (dir) => {
 getFiles(repoPath);
 
 const fileContents = [];
-const envs = [];
+const envs = new Set();
 
 // Push the text content of each file into the fileContents array
 filePaths.forEach((filePath) => {
@@ -49,7 +49,7 @@ fileContents.forEach((fileString) => {
   let result = regex.exec(fileString);
 
   while (result) {
-    envs.push(result[1]);
+    envs.add(result[1]);
     result = regex.exec(fileString);
   }
 });
