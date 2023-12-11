@@ -89,6 +89,14 @@ deploymentController.configureCluster = async (req, res, next) => {
   next();
 };
 
-deploymentController.deletePod = (req, res, next) => {};
+deploymentController.deleteComponent = (req, res, next) => {
+  const { kind, name } = req.body;
+  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { vpcId, clusterId } = req.body.ids;
+  k8.connectCLtoAWS(accessKey, secretKey, region);
+  k8.connectKubectltoEKS(region, clusterId);
+  k8.remove(kind, name);
+  next();
+};
 
 module.exports = deploymentController;
