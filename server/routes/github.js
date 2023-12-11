@@ -3,11 +3,11 @@ const router = express.Router();
 const githubController = require('../controllers/githubController');
 
 router.get('/login', githubController.login, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+  res.status(200); //.json(res.locals.data);
 });
 
 router.get('/callback', githubController.callback, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+  res.status(200); //.json(res.locals.data);
 });
 
 router.get('/userData', githubController.userData, (req, res) => {
@@ -28,6 +28,10 @@ router.post('/branches', githubController.branches, (req, res) => {
 
 router.post('/build', githubController.build, (req, res) => {
   res.status(200).json(res.locals.data);
+});
+
+router.post('/scan', githubController.scanRepo, (req, res) => {
+  res.status(200).json(res.locals.envs);
 });
 
 module.exports = router;

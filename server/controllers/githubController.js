@@ -150,11 +150,14 @@ githubController.scanRepo = (req, res, next) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 
-  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  // const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  //➜  Desktop git clone -b testbranch https://github.com/denniscorsi/envs.git
+
+  const cloneUrl = `https://github.com/${repo}.git`;
 
   // Clones repo into the temps folder
-  const tempsPath = path.join(__dirname, 'server', 'temps');
-  execSync(`cd ${tempsPath} && git clone ${cloneUrl}`);
+  const tempsPath = path.join(__dirname, '..', 'temps');
+  execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
   const repoPath = path.join(tempsPath, repoName);
 
   // An array to hold the paths of all files nested within the repo
@@ -227,7 +230,7 @@ githubController.scanRepo = (req, res, next) => {
   const envArr = Array.from(envs);
 
   console.log('Scanned for env variables and found:', envArr);
- 
+
   res.locals.envs = envArr;
   return next();
 };
