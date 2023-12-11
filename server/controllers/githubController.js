@@ -114,9 +114,12 @@ githubController.branches = async (req, res, next) => {
 githubController.build = (req, res, next) => {
   const { repo, branch } = req.body;
   if (!repo || !branch) console.log('Missing repo and/or branch')
+  
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
+
+  console.log('im in github to docker');
 
   execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
   execSync(`docker build -t ${imageName} ${cloneUrl}`);

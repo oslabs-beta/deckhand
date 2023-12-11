@@ -24,7 +24,8 @@ export default function ConfigureDockerHubPod() {
   useEffect(() => {
     if (state.modal === "ConfigureDockerHubPod") {
       getImages();
-      getImageTags("centos");
+      // getImageTags("centos");
+      getImageTags('deckhandapp/odinolson17-main1');
     }
   }, [state.modal]);
 
@@ -32,8 +33,8 @@ export default function ConfigureDockerHubPod() {
     await fetch("/api/dockerHubImages")
       .then((res) => res.json())
       .then((data) => {
+        console.log('this is arr', data);
         const arr = data.map((el) => {
-          // if (el === '\/') el === '\/';
           (<option key={el} value={el}>
             {el}
           </option>
@@ -59,6 +60,7 @@ export default function ConfigureDockerHubPod() {
             {el}
           </option>
         ));
+        console.log('this is arr2', arr);
         setImageTags(arr);
       })
       .catch((error) => console.log(error));
