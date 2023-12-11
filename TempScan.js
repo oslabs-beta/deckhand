@@ -44,7 +44,6 @@ filePaths.forEach((filePath) => {
 
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
 fileContents.forEach((fileString) => {
- 
   const regexJs = /process.env.([\w$]+)/g;
   const regexPy = /os.environ.get\(['"](\w+)/g;
   const regexPy2 = /os.getenv\(['"](\w+)/g;
@@ -78,8 +77,9 @@ fileContents.forEach((fileString) => {
 // Delete cloned repo
 execSync(`cd ${tempsPath} && rm -r ${repoName}`);
 
-console.log(envs);
+envArr = Array.from(envs);
 
+console.log(envArr);
 
 // TODO:
 // integrate into controller

@@ -1,4 +1,5 @@
 const { execSync, exec } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -89,14 +90,19 @@ githubController.userRepos = async (req, res, next) => {
 githubController.publicRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
   const { input } = req.body;
-  await fetch('https://api.github.com/search/repositories?q=' + input + '+in:name&sort=stars&order=desc', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
+  await fetch(
+    'https://api.github.com/search/repositories?q=' +
+      input +
+      '+in:name&sort=stars&order=desc',
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  })
-    .then(res => res.json())
-    .then(data => {
+  )
+    .then((res) => res.json())
+    .then((data) => {
       res.locals.data = data;
       return next();
     })
@@ -110,26 +116,28 @@ githubController.branches = async (req, res, next) => {
   await fetch(`https://api.github.com/repos/${repo}/branches`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       res.locals.data = data;
       return next();
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 // build repos
 githubController.build = (req, res, next) => {
   const { repo, branch } = req.body;
-  if (!repo || !branch) console.log('Missing repo and/or branch')
+  if (!repo || !branch) console.log('Missing repo and/or branch');
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
 
-  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, {
+    input: DOCKER_PASSWORD,
+  });
   execSync(`docker build -t ${imageName} ${cloneUrl}`);
   execSync(`docker push ${imageName}`);
 
@@ -139,22 +147,88 @@ githubController.build = (req, res, next) => {
 
 // Find all env variables in repo
 githubController.scanRepo = (req, res, next) => {
-  // name of repo will be on request body
-  const { repo } = req.body;
+  const { repo, branch } = req.body;
+  const repoName = repo.split('/')[1];
 
-  const repoUrl = '...'; //will need to turn name into url
+  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
 
-  const envs = [];
-  // clone repo
-  execSync(`git clone ${repoUrl}`);
-  // iterate through files
-  const files = [];
-  
-  // search through each file for process.env
-  // add the variable name to the envs array
-  // put the array on locals and go to next
+  // Clones repo into the temps folder
+  const tempsPath = path.join(__dirname, 'server', 'temps');
+  execSync(`cd ${tempsPath} && git clone ${cloneUrl}`);
+  const repoPath = path.join(tempsPath, repoName);
 
-  res.locals.envs = envs;
+  // An array to hold the paths of all files nested within the repo
+  const filePaths = [];
+
+  // Recursive helper function to get all nested files
+  const getFiles = (dir) => {
+    const dirContents = fs.readdirSync(dir); // This will return an array with names of all files and directories in the *top* level of the directory
+
+    // Ignoring anything within the .git directory, check if each content if a file or directory
+    // If it's a file, push its path to filePaths
+    // If it's a directory, send it recursively back into this function
+    dirContents.forEach((content) => {
+      if (content !== '.git') {
+        const contentPath = path.join(dir, content);
+        const stats = fs.statSync(contentPath);
+        if (stats.isDirectory()) getFiles(contentPath);
+        else filePaths.push(contentPath);
+      }
+    });
+  };
+
+  // Execute function on the cloned repo
+  getFiles(repoPath);
+
+  const fileContents = [];
+  const envs = new Set();
+
+  // Push the text content of each file into the fileContents array
+  filePaths.forEach((filePath) => {
+    fileContents.push(fs.readFileSync(filePath, 'utf8'));
+  });
+
+  // Using regex, scan the text of each file for environmental variables and push them to envs array.
+  fileContents.forEach((fileString) => {
+    const regexJs = /process.env.([\w$]+)/g;
+    const regexPy = /os.environ.get\(['"](\w+)/g;
+    const regexPy2 = /os.getenv\(['"](\w+)/g;
+    const regexRuby = /ENV\[['"](\w+)/g;
+    const regexJava = /System.getenv\(['"]([\w$]+)/g;
+    const regexPHP1 = /\$_ENV\[['"]([\w$]+)/g;
+    const regexPHP2 = /getenv\(['"]([\w$]+)/g;
+    const regexCSharp = /Environment.GetEnvironmentVariable\(['"](\w+)/g;
+
+    regexes = [
+      regexJs,
+      regexPy,
+      regexPy2,
+      regexRuby,
+      regexJava,
+      regexPHP1,
+      regexPHP2,
+      regexCSharp,
+    ];
+
+    regexes.forEach((regex) => {
+      let result = regex.exec(fileString);
+
+      while (result) {
+        envs.add(result[1]);
+        result = regex.exec(fileString);
+      }
+    });
+  });
+
+  // Delete cloned repo
+  execSync(`cd ${tempsPath} && rm -r ${repoName}`);
+
+  // Convert set into an array
+  const envArr = Array.from(envs);
+
+  console.log('Scanned for env variables and found:', envArr);
+ 
+  res.locals.envs = envArr;
   return next();
 };
 
