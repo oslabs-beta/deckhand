@@ -8,7 +8,7 @@ const repoName = 'envs';
 
 // Clones repo into the temps folder
 const tempsPath = path.join(__dirname, 'server', 'temps');
-//execSync(`cd ${tempsPath} && git clone ${repoUrl}`);
+execSync(`cd ${tempsPath} && git clone ${repoUrl}`);
 const repoPath = path.join(tempsPath, repoName);
 
 // An array to hold the paths of all files nested within the repo
@@ -45,18 +45,42 @@ filePaths.forEach((filePath) => {
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
 fileContents.forEach((fileString) => {
   // const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
-  const regex = /process.env.([A-Za-z0-9$_]+)/g;
-  let result = regex.exec(fileString);
 
-  while (result) {
-    envs.add(result[1]);
-    result = regex.exec(fileString);
-  }
+  const regexJs = /process.env.([\w$]+)/g;
+  const regexPy = /os.environ.get\(['"](\w+)/g;
+  const regexPy2 = /os.getenv\(['"](\w+)/g;
+  const regexRuby = /ENV\[['"](\w+)/g;
+  const regexJava = /System.getenv\(['"]([\w$]+)/g;
+  const regexPHP1 = /\$_ENV\[['"]([\w$]+)/g;
+  const regexPHP2 = /getenv\(['"]([\w$]+)/g;
+  const regexCSharp = /Environment.GetEnvironmentVariable\(['"](\w+)/g;
+
+  regexes = [
+    regexJs,
+    regexPy,
+    regexPy2,
+    regexRuby,
+    regexJava,
+    regexPHP1,
+    regexPHP2,
+    regexCSharp,
+  ];
+
+  regexes.forEach((regex) => {
+    let result = regex.exec(fileString);
+
+    while (result) {
+      envs.add(result[1]);
+      result = regex.exec(fileString);
+    }
+  });
 });
 
-console.log(envs);
+// Delete cloned repo
+execSync(`cd ${tempsPath} && rm -r ${repoName}`);
 
-// should be [value, awskey, SECRET, MONGOURI, SECRET]
+console.log(envs);
+// should be [value, awskey, SECRET, MONGOURI, SECRET, VALID]
 
 // Regex parameters:
 // [any character that is NOT a letter, number, underscore, or dollar sign]
@@ -65,6 +89,5 @@ console.log(envs);
 // [then the full string 'process.env.']
 
 // TODO:
-// delelte folder once done
-// look into which part of variable need in configmap
 // integrate into controller
+// include other programming languagls
