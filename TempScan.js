@@ -8,7 +8,7 @@ const repoName = 'envs';
 
 // Clones repo into the temps folder
 const tempsPath = path.join(__dirname, 'server', 'temps');
-execSync(`cd ${tempsPath} && git clone ${repoUrl}`);
+//execSync(`cd ${tempsPath} && git clone ${repoUrl}`);
 const repoPath = path.join(tempsPath, repoName);
 
 // An array to hold the paths of all files nested within the repo
@@ -45,17 +45,15 @@ filePaths.forEach((filePath) => {
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
 fileContents.forEach((fileString) => {
   const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
-  // let result = regex.exec(fileString);
+  let result = regex.exec(fileString);
 
-  // fix this to concat each result to the final array 
-  let envs2 = fileString.match(regex);
-  console.log('ENVS:', envs2);
-  // while (result) {
-  //   console.log(result);
-  //   envs.push(result[1]);
-  //   result = regex.exec(fileString);
-  // }
+  while (result) {
+    envs.push(result[1]);
+    result = regex.exec(fileString);
+  }
 });
+
+console.log(envs);
 
 // should be [key, $val_2, validation, secret_messsage, uri]
 
@@ -65,5 +63,7 @@ fileContents.forEach((fileString) => {
 // [then either a space or an equal sign (any number of these)]
 // [then the full string 'process.env.']
 
+// TODO:
 // delelte folder once done
 // look into which part of variable need in configmap
+// integrate into controller
