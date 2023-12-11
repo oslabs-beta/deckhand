@@ -18,40 +18,39 @@ export const deckhandSlice = createSlice({
     projects: [
       {
         id: 1,
-        externalId: null,
         name: 'Project 1',
-        config: { name: 'Default VPC', provider: 'aws', region: 'US-East' },
-        createdDate: 'Nov 29, 2023',
-        modifiedDate: 'Nov 30, 2023',
+        createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
+        provider: 'aws',
+        vpcId: 'xyz',
+        vpcRegion: 'US-East',
         clusters: [
           {
             id: 1,
-            externalId: null,
             name: 'Cluster 1',
-            config: { name: 'Cluster 1', instanceType: 't2.micro', minNodes: 1, maxNodes: 3 }, // instanceType is immutable, min/max is adjustable
+            config: { instanceType: 't2.micro', minNodes: 1, maxNodes: 3, desiredNodes: 2 }, // instanceType is immutable, min/max is adjustable
             pods: [
               {
                 id: 1,
-                name: 'App',
+                name: 'Moodsight',
                 type: 'github',
                 config: true,
-                githubUrl: 'http://github.com/o-mirza/example-repo',
+                githubRepo: 'o-mirza/Moodsight',
                 githubBranch: 'main',
-                imageName: 'mongo',
-                imageTag: 'latest',
                 replicas: 3,
                 variables: [],
-                ingress: { host: 'example.com', path: '/path' },
+                host: 'moodsight.io',
+                path: '/path',
                 volume: null,
                 deployed: false,
               },
               {
                 id: 2,
-                name: 'Database',
+                name: 'postgres',
                 type: 'docker-hub',
                 config: true,
-                imageName: 'mongo',
-                imageTag: 'latest',
+                imageName: 'postgres',
+                imageTag: 'bullseye',
                 replicas: 1,
                 variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
                 ingress: null,
@@ -93,39 +92,27 @@ export const deckhandSlice = createSlice({
       const { id, createdDate, modifiedDate } = action.payload;
       state.projects.push({
         id: id,
-        externalId: null,
         name: `Project ${state.projects.length + 1}`,
-        config: null,
-        createdDate: createdDate,
-        modifiedDate: modifiedDate,
-        clusters: [
-          {
-            id: 1,
-            externalId: null,
-            name: 'Cluster 1',
-            config: null,
-            pods: [],
-          }
-        ],
+        createdDate: new Date().toString(),
+        modifiedDate: new Date().toString(),
+        clusters: [],
       });
     },
     deleteProject: (state, action) => { // payload: id
       state.projects = state.projects.filter(p => p.id !== action.payload)
     },
-    configureProject: (state, action) => { // payload: {projectId, config}
-      const { projectId, config } = action.payload;
+    configureProject: (state, action) => { // payload: {projectId, mergeProject}
+      const { projectId, mergeProject } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
-      project.name = config.name;
-      project.config = config;
+      Object.assign(project, mergeProject);
     },
     addCluster: (state, action) => { // payload: {projectId, clusterId}
       const { projectId, clusterId } = action.payload;
       const project = state.projects.find(p => p.id === projectId);
       project.clusters.push({
         id: clusterId,
-        externalId: null,
         name: `Cluster ${project.clusters.length + 1}`,
-        config: null,
+        config: false,
         pods: [],
       });
     },

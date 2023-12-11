@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
 import { setModal, configurePod } from "../../deckhandSlice";
 import "./modal.css";
 
@@ -60,7 +61,7 @@ export default function ConfigureDockerHubPod() {
     const formData = new FormData(e.target);
     const mergePod = {
       config: true,
-      name: formData.get("name"),
+      name: formData.get("image"),
       imageName: formData.get("image"),
       imageTag: formData.get("imageTag"),
     };
@@ -97,7 +98,6 @@ export default function ConfigureDockerHubPod() {
             <input
               type="text"
               name="image"
-              defaultValue="mongo"
               onChange={(e) => getImageTags(e.target.value)}
             />
           </label>

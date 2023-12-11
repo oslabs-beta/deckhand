@@ -18,23 +18,6 @@ export default function ConfigurePodYaml() {
     ? cluster.pods.find((p) => p.id === state.podId)
     : null;
 
-  const examplePod = {
-    id: 2,
-    name: "Database",
-    type: "docker-hub",
-    config: true,
-    imageName: "mongo",
-    imageTag: "latest",
-    replicas: 1,
-    variables: [
-      { key: "user1", value: "abc123", secret: true },
-      { key: "PG_URI", value: "db_address", secret: false },
-    ],
-    ingress: null,
-    volume: null, // directory string
-    deployed: false,
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     // const formData = new FormData(e.target);
