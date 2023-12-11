@@ -21,11 +21,16 @@ export default function ConfigureDockerHubPod() {
   const [images, setImages] = useState([]);
   const [imageTags, setImageTags] = useState([]);
 
+  const [userImages, setUsersImages] = useState([]);
+  const [usersImageTags, setUsersImageTags] = useState([]);
+
   useEffect(() => {
     if (state.modal === "ConfigureDockerHubPod") {
       getImages();
-      // getImageTags("centos");
-      getImageTags('deckhandapp/odinolson17-main1');
+      getImageTags("centos");
+
+      getUsersImages();
+      getUsersImageTags('odinolson17-main1');
     }
   }, [state.modal]);
 
@@ -33,13 +38,26 @@ export default function ConfigureDockerHubPod() {
     await fetch("/api/dockerHubImages")
       .then((res) => res.json())
       .then((data) => {
-        console.log('this is arr', data);
         const arr = data.map((el) => {
           (<option key={el} value={el}>
             {el}
           </option>
         )});
         setImages(arr);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getUsersImages = async () => {
+    await fetch("/api/usersDockerHubImages")
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => {
+          (<option key={el} value={el}>
+            {el}
+          </option>
+        )});
+        setUsersImages(arr);
       })
       .catch((error) => console.log(error));
   };
@@ -54,14 +72,32 @@ export default function ConfigureDockerHubPod() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('this is data', data);
         const arr = data.map((el) => (
           <option key={el} value={el}>
             {el}
           </option>
         ));
-        console.log('this is arr2', arr);
         setImageTags(arr);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getUsersImageTags = async (image) => {
+    await fetch(`/api/usersDockerHubImageTags/${image}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        image: image
+      })
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => (
+          <option key={el} value={el}>
+            {el}
+          </option>
+        ));
+        setUsersImageTags(arr);
       })
       .catch((error) => console.log(error));
   };
@@ -104,11 +140,19 @@ export default function ConfigureDockerHubPod() {
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
-            Docker Hub Image:
+            Public Docker Hub Image:
             <input
               type="text"
               name="image"
               onChange={(e) => getImageTags(e.target.value)}
+            />
+          </label>
+          <label>
+            Personal Docker Hub Image:
+            <input
+              type="text"
+              name="image"
+              onChange={(e) => getUsersImageTags(e.target.value)}
             />
           </label>
           {/* <label>
@@ -118,8 +162,12 @@ export default function ConfigureDockerHubPod() {
             </select>
           </label> */}
           <label>
-            Version:
+            Public Version:
             <select name="imageTag">{imageTags}</select>
+          </label>
+          <label>
+            Private Version:
+            <select name="imageTag">{usersImageTags}</select>
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
