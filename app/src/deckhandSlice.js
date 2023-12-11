@@ -14,6 +14,7 @@ export const deckhandSlice = createSlice({
       awsSecretKey: null,
     },
     projectId: null, // selected project id
+    layout: 'cards', // cards or canvas
     modal: {}, // {name, data}
 
     projects: [
@@ -102,6 +103,9 @@ export const deckhandSlice = createSlice({
     },
     setProjectId: (state, action) => { // payload: projectId
       state.projectId = action.payload;
+    },
+    toggleLayout: (state, action) => {
+      state.layout === 'cards' ? state.layout = 'canvas' : state.layout = 'cards';
     },
     showModal: (state, action) => { // payload: {name, data}
       state.modal = action.payload;
@@ -225,6 +229,7 @@ export const {
   setUser,
   setState,
   setProjectId,
+  toggleLayout,
   showModal,
 
   addProject,
