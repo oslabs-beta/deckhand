@@ -74,7 +74,7 @@ deploymentController.deleteCluster = (req, res, next) => {
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { vpcId, clusterId } = req.body.ids;
   // add terraform function: destroy cluster
-  next();
+  return next();
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
@@ -86,7 +86,7 @@ deploymentController.configureCluster = async (req, res, next) => {
   k8.connectCLtoAWS(accessKey, secretKey, region);
   k8.connectKubectltoEKS(region, clusterId);
   k8.deploy(yamls);
-  next();
+  return next();
 };
 
 deploymentController.deleteComponent = (req, res, next) => {
@@ -96,7 +96,7 @@ deploymentController.deleteComponent = (req, res, next) => {
   k8.connectCLtoAWS(accessKey, secretKey, region);
   k8.connectKubectltoEKS(region, clusterId);
   k8.remove(kind, name);
-  next();
+  return next();
 };
 
 module.exports = deploymentController;

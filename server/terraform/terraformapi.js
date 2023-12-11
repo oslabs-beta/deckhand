@@ -4,6 +4,11 @@ const util = require('util');
 const execProm = util.promisify(exec);
 require('dotenv').config();
 
+// Create a terraform directory for the user
+const initializeUser = (id) => {
+  execSync(`cd server/terraform/userData && mkdir user${id}`);
+};
+
 // Writes variables file
 // Does not run any Terraform scripts. Unnessecary until adding a VPC.
 const connectToProvider = async (provider, region, accessKey, secretKey) => {
@@ -124,4 +129,4 @@ const addCluster = async (
   //   });
 };
 
-module.exports = { connectToProvider, addVPC, addCluster };
+module.exports = { connectToProvider, addVPC, addCluster, initializeUser };
