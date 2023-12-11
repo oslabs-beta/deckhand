@@ -44,7 +44,8 @@ filePaths.forEach((filePath) => {
 
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
 fileContents.forEach((fileString) => {
-  const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
+  // const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
+  const regex = /process.env.([A-Za-z0-9$_]+)/g;
   let result = regex.exec(fileString);
 
   while (result) {
@@ -55,7 +56,7 @@ fileContents.forEach((fileString) => {
 
 console.log(envs);
 
-// should be [key, $val_2, validation, secret_messsage, uri]
+// should be [value, awskey, SECRET, MONGOURI, SECRET]
 
 // Regex parameters:
 // [any character that is NOT a letter, number, underscore, or dollar sign]
