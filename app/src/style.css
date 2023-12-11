@@ -242,6 +242,19 @@ button:active {
   width: 200px;
   text-align: center;
   background-color: white;
+  transition: all 0.1s ease-in-out;
+}
+
+#pod-cards .card:hover {
+  filter: brightness(98%);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+#pod-cards .card:active {
+  filter: brightness(100%);
+  transform: scale(1);
+  cursor: pointer;
 }
 
 #pod-cards .card .new-pod {

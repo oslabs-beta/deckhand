@@ -7,7 +7,9 @@ import { mdiChevronDown } from "@mdi/js";
 export default function FloatNav() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
-  const project = state.projects.find((obj) => obj.id === state.projectId);
+  const project = state.projects.find(
+    (obj) => obj.projectId === state.projectId
+  );
 
   return (
     <div className="active-project">

@@ -69,26 +69,25 @@ export default function ConfigureGithubPod() {
   }
 
   const OptionComponent = ({ innerProps, data }) => (
-    <div style={{ height: "100px" }}>
+    <div style={{ margin: "10" }}>
       <div
         {...innerProps}
         style={{
           display: "flex",
           justifyContent: "space-between",
-          margin: "5 5 0 5",
         }}
       >
         <span style={{ color: "#333" }}>
           <b>{data.name}</b> by {data.owner}
         </span>
-        <span>{"⭐ " + formatStars(data.stars)}</span>
+        <span style={{ fontSize: "12px" }}>
+          {"☆ " + formatStars(data.stars)}
+        </span>
       </div>
       <div
         {...innerProps}
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          margin: "0 5 20 5",
           fontSize: "14px",
         }}
       >

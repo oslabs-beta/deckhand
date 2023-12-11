@@ -9,14 +9,9 @@ export default function Home() {
   const dispatch = useDispatch();
 
   const handleClickAddProject = (event) => {
-    // fetch data
-    const data = {
-      id: state.projects.length + 1, // get from SQL once connected
-      createdDate: "Dec 4, 2023",
-      modifiedDate: "Dec 4, 2023",
-    };
-    dispatch(addProject(data));
-    dispatch(setProjectId(data.id));
+    const projectId = Math.floor(Math.random() * 10000); // fetch new project ID from SQL
+    dispatch(addProject(projectId));
+    dispatch(setProjectId(projectId));
   };
 
   const timeAgo = (date) => {
@@ -32,12 +27,17 @@ export default function Home() {
   };
 
   const projectBundle = [];
-  for (const el of [...state.projects].reverse()) {
+  const sortedProjects = [...state.projects].sort((a, b) => {
+    const dateA = new Date(a.modifiedDate);
+    const dateB = new Date(b.modifiedDate);
+    return dateB - dateA;
+  });
+  for (const el of sortedProjects) {
     projectBundle.push(
       <div
-        key={el.id}
+        key={el.projectId}
         className="card"
-        onClick={() => dispatch(setProjectId(el.id))}
+        onClick={() => dispatch(setProjectId(el.projectId))}
       >
         <div className="name">{el.name}</div>
         <div
@@ -56,7 +56,7 @@ export default function Home() {
         <button
           className="delete"
           onClick={(e) => {
-            dispatch(deleteProject(el.id));
+            dispatch(deleteProject(el.projectId));
             e.stopPropagation();
           }}
         >

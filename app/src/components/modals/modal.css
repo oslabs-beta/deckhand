@@ -1,5 +1,4 @@
 .modal {
-  visibility: hidden;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -12,17 +11,12 @@
   justify-content: center;
   display: flex;
   opacity: 0;
-  transition:
-    visibility 0s linear 0.2s,
-    opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal.show {
-  visibility: visible;
   opacity: 1;
-  transition:
-    visibility 0s linear 0s,
-    opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal-content {
@@ -36,11 +30,11 @@
   max-height: 80vh;
   overflow: auto;
   position: relative;
-  transform: scale(0.9);
+  transform: scale(0);
   opacity: 0;
   transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .modal.show .modal-content {
