@@ -44,8 +44,7 @@ filePaths.forEach((filePath) => {
 
 // Using regex, scan the text of each file for environmental variables and push them to envs array.
 fileContents.forEach((fileString) => {
-  // const regex = /([A-Za-z0-9$_]+)[\s=]+process.env./g;
-
+ 
   const regexJs = /process.env.([\w$]+)/g;
   const regexPy = /os.environ.get\(['"](\w+)/g;
   const regexPy2 = /os.getenv\(['"](\w+)/g;
@@ -80,14 +79,7 @@ fileContents.forEach((fileString) => {
 execSync(`cd ${tempsPath} && rm -r ${repoName}`);
 
 console.log(envs);
-// should be [value, awskey, SECRET, MONGOURI, SECRET, VALID]
 
-// Regex parameters:
-// [any character that is NOT a letter, number, underscore, or dollar sign]
-// [then a string of characters that ARE a letter, number, underscore, or dollar sign]
-// [then either a space or an equal sign (any number of these)]
-// [then the full string 'process.env.']
 
 // TODO:
 // integrate into controller
-// include other programming languagls
