@@ -1,19 +1,53 @@
 const fs = require('fs');
+const path = require('path');
 const { exec, execSync } = require('child_process');
 const util = require('util');
 const execProm = util.promisify(exec);
 require('dotenv').config();
 
 // Create a terraform directory for the user
-const initializeUser = (id) => {
-  execSync(`cd server/terraform/userData && mkdir user${id}`);
+const initializeUser = (userId) => {
+  console.log('Creating folder for user');
+  try {
+    execSync(`cd server/terraform/userData && mkdir user${userId}`);
+  } catch (err) {
+    console.log('Error: User directory already exists with that id.');
+  }
+};
+
+const initializeProject = (userId, projectId) => {
+  console.log('Creating folder for project');
+  try {
+    execSync(
+      `cd server/terraform/userData/user${userId} && mkdir project${projectId}`
+    );
+  } catch (err) {
+    console.log(
+      'Error: Project directory already exists with that id for this user.'
+    );
+  }
 };
 
 // Writes variables file
 // Does not run any Terraform scripts. Unnessecary until adding a VPC.
-const connectToProvider = async (provider, region, accessKey, secretKey) => {
+const connectToProvider = async (
+  userId,
+  projectId,
+  provider,
+  region,
+  accessKey,
+  secretKey
+) => {
   console.log('entered connectToProvider');
-  console.log('Params:', provider, region, accessKey, secretKey);
+  console.log(
+    'Params:',
+    userId,
+    projectId,
+    provider,
+    region,
+    accessKey,
+    secretKey
+  );
 
   if (provider === 'aws') {
     const variables = {
@@ -24,7 +58,7 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
 
     // Create a json file with the variables
     await fs.writeFile(
-      'server/terraform/provider.auto.tfvars.json',
+      `server/terraform/userData/user${userId}/project${projectId}/provider.auto.tfvars.json`,
       JSON.stringify(variables),
       (err) => {
         if (err) console.log('ERROR!', err);
@@ -34,15 +68,20 @@ const connectToProvider = async (provider, region, accessKey, secretKey) => {
   }
 
   // copy provider file from template directory into terraform directory
+  const projectPath = path.join(
+    'server/terraform/userData',
+    `user${userId}`,
+    `project${projectId}`
+  );
   console.log('copying provider.tf file');
-  execSync('cp server/templates/provider.tf server/terraform');
+  execSync(`cp server/templates/provider.tf ${projectPath}`);
   console.log('copied file!');
 };
 
 // Returns a promise that resolves to the VPC ID
-const addVPC = async (provider, vpc_name) => {
+const addVPC = async (userId, projectId, provider, vpc_name) => {
   console.log('entered addVPC');
-  console.log('Params:', provider, vpc_name);
+  console.log('Params:', userId, projectId, provider, vpc_name);
 
   const variables = {
     vpc_name,
@@ -50,32 +89,46 @@ const addVPC = async (provider, vpc_name) => {
 
   // write the variables to a tfvars file
   await fs.writeFile(
-    'server/terraform/vpc.auto.tfvars.json',
+    `server/terraform/userData/user${userId}/project${projectId}/vpc.auto.tfvars.json`,
     JSON.stringify(variables),
     () => console.log('Wrote VPC variable file')
   );
 
   // copy VPC file from template directory into terraform directory
+  const projectPath = path.join(
+    'server/terraform/userData',
+    `user${userId}`,
+    `project${projectId}`
+  );
   console.log('copying vpc.tf file');
-  execSync('cp server/templates/vpc.tf server/terraform');
+  execSync(`cp server/templates/vpc.tf ${projectPath}`);
   console.log('copied file!');
 
   // applies the terraform files, provisioning a VPC
   await execProm(
-    'cd server/terraform && terraform init && terraform apply --auto-approve'
+    `cd ${projectPath} && terraform init && terraform apply --auto-approve`
   );
 
   // gets the vpc_id
   const vpcId = JSON.parse(
-    (await execProm('cd server/terraform && terraform output -json vpc_id'))
+    (await execProm(`cd ${projectPath} && terraform output -json vpc_id`))
       .stdout
   );
 
   return vpcId;
 };
 
+const destroyVPC = async (userId, projectId) => {
+  const status = await execProm(
+    `cd server/terraform/userData/user${userId}/project${projectId} && terraform destroy --auto-approve`
+  );
+
+  return status;
+};
+
 // Creates and EKS cluster with nodes
 const addCluster = async (
+  userId,
   clusterName,
   vpcId,
   min,
@@ -129,4 +182,11 @@ const addCluster = async (
   //   });
 };
 
-module.exports = { connectToProvider, addVPC, addCluster, initializeUser };
+module.exports = {
+  connectToProvider,
+  addVPC,
+  destroyVPC,
+  addCluster,
+  initializeUser,
+  initializeProject,
+};

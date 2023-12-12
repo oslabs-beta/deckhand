@@ -11,8 +11,9 @@ variable "vpc_name" {
 }
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
+  // source  = "terraform-aws-modules/vpc/aws" --> This is needed to initialize at first
+  source  = "../../../.terraform/modules/vpc" // This allows us to reference the module files elsewhere so don't need to downlaod for every single user
+  # version = "5.0.0" // only use version on initial download 
 
   name = var.vpc_name
   cidr = "10.0.0.0/16"

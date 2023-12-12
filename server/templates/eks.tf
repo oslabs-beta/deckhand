@@ -26,11 +26,16 @@ variable "vpcId" {
   type = string
 }
 
+variable "private_subnets" {
+  type = list
+}
+
 
 module "eks" {
   // next two lines are a copy and paste from terraform docs. This tells terraform what the module is
-  source  = "terraform-aws-modules/eks/aws"
-  version = "19.20.0"
+  # source  = "terraform-aws-modules/eks/aws"
+  # version = "19.20.0"
+  source = "../../../../.terraform/modules/eks"
 
   cluster_name   = var.clusterName
   cluster_version = "1.28"
@@ -39,7 +44,8 @@ module "eks" {
   cluster_endpoint_public_access  = true
 
   vpc_id                   = var.vpcId 
-  subnet_ids               = module.vpc.private_subnets  // need to find these ids 
+  subnet_ids               = var.private_subnets
+  # subnet_ids               = module.vpc.private_subnets  // need to find these ids 
   # control_plane_subnet_ids = ["10.123.5.0/24", "10.123.6.0/24"] // these are the intra subnets
 
   enable_irsa = true
@@ -82,8 +88,9 @@ data "aws_iam_policy" "ebs_csi_policy" {
 }
 
 module "irsa-ebs-csi" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "4.7.0"
+  # source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  # version = "4.7.0"
+  source = "../../../../.terraform/modules/irsa-ebs-csi"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"

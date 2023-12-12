@@ -6,9 +6,13 @@ dotenv.config();
 const access_key = process.env.AWS_ACCESS_KEY;
 const secret_key = process.env.AWS_SECRET_KEY;
 
-// terraform.connectToProvider('aws', 'us-east-1', access_key, secret_key);
+// terraform.initializeUser(1);
 
-// const vpc_idPromise = terraform.addVPC('aws', 'dec11_2');
+// terraform.initializeProject(1, 3);
+
+// terraform.connectToProvider(1, 3, 'aws', 'us-east-1', access_key, secret_key);
+
+// const vpc_idPromise = terraform.addVPC(1, 3, 'aws', 'dec11_5');
 // let vpcId;
 
 // vpc_idPromise
@@ -19,4 +23,5 @@ const secret_key = process.env.AWS_SECRET_KEY;
 //   })
 //   .catch((err) => console.log('CATCH:', err));
 
-terraform.initializeUser(3);
+const status = terraform.destroyVPC(1, 3);
+status.then((result) => console.log('RESOLVED:', result));
