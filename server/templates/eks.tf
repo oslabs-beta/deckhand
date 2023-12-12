@@ -87,10 +87,16 @@ data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
+// TODO: This module isn't working. I don't know if the source is wrong or if the way the varuables are being referrenced are wrong witht he file structure. 
+// Error: "argument named "role_name" is not expected here. "
+// "argument named "provider_url" is not expected here."
+// "argument named "provider_url" is not expected here."
+// "argument named "oidc_fully_qualified_subjects" is not expected here."
 module "irsa-ebs-csi" {
   # source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   # version = "4.7.0"
   source = "../../../../.terraform/modules/irsa-ebs-csi"
+  # source = "../../../../.terraform/modules/iam-assumable-role-with-oidc"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"

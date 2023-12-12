@@ -129,6 +129,8 @@ const destroyVPC = async (userId, projectId) => {
 // Creates and EKS cluster with nodes
 const addCluster = async (
   userId,
+  projectId,
+  clusterId,
   clusterName,
   vpcId,
   min,
@@ -137,19 +139,52 @@ const addCluster = async (
   instanceType
 ) => {
   console.log('entered addCluster');
-  console.log('Params:', clusterName, vpcId, min, max, desired, instanceType);
+  console.log(
+    'Params:',
+    userId,
+    projectId,
+    clusterId,
+    clusterName,
+    vpcId,
+    min,
+    max,
+    desired,
+    instanceType
+  );
 
   // copy eks file from template directory into terraform directory
+  const projectPath = path.join(
+    'server/terraform/userData',
+    `user${userId}`,
+    `project${projectId}`
+  );
+
+  console.log('Creating folder for cluster');
+
+  execSync(`cd ${projectPath} && mkdir cluster${clusterId}`);
+
   console.log('copying eks.tf file');
-  execSync('cp server/templates/eks.tf server/terraform');
+  execSync(`cp server/templates/eks.tf ${projectPath}/cluster${clusterId}`);
   console.log('copied file!');
 
   // generate a random name from the clusterName and a number
   const nodeGroupName = clusterName + Math.floor(Math.random() * 100000);
 
+  // Get private_subnets from vpc outputs
+  const private_subnets = JSON.parse(
+    (
+      await execProm(
+        `cd ${projectPath} && terraform output -json private_subnets`
+      )
+    ).stdout
+  );
+
+  console.log('SUBNET IDS:', private_subnets);
+
   const variables = {
     clusterName,
     vpcId,
+    private_subnets,
     min,
     max,
     desired,
@@ -159,14 +194,14 @@ const addCluster = async (
 
   // write the variables to a tfvars file
   await fs.writeFile(
-    'server/terraform/eks.auto.tfvars.json',
+    `${projectPath}/cluster${clusterId}/eks.auto.tfvars.json`,
     JSON.stringify(variables),
     () => console.log('Wrote eks variable file')
   );
 
   // applies the terraform files, provisioning a cluster
   await execProm(
-    'cd server/terraform && terraform init && terraform apply --auto-approve'
+    `cd ${projectPath}/cluster${clusterId} && terraform init && terraform apply --auto-approve`
   );
 
   // this will eventually be written to get whatever necessary ids we need from the cluster
@@ -182,6 +217,8 @@ const addCluster = async (
   //   });
 };
 
+const destroyCluster = (userId, projectId, clusterId) => {};
+
 module.exports = {
   connectToProvider,
   addVPC,
@@ -189,4 +226,5 @@ module.exports = {
   addCluster,
   initializeUser,
   initializeProject,
+  destroyCluster,
 };
