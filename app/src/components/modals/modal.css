@@ -108,3 +108,17 @@
   background-color: rgb(0, 128, 255);
   color: white;
 }
+
+/* Pod Source Modal */
+
+.pod-source {
+  padding: 20px 10px;
+  color: "#aaa";
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+.pod-source:hover {
+  background-color: rgb(228, 248, 255);
+  border: 1px solid #ccc;
+}
