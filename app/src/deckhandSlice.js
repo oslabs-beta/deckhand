@@ -3,16 +3,17 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    // user: {},
-    user: {
-      id: 1,
-      name: 'John',
-      email: 'john@example.com',
-      avatarUrl: 'http://example.com',
-      githubId: null,
-      awsAccessKey: null,
-      awsSecretKey: null,
-    },
+    user: {},
+    // user: {
+    //   id: 1,
+    //   name: 'John',
+    //   email: 'john@example.com',
+    //   avatarUrl: 'http://example.com',
+    //   githubId: null,
+    //   awsAccessKey: null,
+    //   awsSecretKey: null,
+    // },
+
     projectId: null, // selected project id
     layout: 'cards', // cards or canvas
     modal: {}, // {name, data}
