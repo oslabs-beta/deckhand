@@ -14,30 +14,99 @@ export default function () {
 
   const [show, setShow] = useState(false);
   const [type, setType] = useState("docker-hub");
+  const [dockerHubImages, setDockerHubImages] = useState([]);
   const [userRepos, setUserRepos] = useState([]);
   const [publicRepos, setPublicRepos] = useState([]);
 
   useEffect(() => {
     setShow(true);
-    getUserRepos();
   }, []);
 
+  useEffect(() => {
+    if (type === "my-github") getUserRepos();
+  }, [type]);
+
+  const getDockerHubImages = async (input) => {
+    if (!input) return setDockerHubImages([]);
+    setDockerHubImages(<span style={{ color: "#ccc" }}>Loading...</span>);
+    await fetch(`/api/dockerHubImages/${input}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const arr = data.map((el) => (
+          <div key={el.name} style={{ margin: "20 5", color: "#aaa" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <span style={{ color: "#333" }}>
+                <b>{el.name}</b>
+              </span>
+              <span style={{ fontSize: "12px" }}>
+                {"☆ " + formatStars(el.stars)}
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: "14px",
+              }}
+            >
+              <span>{el.description}</span>
+            </div>
+          </div>
+        ));
+        setDockerHubImages(arr);
+      });
+  };
+
   const getUserRepos = async () => {
+    setUserRepos(
+      <div style={{ color: "#ccc", marginTop: "10px" }}>Loading...</div>
+    );
     await fetch("/api/github/userRepos")
       .then((res) => res.json())
       .then((data) => {
         const arr = data.map((el) => (
-          <option key={el.full_name} value={el.full_name}>
-            {el.name + " by " + el.owner.login}
-          </option>
+          <div key={el.name} style={{ margin: "20 5", color: "#aaa" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <span style={{ color: "#333" }}>
+                <b>{el.name}</b> by {el.owner.login}
+              </span>
+              <span style={{ fontSize: "12px" }}>
+                {"☆ " + formatStars(el.stargazers_count)}
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: "14px",
+              }}
+            >
+              <span>{el.description}</span>
+            </div>
+          </div>
         ));
-        setUserRepos(arr);
+        if (arr.length) setUserRepos(arr);
+        else
+          setUserRepos(
+            <div style={{ color: "#ccc", marginTop: "10px" }}>
+              No repositories found.
+            </div>
+          );
       });
   };
 
   const getPublicRepos = async (input) => {
+    if (!input) return setPublicRepos([]);
     setPublicRepos(<span style={{ color: "#ccc" }}>Loading...</span>);
-    return fetch("/api/github/publicRepos", {
+    await fetch("/api/github/publicRepos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,14 +153,37 @@ export default function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    dispatch(
-      configurePod({
-        podId: pod.podId,
-        config: true,
-        type: type,
-        githubRepo: formData.get("userRepo"),
-      })
-    );
+
+    if (type === "docker-hub") {
+      dispatch(
+        configurePod({
+          podId: pod.podId,
+          type: "docker-hub",
+          imageName: selection,
+        })
+      );
+    }
+
+    if (type === "my-github") {
+      dispatch(
+        configurePod({
+          podId: pod.podId,
+          type: "github",
+          githubRepo: formData.get("userRepo"),
+        })
+      );
+    }
+
+    if (type === "public-github") {
+      dispatch(
+        configurePod({
+          podId: pod.podId,
+          type: "github",
+          githubRepo: selection,
+        })
+      );
+    }
+
     closeModal();
   };
 
@@ -104,38 +196,79 @@ export default function () {
         <h2>Select Source</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            <select name="userRepo" onChange={(e) => setType(e.target.value)}>
+            <select name="source" onChange={(e) => setType(e.target.value)}>
               <option value="docker-hub">Docker Hub</option>
-              <option value="github">Github</option>
+              <option value="my-github">My Github</option>
+              <option value="public-github">Public Github</option>
             </select>
           </label>
-          {type === "github" && (
+          {type === "docker-hub" && (
             <>
               <label>
-                My Repos:
-                <select name="userRepo">{userRepos}</select>
-              </label>
-              <label>
-                Public Repos:
+                Search Docker Hub:
                 <input
                   type="text"
-                  name="search"
+                  name="imageName"
+                  onChange={(e) => getDockerHubImages(e.target.value)}
+                />
+              </label>
+              <div
+                style={{
+                  maxHeight: "300px",
+                  overflow: "auto",
+                  // maskImage:
+                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
+                }}
+              >
+                {dockerHubImages}
+              </div>
+            </>
+          )}
+          {type === "my-github" && (
+            <>
+              <label>Select Repository:</label>
+              <div
+                style={{
+                  maxHeight: "300px",
+                  overflow: "auto",
+                  // maskImage:
+                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
+                }}
+              >
+                {userRepos}
+              </div>
+            </>
+          )}
+          {type === "public-github" && (
+            <>
+              <label>
+                Search Github:
+                <input
+                  type="text"
+                  name="githubRepo"
                   onChange={(e) => getPublicRepos(e.target.value)}
                 />
               </label>
-              <div style={{ maxHeight: "200px", overflow: "scroll" }}>
+              <div
+                style={{
+                  maxHeight: "300px",
+                  overflow: "auto",
+                  // maskImage:
+                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
+                }}
+              >
                 {publicRepos}
               </div>
             </>
           )}
-          <div className="buttons">
+          {/* <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel
             </button>
             <button type="submit" className="blue">
               Submit
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
