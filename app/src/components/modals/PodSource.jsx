@@ -33,7 +33,11 @@ export default function () {
       .then((res) => res.json())
       .then((data) => {
         const arr = data.map((el) => (
-          <div key={el.name} style={{ margin: "20 5", color: "#aaa" }}>
+          <div
+            key={el.name}
+            className="pod-source"
+            onClick={() => handleClickDockerHub(el.name)}
+          >
             <div
               style={{
                 display: "flex",
@@ -69,7 +73,11 @@ export default function () {
       .then((res) => res.json())
       .then((data) => {
         const arr = data.map((el) => (
-          <div key={el.name} style={{ margin: "20 5", color: "#aaa" }}>
+          <div
+            key={el.name}
+            className="pod-source"
+            onClick={() => handleClickGithub(el.full_name)}
+          >
             <div
               style={{
                 display: "flex",
@@ -116,7 +124,11 @@ export default function () {
       .then((res) => res.json())
       .then((data) => {
         const arr = data.items.map((el) => (
-          <div key={el.name} style={{ margin: "20 5", color: "#aaa" }}>
+          <div
+            key={el.name}
+            className="pod-source"
+            onClick={() => handleClickGithub(el.full_name)}
+          >
             <div
               style={{
                 display: "flex",
@@ -150,40 +162,25 @@ export default function () {
     else return (starCount / 10 ** 9).toFixed(1) + "M";
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+  const handleClickDockerHub = (image) => {
+    dispatch(
+      configurePod({
+        podId: pod.podId,
+        type: "docker-hub",
+        imageName: image,
+      })
+    );
+    closeModal();
+  };
 
-    if (type === "docker-hub") {
-      dispatch(
-        configurePod({
-          podId: pod.podId,
-          type: "docker-hub",
-          imageName: selection,
-        })
-      );
-    }
-
-    if (type === "my-github") {
-      dispatch(
-        configurePod({
-          podId: pod.podId,
-          type: "github",
-          githubRepo: formData.get("userRepo"),
-        })
-      );
-    }
-
-    if (type === "public-github") {
-      dispatch(
-        configurePod({
-          podId: pod.podId,
-          type: "github",
-          githubRepo: selection,
-        })
-      );
-    }
-
+  const handleClickGithub = (repo) => {
+    dispatch(
+      configurePod({
+        podId: pod.podId,
+        type: "github",
+        githubRepo: repo,
+      })
+    );
     closeModal();
   };
 
@@ -194,7 +191,7 @@ export default function () {
           &times;
         </span>
         <h2>Select Source</h2>
-        <form onSubmit={handleSubmit}>
+        <form>
           <label>
             <select name="source" onChange={(e) => setType(e.target.value)}>
               <option value="docker-hub">Docker Hub</option>
