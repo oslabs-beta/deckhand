@@ -51,7 +51,7 @@ export default function () {
             </select>
           </label>
           <label>
-            Provider:
+            Region:
             <select name="region">
               <option defaultValue="US-East">US-East</option>
             </select>
