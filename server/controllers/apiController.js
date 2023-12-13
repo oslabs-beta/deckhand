@@ -6,7 +6,6 @@ apiController.getProjects = (req, res, next) => {
 
 apiController.getDockerHubImages = async (req, res, next) => {
   const image = req.params[0];
-  console.log(image)
   await fetch(`https://hub.docker.com/v2/search/repositories/?query=${image}`)
     .then((res) => res.json())
     .then((data) => {
