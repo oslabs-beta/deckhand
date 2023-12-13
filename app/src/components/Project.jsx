@@ -31,8 +31,82 @@ export default function Project() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.projectId === state.projectId);
+  const clusters = state.clusters?.filter(
+    (cluster) => cluster.projectId === project.projectId
+  );
 
-  const handleClickBuild = async (cluster, pod) => {
+  useEffect(() => {
+    const fetchPodData = async () => {
+      for (let cluster of clusters) {
+        const pods = state.pods?.filter(
+          (pod) => pod.clusterId === cluster.clusterId
+        );
+        for (let pod of pods) {
+          if (pod.type === "docker-hub" && pod.imageName) {
+            await getImageTags(pod.podId, pod.imageName);
+          }
+          if (pod.type === "github" && pod.githubRepo) {
+            await getBranches(pod.podId, pod.githubRepo);
+          }
+        }
+      }
+    };
+    fetchPodData().catch(console.error);
+  }, []);
+
+  const getBranches = async (podId, repo) => {
+    await fetch("/api/github/branches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ repo }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: podId,
+            githubBranches: data,
+          })
+        );
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const setImageTag = (podId, imageTag) => {
+    dispatch(
+      configurePod({
+        podId: podId,
+        imageTag: imageTag,
+      })
+    );
+  };
+
+  const setBranch = (podId, branch) => {
+    dispatch(
+      configurePod({
+        podId: podId,
+        githubBranch: branch,
+      })
+    );
+  };
+
+  const getImageTags = async (podId, image) => {
+    await fetch(`/api/dockerHubImageTags/${image}`)
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: podId,
+            imageTags: data,
+          })
+        );
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleClickBuild = async (pod) => {
     await fetch("/api/github/build", {
       method: "POST",
       headers: {
@@ -56,9 +130,6 @@ export default function Project() {
   };
 
   const clusterBundle = [];
-  const clusters = state.clusters?.filter(
-    (cluster) => cluster.projectId === project.projectId
-  );
   for (const cluster of clusters) {
     // bundle pods
     const podBundle = [];
@@ -78,6 +149,34 @@ export default function Project() {
       podBundle.push(
         <div key={pod.podId} className="card">
           <div className="name">{`${pod.name} (${pod.type})`}</div>
+          {pod.type === "docker-hub" && pod.imageName && (
+            <select
+              name="tag"
+              onChange={(e) => setImageTag(pod.podId, e.target.value)}
+            >
+              {pod.imageTags
+                ? pod.imageTags.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))
+                : ""}
+            </select>
+          )}
+          {pod.type === "github" && pod.githubRepo && (
+            <select
+              name="branch"
+              onChange={(e) => setBranch(pod.podId, e.target.value)}
+            >
+              {pod.githubBranches
+                ? pod.githubBranches.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))
+                : ""}
+            </select>
+          )}
           {!pod.type ? (
             <>
               <button
@@ -190,7 +289,7 @@ export default function Project() {
               {pod.type === "github" ? (
                 <button
                   onClick={() => {
-                    handleClickBuild(cluster, pod);
+                    handleClickBuild(pod);
                   }}
                 >
                   <b>Build</b>
