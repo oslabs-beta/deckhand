@@ -22,11 +22,11 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-      CLIENT_ID +
-      '&client_secret=' +
-      CLIENT_SECRET +
-      '&code=' +
-      auth_code,
+    CLIENT_ID +
+    '&client_secret=' +
+    CLIENT_SECRET +
+    '&code=' +
+    auth_code,
     {
       method: 'POST',
       headers: {
@@ -92,8 +92,8 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-      input +
-      '+in:name&sort=stars&order=desc',
+    input +
+    '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -121,7 +121,7 @@ githubController.branches = async (req, res, next) => {
   })
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data;
+      res.locals.data = data.map((el) => el.name)
       return next();
     })
     .catch((err) => console.log(err));
