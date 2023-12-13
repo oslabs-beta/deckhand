@@ -74,7 +74,7 @@ export default function () {
                 <tr key={index}>
                   <td>
                     <input
-                      type="text"
+                      type={input.secret ? "password" : "text"}
                       name="key"
                       value={input.key}
                       onChange={(event) => handleInputChange(index, event)}
