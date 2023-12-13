@@ -162,25 +162,61 @@ export default function () {
     else return (starCount / 10 ** 9).toFixed(1) + "M";
   }
 
-  const handleClickDockerHub = (image) => {
+  const handleClickDockerHub = async (image) => {
     dispatch(
       configurePod({
         podId: pod.podId,
+        name: image,
         type: "docker-hub",
         imageName: image,
       })
     );
+
+    await fetch(`/api/dockerHubImageTags/${image}`)
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: pod.podId,
+            imageTag: data[0],
+            imageTags: data,
+          })
+        );
+      })
+      .catch((error) => console.log(error));
+
     closeModal();
   };
 
-  const handleClickGithub = (repo) => {
+  const handleClickGithub = async (repo) => {
     dispatch(
       configurePod({
         podId: pod.podId,
+        name: repo.split("/")[1],
         type: "github",
         githubRepo: repo,
       })
     );
+
+    await fetch("/api/github/branches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ repo }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: pod.podId,
+            githubBranch: data[0],
+            githubBranches: data,
+          })
+        );
+      })
+      .catch((err) => console.log(err));
+
     closeModal();
   };
 
