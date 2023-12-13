@@ -74,7 +74,7 @@ export default function () {
       .then((data) => {
         const arr = data.map((el) => (
           <div
-            key={el.name}
+            key={el.name + "-" + el.owner.login}
             className="pod-source"
             onClick={() => handleClickGithub(el.full_name)}
           >
@@ -125,7 +125,7 @@ export default function () {
       .then((data) => {
         const arr = data.items.map((el) => (
           <div
-            key={el.name}
+            key={el.name + "-" + el.owner.login}
             className="pod-source"
             onClick={() => handleClickGithub(el.full_name)}
           >
