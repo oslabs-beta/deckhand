@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleLayout, showModal } from "../../deckhandSlice";
 import LinkedCloudProviders from "../modals/LinkedCloudProviders";
 import ConfigureProject from "../modals/ConfigureProject";
 import ConfigureCluster from "../modals/ConfigureCluster";
@@ -12,9 +9,6 @@ import ConfigurePodVariables from "../modals/ConfigurePodVariables";
 import ConfigurePodYaml from "../modals/ConfigurePodYaml";
 
 export default function Modals() {
-  const state = useSelector((state) => state.deckhand);
-  const dispatch = useDispatch();
-
   return (
     <>
       {state.modal.name === "LinkedCloudProviders" && <LinkedCloudProviders />}
