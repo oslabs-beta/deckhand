@@ -118,6 +118,7 @@ const addVPC = async (userId, projectId, provider, vpc_name) => {
   return vpcId;
 };
 
+// Tears down the VIP
 const destroyVPC = async (userId, projectId) => {
   const status = await execProm(
     `cd server/terraform/userData/user${userId}/project${projectId} && terraform destroy --auto-approve`
@@ -217,7 +218,15 @@ const addCluster = async (
   //   });
 };
 
-const destroyCluster = (userId, projectId, clusterId) => {};
+// Tears down the cluster
+// Will this also destroy all the nodes inside or do I need to do that separately?
+const destroyCluster = async (userId, projectId, clusterId) => {
+  const status = await execProm(
+    `cd server/terraform/userData/user${userId}/project${projectId}/cluster${clusterId} && terraform destroy --auto-approve`
+  );
+
+  return status;
+};
 
 module.exports = {
   connectToProvider,
