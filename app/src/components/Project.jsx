@@ -12,20 +12,11 @@ import {
   addVolume,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
-import FloatNav from "./floats/FloatNav";
+import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
-import FloatDev from "./floats/FloatDev";
-import LinkedCloudProviders from "./modals/LinkedCloudProviders";
-import ConfigureProject from "./modals/ConfigureProject";
-import ConfigureCluster from "./modals/ConfigureCluster";
-import PodSource from "./modals/PodSource";
-import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
-import ConfigurePodIngress from "./modals/ConfigurePodIngress";
-import ConfigurePodVolume from "./modals/ConfigurePodVolume";
-import ConfigurePodVariables from "./modals/ConfigurePodVariables";
-import ConfigurePodYaml from "./modals/ConfigurePodYaml";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
+import { mdiCogOutline } from "@mdi/js";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -329,32 +320,19 @@ export default function Project() {
     clusterBundle.push(
       <div key={cluster.clusterId}>
         <h2>
-          {cluster.name}{" "}
-          <button
+          {cluster.name}
+          <Icon
+            path={mdiCogOutline}
+            size={0.75}
+            className="icon"
             onClick={() => {
-              dispatch(showModal({ name: "LinkedCloudProviders" }));
+              dispatch(showModal({ name: "ConfigureCluster", data: project }));
             }}
-          >
-            Link AWS Account
-          </button>{" "}
-          <button
-            onClick={() => {
-              dispatch(showModal({ name: "ConfigureProject", data: project }));
-            }}
-          >
-            Configure Project
-          </button>{" "}
-          <button
-            onClick={() => {
-              dispatch(showModal({ name: "ConfigureCluster", data: cluster }));
-            }}
-          >
-            Configure Cluster
-          </button>{" "}
+          />
           <Icon
             path={mdiTrashCanOutline}
             size={0.75}
-            className="mdiTrashCanOutline"
+            className="icon"
             onClick={() => dispatch(deleteCluster(cluster.clusterId))}
           />
         </h2>
@@ -382,24 +360,8 @@ export default function Project() {
   return (
     <div className="container">
       <FloatLogo />
-      <FloatNav />
+      <FloatProject />
       <FloatAccount />
-      <FloatDev />
-      {state.modal.name === "LinkedCloudProviders" && <LinkedCloudProviders />}
-      {state.modal.name === "ConfigureProject" && <ConfigureProject />}
-      {state.modal.name === "ConfigureCluster" && <ConfigureCluster />}
-      {state.modal.name === "PodSource" && <PodSource />}
-      {state.modal.name === "ConfigureGithubPod" && <ConfigureGithubPod />}
-      {state.modal.name === "ConfigureDockerHubPod" && (
-        <ConfigureDockerHubPod />
-      )}
-      {state.modal.name === "ConfigurePodReplicas" && <ConfigurePodReplicas />}
-      {state.modal.name === "ConfigurePodIngress" && <ConfigurePodIngress />}
-      {state.modal.name === "ConfigurePodVolume" && <ConfigurePodVolume />}
-      {state.modal.name === "ConfigurePodVariables" && (
-        <ConfigurePodVariables />
-      )}
-      {state.modal.name === "ConfigurePodYaml" && <ConfigurePodYaml />}
       <div className="content-container">
         <div className="content">
           {clusterBundle}
