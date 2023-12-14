@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { /* reducers */ } "../deckhandSlice";
+import { showModal } from "../../deckhandSlice";
 import Icon from "@mdi/react";
-import { mdiChevronDown } from "@mdi/js";
+import { mdiCogOutline } from "@mdi/js";
 
 export default function FloatNav() {
   const state = useSelector((state) => state.deckhand);
@@ -13,7 +13,15 @@ export default function FloatNav() {
 
   return (
     <div className="active-project">
-      {project.name} <Icon path={mdiChevronDown} size={1} />
+      {project.name}{" "}
+      <Icon
+        path={mdiCogOutline}
+        size={0.75}
+        className="icon"
+        onClick={() => {
+          dispatch(showModal({ name: "ConfigureProject", data: project }));
+        }}
+      />
     </div>
   );
 }
