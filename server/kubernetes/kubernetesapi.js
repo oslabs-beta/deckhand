@@ -32,3 +32,30 @@ const remove = (kind, name) => {
 };
 
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
+
+// Testing
+connectKubectltoEKS('us-east-1', 'dec14_1');
+deploy([
+  `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dennis
+  labels:
+    app: dennis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dennis
+  template:
+    metadata:
+      labels:
+        app: dennis
+    spec:
+      containers:
+        - name: dennis
+          image: nginx
+          ports:
+            - containerPort: 3000
+`,
+]);

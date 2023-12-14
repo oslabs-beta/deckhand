@@ -30,10 +30,22 @@ deploymentController.addProject = (req, res, next) => {
 };
 
 deploymentController.deleteProject = (req, res, next) => {
-  const { externalId } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  // add terraform function: destroy VPC
-  next();
+  // const { externalId } = req.body;
+  // const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { userId, projectId } = req.body.ids;
+  terraform
+    .destroyVPC(userId, projectId)
+    .then((output) => {
+      console.log(output);
+      return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.deleteProject:' + err,
+        message: { err: 'An error occured trying to delete a VPC' },
+      };
+      return next(errObj);
+    });
 };
 
 deploymentController.addCluster = (req, res, next) => {
@@ -70,10 +82,11 @@ deploymentController.addCluster = (req, res, next) => {
 };
 
 deploymentController.deleteCluster = (req, res, next) => {
-  const { provider } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { vpcId, clusterId } = req.body.ids;
-  // add terraform function: destroy cluster
+  // const { provider } = req.body;
+  // const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { userId, projectId, clusterId } = req.body.ids;
+
+  terraform.destroyCluster(userId, projectId, clusterId);
   return next();
 };
 
