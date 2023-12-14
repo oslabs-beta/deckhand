@@ -51,9 +51,10 @@ module "eks" {
   enable_irsa = true
 
   cluster_addons = {
-    coredns = {
-      most_recent = true
-    }
+    ## Try without since degraded
+    # coredns = {
+    #   most_recent = true
+    # }
     kube-proxy = {
       most_recent = true
     }
@@ -81,117 +82,3 @@ module "eks" {
   }
 
 }
-
-
-data "aws_iam_policy" "ebs_csi_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
-
-// TODO: This module isn't working. I don't know if the source is wrong or if the way the variables are being referrenced are wrong with the file structure. 
-// Error: "argument named "role_name" is not expected here. "
-// "argument named "provider_url" is not expected here."
-// "argument named "provider_url" is not expected here."
-// "argument named "oidc_fully_qualified_subjects" is not expected here."
-module "irsa-ebs-csi" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "4.7.0"
-  # source = "../../../../.terraform/modules/irsa-ebs-csi"
-  # source = "../../../../.terraform/modules/iam-assumable-role-with-oidc"
-
-  create_role                   = true
-  role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
-  provider_url                  = module.eks.oidc_provider
-  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-}
-
-resource "aws_eks_addon" "ebs-csi" {
-  cluster_name             = module.eks.cluster_name
-  addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.20.0-eksbuild.1"
-  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
-  tags = {
-    "eks_addon" = "ebs-csi"
-    "terraform" = "true"
-  }
-}
-
-
-# module "allow_eks_access_iam_policy" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
-#   version = "5.3.1"
-
-#   name          = "allow-eks-access"
-#   create_policy = true
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Action = [
-#           "eks:DescribeCluster",
-#         ]
-#         Effect   = "Allow"
-#         Resource = "*"
-#       },
-#     ]
-#   })
-# }
-
-# module "eks_admins_iam_role" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
-#   version = "5.3.1"
-
-#   role_name         = "eks-admin"
-#   create_role       = true
-#   role_requires_mfa = false
-
-#   custom_role_policy_arns = [module.allow_eks_access_iam_policy.arn]
-
-#   trusted_role_arns = [
-#     "arn:aws:iam::${module.vpc.vpc_owner_id}:root"
-#   ]
-# }
-
-# module "user1_iam_user" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-user"
-#   version = "5.3.1"
-
-#   name                          = "user1"
-#   create_iam_access_key         = false
-#   create_iam_user_login_profile = false
-
-#   force_destroy = true
-# }
-
-# module "allow_assume_eks_admins_iam_policy" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
-#   version = "5.3.1"
-
-#   name          = "allow-assume-eks-admin-iam-role"
-#   create_policy = true
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Action = [
-#           "sts:AssumeRole",
-#         ]
-#         Effect   = "Allow"
-#         Resource = module.eks_admins_iam_role.iam_role_arn
-#       },
-#     ]
-#   })
-# }
-
-# module "eks_admins_iam_group" {
-#   source  = "terraform-aws-modules/iam/aws//modules/iam-group-with-policies"
-#   version = "5.3.1"
-
-#   name                              = "eks-admin"
-#   attach_iam_self_management_policy = false
-#   create_group                      = true
-#   group_users                       = [module.user1_iam_user.iam_user_name]
-#   custom_group_policy_arns          = [module.allow_assume_eks_admins_iam_policy.arn]
-# }

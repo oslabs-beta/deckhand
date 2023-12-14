@@ -33,6 +33,9 @@ deploymentController.deleteProject = (req, res, next) => {
   // const { externalId } = req.body;
   // const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { userId, projectId } = req.body.ids;
+
+  //TODO: Need to make sure no clusters are active 
+  
   terraform
     .destroyVPC(userId, projectId)
     .then((output) => {

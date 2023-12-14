@@ -201,9 +201,11 @@ const addCluster = async (
   );
 
   // applies the terraform files, provisioning a cluster
-  await execProm(
+  const output = await execProm(
     `cd ${projectPath}/cluster${clusterId} && terraform init && terraform apply --auto-approve`
   );
+
+  return output;
 
   // this will eventually be written to get whatever necessary ids we need from the cluster
   //   const output = JSON.parse(
