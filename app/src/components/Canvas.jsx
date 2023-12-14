@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ReactFlow, {
-  addEdge,
-  Background,
-  useNodesState,
-  useEdgesState,
-  MarkerType,
-} from "reactflow";
-import "reactflow/dist/style.css";
 import {
   showModal,
   addCluster,
@@ -20,27 +12,93 @@ import {
   addVolume,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
-import FloatNav from "./floats/FloatNav";
+import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
-import FloatDev from "./floats/FloatDev";
-import LinkedCloudProviders from "./modals/LinkedCloudProviders";
-import ConfigureProject from "./modals/ConfigureProject";
-import ConfigureCluster from "./modals/ConfigureCluster";
-import PodSource from "./modals/PodSource";
-import ConfigurePodReplicas from "./modals/ConfigurePodReplicas";
-import ConfigurePodIngress from "./modals/ConfigurePodIngress";
-import ConfigurePodVolume from "./modals/ConfigurePodVolume";
-import ConfigurePodVariables from "./modals/ConfigurePodVariables";
-import ConfigurePodYaml from "./modals/ConfigurePodYaml";
+import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
+import { mdiCogOutline } from "@mdi/js";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find((p) => p.projectId === state.projectId);
+  const clusters = state.clusters?.filter(
+    (cluster) => cluster.projectId === project.projectId
+  );
 
-  const handleClickBuild = async (cluster, pod) => {
+  useEffect(() => {
+    const fetchPodData = async () => {
+      for (let cluster of clusters) {
+        const pods = state.pods?.filter(
+          (pod) => pod.clusterId === cluster.clusterId
+        );
+        for (let pod of pods) {
+          if (pod.type === "docker-hub" && pod.imageName) {
+            await getImageTags(pod.podId, pod.imageName);
+          }
+          if (pod.type === "github" && pod.githubRepo) {
+            await getBranches(pod.podId, pod.githubRepo);
+          }
+        }
+      }
+    };
+    fetchPodData().catch(console.error);
+  }, []);
+
+  const getBranches = async (podId, repo) => {
+    await fetch("/api/github/branches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ repo }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: podId,
+            githubBranches: data,
+          })
+        );
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const setImageTag = (podId, imageTag) => {
+    dispatch(
+      configurePod({
+        podId: podId,
+        imageTag: imageTag,
+      })
+    );
+  };
+
+  const setBranch = (podId, branch) => {
+    dispatch(
+      configurePod({
+        podId: podId,
+        githubBranch: branch,
+      })
+    );
+  };
+
+  const getImageTags = async (podId, image) => {
+    await fetch(`/api/dockerHubImageTags/${image}`)
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(
+          configurePod({
+            podId: podId,
+            imageTags: data,
+          })
+        );
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleClickBuild = async (pod) => {
     await fetch("/api/github/build", {
       method: "POST",
       headers: {
@@ -64,9 +122,6 @@ export default function Project() {
   };
 
   const clusterBundle = [];
-  const clusters = state.clusters?.filter(
-    (cluster) => cluster.projectId === project.projectId
-  );
   for (const cluster of clusters) {
     // bundle pods
     const podBundle = [];
@@ -86,6 +141,34 @@ export default function Project() {
       podBundle.push(
         <div key={pod.podId} className="card">
           <div className="name">{`${pod.name} (${pod.type})`}</div>
+          {pod.type === "docker-hub" && pod.imageName && (
+            <select
+              name="tag"
+              onChange={(e) => setImageTag(pod.podId, e.target.value)}
+            >
+              {pod.imageTags
+                ? pod.imageTags.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))
+                : ""}
+            </select>
+          )}
+          {pod.type === "github" && pod.githubRepo && (
+            <select
+              name="branch"
+              onChange={(e) => setBranch(pod.podId, e.target.value)}
+            >
+              {pod.githubBranches
+                ? pod.githubBranches.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))
+                : ""}
+            </select>
+          )}
           {!pod.type ? (
             <>
               <button
@@ -198,7 +281,7 @@ export default function Project() {
               {pod.type === "github" ? (
                 <button
                   onClick={() => {
-                    handleClickBuild(cluster, pod);
+                    handleClickBuild(pod);
                   }}
                 >
                   <b>Build</b>
@@ -238,32 +321,19 @@ export default function Project() {
     clusterBundle.push(
       <div key={cluster.clusterId}>
         <h2>
-          {cluster.name}{" "}
-          <button
+          {cluster.name}
+          <Icon
+            path={mdiCogOutline}
+            size={0.75}
+            className="icon"
             onClick={() => {
-              dispatch(showModal({ name: "LinkedCloudProviders" }));
+              dispatch(showModal({ name: "ConfigureCluster", data: project }));
             }}
-          >
-            Link AWS Account
-          </button>{" "}
-          <button
-            onClick={() => {
-              dispatch(showModal({ name: "ConfigureProject", data: project }));
-            }}
-          >
-            Configure Project
-          </button>{" "}
-          <button
-            onClick={() => {
-              dispatch(showModal({ name: "ConfigureCluster", data: cluster }));
-            }}
-          >
-            Configure Cluster
-          </button>{" "}
+          />
           <Icon
             path={mdiTrashCanOutline}
             size={0.75}
-            className="mdiTrashCanOutline"
+            className="icon"
             onClick={() => dispatch(deleteCluster(cluster.clusterId))}
           />
         </h2>
@@ -291,24 +361,9 @@ export default function Project() {
   return (
     <div className="container">
       <FloatLogo />
-      <FloatNav />
+      <FloatProject />
       <FloatAccount />
-      <FloatDev />
-      {state.modal.name === "LinkedCloudProviders" && <LinkedCloudProviders />}
-      {state.modal.name === "ConfigureProject" && <ConfigureProject />}
-      {state.modal.name === "ConfigureCluster" && <ConfigureCluster />}
-      {state.modal.name === "PodSource" && <PodSource />}
-      {state.modal.name === "ConfigureGithubPod" && <ConfigureGithubPod />}
-      {state.modal.name === "ConfigureDockerHubPod" && (
-        <ConfigureDockerHubPod />
-      )}
-      {state.modal.name === "ConfigurePodReplicas" && <ConfigurePodReplicas />}
-      {state.modal.name === "ConfigurePodIngress" && <ConfigurePodIngress />}
-      {state.modal.name === "ConfigurePodVolume" && <ConfigurePodVolume />}
-      {state.modal.name === "ConfigurePodVariables" && (
-        <ConfigurePodVariables />
-      )}
-      {state.modal.name === "ConfigurePodYaml" && <ConfigurePodYaml />}
+      <Modals />
       <div className="content-container">
         <div className="content">
           {clusterBundle}

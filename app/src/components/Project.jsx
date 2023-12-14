@@ -14,6 +14,7 @@ import {
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
+import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { mdiCogOutline } from "@mdi/js";
@@ -362,6 +363,7 @@ export default function Project() {
       <FloatLogo />
       <FloatProject />
       <FloatAccount />
+      <Modals />
       <div className="content-container">
         <div className="content">
           {clusterBundle}
