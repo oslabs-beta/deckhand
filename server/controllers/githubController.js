@@ -42,6 +42,14 @@ githubController.callback = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
+githubController.logout = (req, res, next) => {
+  if (req.cookies.github_token) {
+    // Set the cookie's value to empty and expiration date to now
+    res.cookie('github_token', '', { expires: new Date(0), httpOnly: true });
+  }
+  next();
+};
+
 // get user data
 githubController.userData = async (req, res, next) => {
   if (req.cookies.github_token) {
