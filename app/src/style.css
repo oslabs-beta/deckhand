@@ -25,15 +25,16 @@ button:active {
   transform: scale(0.98);
 }
 
-.mdiTrashCanOutline {
+.icon {
   color: #999;
+  margin-left: 5px;
 }
 
-.mdiTrashCanOutline:hover {
+.icon:hover {
   color: #000;
 }
 
-.mdiTrashCanOutline:active {
+.icon:active {
   transform: scale(0.98);
 }
 
@@ -68,40 +69,43 @@ button:active {
   padding: 10px;
 }
 
-.active-project:hover {
-  border-radius: 10px;
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
-  cursor: pointer;
-}
-
-.account {
+.float-account {
   position: absolute;
   display: flex;
   align-items: center;
   top: 10px;
-  right: 10px;
+  right: 20px;
   padding: 10px;
-}
-
-.account:hover {
   border-radius: 10px;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
   cursor: pointer;
 }
 
-.account img {
+.float-account img {
   height: 30px;
   width: auto;
   border-radius: 15px;
 }
 
-.account span {
+.float-account span {
   margin-left: 10px;
   color: #333;
   font-weight: bold;
   font-size: 18px;
+}
+
+.dropdown {
+  margin-right: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  cursor: pointer;
+  width: 220px;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
 }
 
 .dev {
