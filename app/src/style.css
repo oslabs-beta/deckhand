@@ -1,13 +1,22 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:300:400");
 
 body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: "Roboto", sans-serif;
+  font-family: "Lato", sans-serif;
   /* background-color: #edf6ff; */
-  background: linear-gradient(#f9f6ff, #bddeff);
+  background: linear-gradient(
+    60deg,
+    rgb(213, 202, 255) 0%,
+    rgb(201, 249, 255) 100%
+  );
+  /* background: linear-gradient(
+    60deg,
+    rgba(84, 58, 183, 1) 0%,
+    rgba(0, 172, 193, 1) 100%
+  ); */
 }
 
 button {
