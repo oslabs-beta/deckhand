@@ -21,9 +21,6 @@ export default function ConfigureDockerHubPod() {
   const [images, setImages] = useState([]);
   const [imageTags, setImageTags] = useState([]);
 
-  const [userImages, setUsersImages] = useState([]);
-  const [usersImageTags, setUsersImageTags] = useState([]);
-
   useEffect(() => {
     if (state.modal === "ConfigureDockerHubPod") {
       getImages();
@@ -48,20 +45,6 @@ export default function ConfigureDockerHubPod() {
       .catch((error) => console.log(error));
   };
 
-  const getUsersImages = async () => {
-    await fetch("/api/usersDockerHubImages")
-      .then((res) => res.json())
-      .then((data) => {
-        const arr = data.map((el) => {
-          (<option key={el} value={el}>
-            {el}
-          </option>
-        )});
-        setUsersImages(arr);
-      })
-      .catch((error) => console.log(error));
-  };
-
   const getImageTags = async (image) => {
     await fetch(`/api/dockerHubImageTags/${image}`, {
       method: 'POST',
@@ -78,26 +61,6 @@ export default function ConfigureDockerHubPod() {
           </option>
         ));
         setImageTags(arr);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const getUsersImageTags = async (image) => {
-    await fetch(`/api/usersDockerHubImageTags/${image}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        image: image
-      })
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const arr = data.map((el) => (
-          <option key={el} value={el}>
-            {el}
-          </option>
-        ));
-        setUsersImageTags(arr);
       })
       .catch((error) => console.log(error));
   };
@@ -147,14 +110,6 @@ export default function ConfigureDockerHubPod() {
               onChange={(e) => getImageTags(e.target.value)}
             />
           </label>
-          <label>
-            Personal Docker Hub Image:
-            <input
-              type="text"
-              name="image"
-              onChange={(e) => getUsersImageTags(e.target.value)}
-            />
-          </label>
           {/* <label>
             Docker Hub Image:
             <select name="image" onChange={(e) => getImageTags(e.target.value)}>
@@ -164,10 +119,6 @@ export default function ConfigureDockerHubPod() {
           <label>
             Public Version:
             <select name="imageTag">{imageTags}</select>
-          </label>
-          <label>
-            Private Version:
-            <select name="imageTag">{usersImageTags}</select>
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
