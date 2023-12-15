@@ -21,7 +21,7 @@ export const deckhandSlice = createSlice({
     projects: [
       {
         projectId: 1,
-        name: 'Project 1', // store as tag in AWS to allow renaming
+        name: 'Moodsight', // store as tag in AWS to allow renaming
         createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
         provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
@@ -34,7 +34,7 @@ export const deckhandSlice = createSlice({
       {
         clusterId: 1, // store as unique identifier in AWS
         projectId: 1,
-        name: 'Cluster 1', // store as tag in AWS to allow renaming
+        name: 'New Cluster', // store as tag in AWS to allow renaming
         instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
         minNodes: 1,
         maxNodes: 3,
@@ -118,7 +118,7 @@ export const deckhandSlice = createSlice({
     addProject: (state, action) => { // payload: projectId
       state.projects.push({
         projectId: action.payload,
-        name: `New Project`,
+        name: `Default Project`,
         createdDate: new Date().toString(),
         modifiedDate: new Date().toString(),
       });
@@ -139,7 +139,7 @@ export const deckhandSlice = createSlice({
       state.clusters.push({
         clusterId: action.payload.clusterId,
         projectId: action.payload.projectId,
-        name: `New Cluster`,
+        name: `Default Cluster`,
       });
     },
     deleteCluster: (state, action) => { // payload: clusterId
