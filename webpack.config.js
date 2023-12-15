@@ -31,7 +31,7 @@ module.exports = {
       },
       {
         test: /.(css|scss)$/,
-        exclude: /node_modules/,
+        // exclude: /node_modules/,
         use: ['style-loader', 'css-loader', 'sass-loader'], // order reads right to left (turns sass files to css to style string)
       },
       {

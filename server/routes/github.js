@@ -10,6 +10,10 @@ router.get('/callback', githubController.callback, (req, res) => {
   res.status(200); //.json(res.locals.data);
 });
 
+router.get('/logout', githubController.callback, (req, res) => {
+  res.status(200); //.json(res.locals.data);
+});
+
 router.get('/userData', githubController.userData, (req, res) => {
   res.status(200).json(res.locals.data);
 });

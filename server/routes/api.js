@@ -6,7 +6,7 @@ router.post('/', apiController.getProjects, (req, res) => {
   res.status(200)//.json(res.locals.data);
 });
 
-router.get('/dockerHubImages', apiController.getDockerHubImages, (req, res) => {
+router.get('/dockerHubImages/*', apiController.getDockerHubImages, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
@@ -20,7 +20,7 @@ router.get('/usersDockerHubImages', apiController.getUsersDockerHubImages, (req,
   res.status(200).json(res.locals.data);
 });
 
-router.post('/usersDockerHubImageTags/:image', apiController.getUsersDockerHubImageTags, (req, res) => {
+router.post('/usersDockerHubImageTags/*', apiController.getUsersDockerHubImageTags, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
