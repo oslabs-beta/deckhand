@@ -17,7 +17,7 @@ const buildTest = () => {
   terraform.connectToProvider(2, 1, 'aws', 'us-east-1', access_key, secret_key);
 
   // for user 2, project 1, provision VPC
-  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec14_2');
+  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec15_1');
   let vpcId;
 
   vpc_idPromise
@@ -26,7 +26,7 @@ const buildTest = () => {
       vpcId = vpc_id;
       // for user 2, project 1, provision an EKS cluster with id 1
       terraform
-        .addCluster(2, 1, 1, 'dec14_2', vpcId, 1, 3, 2, 't2.micro')
+        .addCluster(2, 1, 1, 'dec15_1', vpcId, 1, 3, 2, 't2.micro')
         .then(console.log);
     })
     .catch((err) => console.log('CATCH:', err));
@@ -37,7 +37,7 @@ const buildTest = () => {
 
 const k8deploytest = () => {
   const fs = require('fs');
-  k8.connectKubectltoEKS('us-east-1', 'dec14_2');
+  k8.connectKubectltoEKS('us-east-1', 'dec15_1');
   k8.deploy([fs.readFileSync(__dirname + '/templates/ngindeploy.yaml')]);
 };
 

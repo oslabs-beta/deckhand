@@ -32,4 +32,3 @@ const remove = (kind, name) => {
 };
 
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
-

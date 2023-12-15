@@ -19,3 +19,10 @@ spec:
           image: nginx
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: my-efs-volume
+              mountPath: "/test"
+      volumes:
+        - name: my-efs-volume
+          persistentVolumeClaim:
+            claimName: my-efs-pvc
