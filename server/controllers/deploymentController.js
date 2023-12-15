@@ -33,9 +33,10 @@ deploymentController.deleteProject = (req, res, next) => {
   // const { externalId } = req.body;
   // const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { userId, projectId } = req.body.ids;
+  //TODO: add cluster array
 
-  //TODO: Need to make sure no clusters are active 
-  
+  //TODO: Need to make sure no clusters are active
+
   terraform
     .destroyVPC(userId, projectId)
     .then((output) => {
@@ -105,7 +106,10 @@ deploymentController.configureCluster = async (req, res, next) => {
   return next();
 };
 
-deploymentController.deleteComponent = (req, res, next) => {
+// Called on a pod, but delete all attached components (an array)
+// TODO: adjust to take an array. Each element needs the kind and name
+// ex: {kind: 'configMap', name: 'frontendConfig'}
+deploymentController.deletePod = (req, res, next) => {
   const { kind, name } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { vpcId, clusterId } = req.body.ids;
