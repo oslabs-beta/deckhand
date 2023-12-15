@@ -3,48 +3,54 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleLayout, showModal } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiChevronDown } from "@mdi/js";
-import {
-  Button,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Popover,
-} from "react-aria-components";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function FloatAccount() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
-  const handleAction = async (key) => {
-    if (key === "linked-cloud-providers")
-      dispatch(showModal({ name: "LinkedCloudProviders" }));
-    if (key === "toggle-layout") dispatch(toggleLayout());
-    if (key === "logout") {
-      await fetch("/api/github/logout");
-      location.reload();
-    }
-  };
-
   return (
-    <MenuTrigger>
-      <Button className="float-account" aria-label="Menu">
-        <img src={state.user.avatarUrl} alt="Account" />
-        <span>{state.user.name}</span>
-        <Icon path={mdiChevronDown} size={1} />
-      </Button>
-      <Popover>
-        <Menu className="dropdown" onAction={handleAction}>
-          <MenuItem id="linked-cloud-providers" className="dropdown-item">
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button className="float-account" aria-label="Customise options">
+          <img src={state.user.avatarUrl} alt="Account" />
+          <span>{state.user.name}</span>
+          <Icon path={mdiChevronDown} size={1} />
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          className="dropdown"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              dispatch(showModal({ name: "LinkedCloudProviders" }));
+            }}
+          >
             Link AWS Account
-          </MenuItem>
-          <MenuItem id="toggle-layout" className="dropdown-item">
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              dispatch(toggleLayout());
+            }}
+          >
             Toggle Layout
-          </MenuItem>
-          <MenuItem id="logout" className="dropdown-item">
-            Sign Out
-          </MenuItem>
-        </Menu>
-      </Popover>
-    </MenuTrigger>
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator className="dropdown-separator" />
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={async () => {
+              await fetch("/api/github/logout");
+              location.reload();
+            }}
+          >
+            Log Out
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
