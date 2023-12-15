@@ -1,9 +1,11 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
+
 body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #edf6ff;
 }
 
@@ -23,15 +25,16 @@ button:active {
   transform: scale(0.98);
 }
 
-.mdiTrashCanOutline {
+.icon {
   color: #999;
+  margin-left: 5px;
 }
 
-.mdiTrashCanOutline:hover {
+.icon:hover {
   color: #000;
 }
 
-.mdiTrashCanOutline:active {
+.icon:active {
   transform: scale(0.98);
 }
 
@@ -66,40 +69,71 @@ button:active {
   padding: 10px;
 }
 
-.active-project:hover {
-  border-radius: 10px;
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
-  cursor: pointer;
-}
-
-.account {
+.float-account {
   position: absolute;
   display: flex;
   align-items: center;
   top: 10px;
-  right: 10px;
+  right: 20px;
   padding: 10px;
-}
-
-.account:hover {
   border-radius: 10px;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
   cursor: pointer;
 }
 
-.account img {
+.float-account img {
   height: 30px;
   width: auto;
   border-radius: 15px;
 }
 
-.account span {
+.float-account span {
   margin-left: 10px;
   color: #333;
   font-weight: bold;
   font-size: 18px;
+}
+
+.dropdown {
+  margin-right: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  cursor: pointer;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+}
+
+.dropdown-item:hover {
+  background-color: #ddd;
+}
+
+.dropdown-separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 3px 6px;
+}
+
+.dev {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  bottom: 10px;
+  right: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: white;
+}
+
+.dev button {
+  border: 0;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 10px;
 }
 
 .content-container {
@@ -177,6 +211,7 @@ button:active {
 }
 
 #project-cards .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   border-radius: 10px;
@@ -222,6 +257,24 @@ button:active {
   margin-top: auto;
 }
 
+.card-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #999;
+  background-color: white;
+}
+
+.card-menu:hover {
+  background-color: white;
+  color: #000;
+}
+
+.card-menu:active {
+  transform: scale(0.98);
+}
+
 /* Deckhand page */
 
 #pod-cards {
@@ -229,7 +282,21 @@ button:active {
   flex-wrap: wrap;
 }
 
+#pod-cards select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+#pod-cards select > label {
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  background-color: white;
+}
+
 #pod-cards .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   border-radius: 10px;
@@ -240,6 +307,19 @@ button:active {
   width: 200px;
   text-align: center;
   background-color: white;
+  transition: all 0.1s ease-in-out;
+}
+
+#pod-cards .card:has(.new-pod):hover {
+  filter: brightness(98%);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+#pod-cards .card:active {
+  filter: brightness(100%);
+  transform: scale(1);
+  cursor: pointer;
 }
 
 #pod-cards .card .new-pod {

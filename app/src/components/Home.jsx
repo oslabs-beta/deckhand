@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setProjectId, addProject, deleteProject } from "../deckhandSlice";
+import {
+  setProjectId,
+  addProject,
+  deleteProject,
+  showModal,
+} from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatAccount from "./floats/FloatAccount";
+import Modals from "./modals/Modals";
+import Icon from "@mdi/react";
+import { mdiDotsVertical } from "@mdi/js";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function Home() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   const handleClickAddProject = (event) => {
-    // fetch data
-    const data = {
-      id: state.projects.length + 1, // get from SQL once connected
-      createdDate: "Dec 4, 2023",
-      modifiedDate: "Dec 4, 2023",
-    };
-    dispatch(addProject(data));
-    dispatch(setProjectId(data.id));
+    const projectId = Math.floor(Math.random() * 10000); // fetch new project ID from SQL
+    dispatch(addProject(projectId));
+    dispatch(setProjectId(projectId));
   };
 
   const timeAgo = (date) => {
@@ -31,14 +35,59 @@ export default function Home() {
     else return Math.round(days) + " days ago";
   };
 
+  const handleAction = async (key, project) => {
+    console.log(key);
+    console.log(project);
+    if (key === "configure-project") {
+      dispatch(showModal({ name: "ConfigureProject", data: project }));
+    }
+    if (key === "delete-project") {
+      dispatch(deleteProject(project.projectId));
+    }
+  };
+
   const projectBundle = [];
-  for (const el of [...state.projects].reverse()) {
+  const sortedProjects = [...state.projects].sort((a, b) => {
+    const dateA = new Date(a.modifiedDate);
+    const dateB = new Date(b.modifiedDate);
+    return dateB - dateA;
+  });
+  for (const el of sortedProjects) {
     projectBundle.push(
       <div
-        key={el.id}
+        key={el.projectId}
         className="card"
-        onClick={() => dispatch(setProjectId(el.id))}
+        onClick={() => dispatch(setProjectId(el.projectId))}
       >
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button className="card-menu" aria-label="Customise options">
+              <Icon path={mdiDotsVertical} size={1} />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              className="dropdown"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => {
+                  dispatch(showModal({ name: "ConfigureProject", data: el }));
+                }}
+              >
+                Configure
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator className="dropdown-separator" />
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => dispatch(deleteProject(el.projectId))}
+              >
+                Delete
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
         <div className="name">{el.name}</div>
         <div
           className="date-info"
@@ -52,16 +101,6 @@ export default function Home() {
         >
           Last Modified: {timeAgo(el.modifiedDate)}
         </div>
-        <br />
-        <button
-          className="delete"
-          onClick={(e) => {
-            dispatch(deleteProject(el.id));
-            e.stopPropagation();
-          }}
-        >
-          Delete Project
-        </button>
       </div>
     );
   }
@@ -70,6 +109,7 @@ export default function Home() {
     <div className="container">
       <FloatLogo />
       <FloatAccount />
+      <Modals />
       <div className="content-container">
         <div className="content">
           <h1>Home</h1>

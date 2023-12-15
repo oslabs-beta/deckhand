@@ -18,8 +18,6 @@ import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiTrashCanOutline } from "@mdi/js";
 import { mdiCogOutline } from "@mdi/js";
-import { mdiDotsVertical } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -142,43 +140,6 @@ export default function Project() {
       );
       podBundle.push(
         <div key={pod.podId} className="card">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <button className="card-menu" aria-label="Customise options">
-                <Icon path={mdiDotsVertical} size={1} />
-              </button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                className="dropdown"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <DropdownMenu.Item
-                  className="dropdown-item"
-                  onClick={() =>
-                    dispatch(showModal({ name: "PodSource", data: pod }))
-                  }
-                >
-                  Select Source
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  className="dropdown-item"
-                  onClick={() =>
-                    dispatch(showModal({ name: "ConfigurePodYaml", data: pod }))
-                  }
-                >
-                  Show YAML
-                </DropdownMenu.Item>
-                <DropdownMenu.Separator className="dropdown-separator" />
-                <DropdownMenu.Item
-                  className="dropdown-item"
-                  onClick={() => dispatch(deletePod(pod.podId))}
-                >
-                  Delete
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
           <div className="name">{`${pod.name} (${pod.type})`}</div>
           {pod.type === "docker-hub" && pod.imageName && (
             <select
@@ -220,6 +181,13 @@ export default function Project() {
             </>
           ) : (
             <>
+              <button
+                onClick={() =>
+                  dispatch(showModal({ name: "PodSource", data: pod }))
+                }
+              >
+                Edit Source
+              </button>
               <button
                 onClick={() =>
                   dispatch(
@@ -330,8 +298,21 @@ export default function Project() {
                   <b>Stop</b>
                 </button>
               )}
+              <button
+                onClick={() =>
+                  dispatch(showModal({ name: "ConfigurePodYaml", data: pod }))
+                }
+              >
+                Create YAML
+              </button>
             </>
           )}
+          <button
+            className="delete"
+            onClick={() => dispatch(deletePod(pod.podId))}
+          >
+            Delete Pod
+          </button>
         </div>
       );
     }
@@ -341,35 +322,20 @@ export default function Project() {
       <div key={cluster.clusterId}>
         <h2>
           {cluster.name}
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Icon className="icon" path={mdiDotsVertical} size={0.75} />
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                className="dropdown"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <DropdownMenu.Item
-                  className="dropdown-item"
-                  onClick={() => {
-                    dispatch(
-                      showModal({ name: "ConfigureCluster", data: project })
-                    );
-                  }}
-                >
-                  Configure
-                </DropdownMenu.Item>
-                <DropdownMenu.Separator className="dropdown-separator" />
-                <DropdownMenu.Item
-                  className="dropdown-item"
-                  onClick={() => dispatch(deleteCluster(cluster.clusterId))}
-                >
-                  Delete
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
+          <Icon
+            path={mdiCogOutline}
+            size={0.75}
+            className="icon"
+            onClick={() => {
+              dispatch(showModal({ name: "ConfigureCluster", data: project }));
+            }}
+          />
+          <Icon
+            path={mdiTrashCanOutline}
+            size={0.75}
+            className="icon"
+            onClick={() => dispatch(deleteCluster(cluster.clusterId))}
+          />
         </h2>
         <div id="pod-cards">
           <div
