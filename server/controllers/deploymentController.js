@@ -33,22 +33,38 @@ deploymentController.deleteProject = (req, res, next) => {
   // const { externalId } = req.body;
   // const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { userId, projectId } = req.body.ids;
-  //TODO: add cluster array
+  const { clusterIds } = req.body; // an array of the clusterIds that are active in this project
 
-  //TODO: Need to make sure no clusters are active
+  const promises = [];
 
-  terraform
-    .destroyVPC(userId, projectId)
-    .then((output) => {
-      console.log(output);
-      return next();
+  clusterIds.forEach((clusterId) => {
+    console.log('Destroying cluster', clusterId);
+    promises.push(terraform.destroyCluster(userId, projectId, clusterId));
+  });
+
+  Promise.all(promises)
+    .then((outputs) => {
+      console.log('Completed destoying all clusters within project', outputs);
+      console.log('Now deleting VPC');
+      terraform
+        .destroyVPC(userId, projectId)
+        .then((output) => {
+          console.log(output);
+          return next();
+        })
+        .catch((err) => {
+          const errObj = {
+            log: 'Error in deploymentController.deleteProject:' + err,
+            message: { err: 'An error occured trying to delete a VPC' },
+          };
+          return next(errObj);
+        });
     })
     .catch((err) => {
-      const errObj = {
-        log: 'Error in deploymentController.deleteProject:' + err,
-        message: { err: 'An error occured trying to delete a VPC' },
-      };
-      return next(errObj);
+      console.log(
+        'Failed to destroy all clusters. Can not complete deletion of project',
+        err
+      );
     });
 };
 
