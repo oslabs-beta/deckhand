@@ -184,6 +184,7 @@ export default function Project() {
             <select
               name="tag"
               onChange={(e) => setImageTag(pod.podId, e.target.value)}
+              value={pod.imageTag}
             >
               {pod.imageTags
                 ? pod.imageTags.map((el) => (
@@ -198,6 +199,7 @@ export default function Project() {
             <select
               name="branch"
               onChange={(e) => setBranch(pod.podId, e.target.value)}
+              value={pod.githubBranch}
             >
               {pod.githubBranches
                 ? pod.githubBranches.map((el) => (
@@ -222,9 +224,7 @@ export default function Project() {
             <>
               <button
                 onClick={() =>
-                  dispatch(
-                    showModal({ name: "ConfigurePodReplicas", data: pod })
-                  )
+                  dispatch(showModal({ name: "PodReplicas", data: pod }))
                 }
               >
                 <b>Edit Replicas ({pod.replicas})</b>
@@ -247,7 +247,7 @@ export default function Project() {
                   onClick={() =>
                     dispatch(
                       showModal({
-                        name: "ConfigurePodVariables",
+                        name: "ConfigureVarSets",
                         data: varSets[0],
                       })
                     )
@@ -274,7 +274,7 @@ export default function Project() {
                   onClick={() =>
                     dispatch(
                       showModal({
-                        name: "ConfigurePodIngress",
+                        name: "ConfigureIngress",
                         data: ingresses[0],
                       })
                     )
@@ -301,7 +301,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       showModal({
-                        name: "ConfigurePodVolume",
+                        name: "ConfigureVolume",
                         data: volumes[0],
                       })
                     );
