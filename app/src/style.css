@@ -61,6 +61,7 @@ button:active {
   top: 20px;
   left: 20px;
   cursor: pointer;
+  z-index: 10;
 }
 
 .logo img {
@@ -78,6 +79,7 @@ button:active {
   font-weight: bold;
   font-size: 18px;
   padding: 10px;
+  z-index: 10;
 }
 
 .float-account {
@@ -91,6 +93,7 @@ button:active {
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
   cursor: pointer;
+  z-index: 10;
 }
 
 .float-account img {
