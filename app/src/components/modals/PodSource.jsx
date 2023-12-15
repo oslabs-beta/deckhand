@@ -233,6 +233,7 @@ export default function () {
               <option value="docker-hub">Docker Hub</option>
               <option value="my-github">My Github</option>
               <option value="public-github">Public Github</option>
+              <option value="aws-ecr">AWS ECR</option>
             </select>
           </label>
           {type === "docker-hub" && (
