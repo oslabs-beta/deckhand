@@ -91,6 +91,7 @@ deploymentController.deleteCluster = (req, res, next) => {
   const { userId, projectId, clusterId } = req.body.ids;
 
   terraform.destroyCluster(userId, projectId, clusterId);
+
   return next();
 };
 
@@ -99,23 +100,29 @@ deploymentController.configureCluster = async (req, res, next) => {
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { vpcId, clusterId } = req.body.ids;
   const { yamls } = req.body.yamls;
+
   await terraform.connectToProvider(provider, region, accessKey, secretKey);
   k8.connectCLtoAWS(accessKey, secretKey, region);
   k8.connectKubectltoEKS(region, clusterId);
   k8.deploy(yamls);
+
   return next();
 };
 
-// Called on a pod, but delete all attached components (an array)
-// TODO: adjust to take an array. Each element needs the kind and name
-// ex: {kind: 'configMap', name: 'frontendConfig'}
 deploymentController.deletePod = (req, res, next) => {
-  const { kind, name } = req.body;
+  // components is an array including the pod and all conneted components to remove from cluster
+  // Each element of the array should be an object with the resource's kind and name
+  // ex: [{kind: 'deployment', name: 'frontend'}, {kind: 'configMap', name: 'frontendConfig'}]
+  const { components, region } = req.body;
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { vpcId, clusterId } = req.body.ids;
+  const { clusterId } = req.body.ids;
+
   k8.connectCLtoAWS(accessKey, secretKey, region);
   k8.connectKubectltoEKS(region, clusterId);
-  k8.remove(kind, name);
+  components.forEach((component) => {
+    k8.remove(component.kind, component.name);
+  });
+
   return next();
 };
 
