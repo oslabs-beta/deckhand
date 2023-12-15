@@ -15,7 +15,7 @@ export const deckhandSlice = createSlice({
     // },
 
     projectId: null, // selected project id
-    layout: 'cards', // cards or canvas
+    layout: 'canvas', // cards or canvas
     modal: {}, // {name, data}
 
     projects: [
