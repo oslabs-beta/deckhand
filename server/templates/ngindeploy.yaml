@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dennis
+  name: dennis1
   labels:
-    app: dennis
+    app: dennis1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dennis
+      app: dennis1
   template:
     metadata:
       labels:
-        app: dennis
+        app: dennis1
     spec:
       containers:
-        - name: dennis
+        - name: dennis1
           image: nginx
           ports:
             - containerPort: 3000

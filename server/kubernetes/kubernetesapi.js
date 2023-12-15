@@ -19,15 +19,17 @@ const connectKubectltoEKS = (region, clusterName) => {
   );
 };
 
-// Testing
-// connectCLtoAWS(
-//   process.env.AWS_ACCESS_KEY,
-//   process.env.AWS_SECRET_KEY,
-//   'us-east-1'
-// );
+// deploys each yaml string in the input array
+const deploy = (yamls) => {
+  yamls.forEach((yaml) => {
+    execSync(`echo "${yaml}" | kubectl apply -f -`);
+  });
+};
 
-// connectKubectltoEKS('us-east-1', 'dec7cluster3');
+// removes the component from the cluster
+const remove = (kind, name) => {
+  execSync(`kubectl delete ${kind} ${name}`);
+};
 
-const deploy = (yamls) => {};
+module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
 
-module.exports = { connectCLtoAWS, connectKubectltoEKS };
