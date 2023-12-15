@@ -14,4 +14,8 @@ router.post('/imagePusher', awsEcrController.imagePusher, (req, res) => {
   res.status(200)//.json(res.locals.data);
 });
 
+router.post('/repositoryDestroyer', awsEcrController.repositoryDestroyer, (req, res) => {
+  res.status(200)//.json(res.locals.data);
+});
+
 module.exports = router;

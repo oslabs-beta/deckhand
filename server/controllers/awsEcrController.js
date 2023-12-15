@@ -6,26 +6,28 @@ require('dotenv').config();
 
 // we also need the account id
 
-const AWS_ECR_ACCESS_KEY = '';
-const AWS_ECR_SECRET_ACCESS_KEY = '';
-const AWS_ECR_REGION = '';
+const AWS_ECR_ACCESS_KEY = process.env.AWS_ECR_ACCESS_KEY;
+const AWS_ECR_SECRET_ACCESS_KEY = process.env.AWS_ECR_SECRET_ACCESS_KEY;
+const AWS_ECR_REGION = process.env.AWS_ECR_REGION;
 
-const AWS_ACCOUNT_ID = '';
+const AWS_ACCOUNT_ID = process.env.AWS_ACCOUNT_ID;
 
 awsEcrController.repositoryMaker = (req, res, next) => {
 
   // from the post request would need to declare what the new repo would be called
   const repoName = req.body.repoName;
+  const Name_of_the_image = req.body.imageName;
+  const the_git_repo = req.body.githuburl;
 
   // for signing in:
     // This came from Dennis and may not be needed up until region if already signed in
   execSync(
-    `aws --profile default configure set aws_access_key_id ${accessKey}`
+    `aws --profile default configure set aws_access_key_id ${AWS_ECR_ACCESS_KEY}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key_id ${AWS_ECR_SECRET_ACCESS_KEY}`
   );
-  execSync(`aws --profile default configure set region ${region}`);
+  execSync(`aws --profile default configure set region ${AWS_ECR_REGION}`);
 
   // new code -- creating the repository in ECR
 
