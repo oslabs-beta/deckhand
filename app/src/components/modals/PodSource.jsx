@@ -295,6 +295,17 @@ export default function () {
               </div>
             </>
           )}
+          {type === "aws-ecr" && (
+            <>
+            <label>
+              Use AWS ECR
+              <input 
+                type='text'
+                
+              />
+            </label>
+            </>
+          )}
           {/* <div className="buttons">
             <button type="button" onClick={closeModal}>
               Cancel

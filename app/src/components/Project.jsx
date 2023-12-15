@@ -436,12 +436,14 @@ export default function Project() {
           </div>
         </div>
       </div>
+
       <form onSubmit={useECR}>
         <input id='repoName' placeholder='repoName' />
         <input id='imageName'placeholder='imageName' />
         <input id='githuburl' placeholder='githuburl' />
         <button>Click Me</button>
       </form>
+      
     </div>
   );
 }
