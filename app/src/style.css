@@ -6,7 +6,8 @@ html {
   padding: 0;
   height: 100%;
   font-family: "Roboto", sans-serif;
-  background-color: #edf6ff;
+  /* background-color: #edf6ff; */
+  background: linear-gradient(#f9f6ff, #bddeff);
 }
 
 button {
@@ -32,6 +33,7 @@ button:active {
 
 .icon:hover {
   color: #000;
+  cursor: pointer;
 }
 
 .icon:active {
