@@ -25,8 +25,8 @@ export const deckhandSlice = createSlice({
         createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
         provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
+        vpcRegion: 'US-East', // immutable once VPC provisioned (destroying and recreating will break external connections)
         vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
-        vpcRegion: 'US-East', // immutable once VPC provisioned (destroying and recreating will break external connections),
       },
     ],
 
@@ -121,6 +121,8 @@ export const deckhandSlice = createSlice({
         name: `Default Project`,
         createdDate: new Date().toString(),
         modifiedDate: new Date().toString(),
+        provider: 'aws', // default
+        vpcRegion: 'US-East', // default
       });
     },
     deleteProject: (state, action) => { // payload: projectId
