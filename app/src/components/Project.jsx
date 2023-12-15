@@ -16,8 +16,6 @@ import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
-import { mdiTrashCanOutline } from "@mdi/js";
-import { mdiCogOutline } from "@mdi/js";
 import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
