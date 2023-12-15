@@ -51,46 +51,49 @@ export default function ConfigureGithubPod() {
     })
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.items.map((item) => ({
-          value: item.full_name,
-          label: item.full_name,
-          stars: item.stargazers_count,
-          description: item.description,
+        const arr = data.items.map((el) => ({
+          value: el.full_name,
+          name: el.name,
+          owner: el.owner.login,
+          stars: el.stargazers_count,
+          description: el.description,
         }));
         return arr;
       });
   };
 
   function formatStars(starCount) {
-    if (starCount < 1000) return starCount;
-    else if (starCount < 1000000) return (starCount / 1000).toFixed(1) + "k";
-    else return (starCount / 1000000).toFixed(1) + "M";
+    if (starCount < 10 ** 3) return starCount;
+    else if (starCount < 10 ** 6) return (starCount / 1000).toFixed(1) + "k";
+    else return (starCount / 10 ** 9).toFixed(1) + "M";
   }
 
   const OptionComponent = ({ innerProps, data }) => (
-    <>
+    <div style={{ margin: "10" }}>
       <div
         {...innerProps}
         style={{
           display: "flex",
           justifyContent: "space-between",
-          margin: "5",
         }}
       >
-        <span style={{ color: "#333" }}>{data.label}</span>
-        <span>{"⭐ " + formatStars(data.stars)}</span>
+        <span style={{ color: "#333" }}>
+          <b>{data.name}</b> by {data.owner}
+        </span>
+        <span style={{ fontSize: "12px" }}>
+          {"☆ " + formatStars(data.stars)}
+        </span>
       </div>
       <div
         {...innerProps}
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          margin: "0 5 20 5",
+          fontSize: "14px",
         }}
       >
         <span>{data.description}</span>
       </div>
-    </>
+    </div>
   );
 
   const getBranches = async (repo) => {
@@ -144,10 +147,6 @@ export default function ConfigureGithubPod() {
         </span>
         <h2>Configure Pod</h2>
         <form onSubmit={handleSubmit}>
-          <label>
-            Name:
-            <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
-          </label>
           <label>
             My Repos:
             <select

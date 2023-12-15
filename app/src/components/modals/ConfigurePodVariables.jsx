@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setModal, configurePod } from "../../deckhandSlice";
+import { showModal, configureVarSet } from "../../deckhandSlice";
 import "./modal.css";
 
-export default function ConfigurePodVariables() {
+export default function () {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
-  const closeModal = () => dispatch(setModal(null));
-  const project = state.projectId
-    ? state.projects.find((p) => p.id === state.projectId)
-    : null;
-  const cluster = state.clusterId
-    ? project.clusters.find((c) => c.id === state.clusterId)
-    : null;
-  const pod = state.podId
-    ? cluster.pods.find((p) => p.id === state.podId)
-    : null;
+  const closeModal = () => {
+    setShow(false);
+    setTimeout(() => dispatch(showModal({})), 300);
+  };
+  const varSet = state.modal.data;
 
+  const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState(
-    [{ key: "", value: "", secret: false }]
-    // [
-    //   { key: "user1", value: "abc123", secret: true },
-    //   { key: "PG_URI", value: "db_address", secret: false },
-    // ]
+    varSet ? varSet.variables : [{ key: "", value: "", secret: true }]
   );
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
   const handleInputChange = (index, event) => {
     const values = [...inputs];
@@ -47,25 +43,17 @@ export default function ConfigurePodVariables() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mergePod = { variables: inputs };
     dispatch(
-      configurePod({
-        projectId: state.projectId,
-        clusterId: state.clusterId,
-        podId: state.podId,
-        mergePod: mergePod,
+      configureVarSet({
+        varSet: varSet.varSetId,
+        variables: inputs,
       })
     );
     closeModal();
   };
 
   return (
-    <div
-      className={`modal ${
-        state.modal === "ConfigurePodVariables" ? "show" : ""
-      }`}
-      onClick={closeModal}
-    >
+    <div className={`modal ${show ? "show" : ""}`}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close-button" onClick={closeModal}>
           &times;
@@ -86,7 +74,7 @@ export default function ConfigurePodVariables() {
                 <tr key={index}>
                   <td>
                     <input
-                      type="text"
+                      type={input.secret ? "password" : "text"}
                       name="key"
                       value={input.key}
                       onChange={(event) => handleInputChange(index, event)}

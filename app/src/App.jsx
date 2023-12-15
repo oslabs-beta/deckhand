@@ -4,6 +4,7 @@ import { setUser } from "./deckhandSlice";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Project from "./components/Project";
+import Canvas from "./components/Canvas";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -25,5 +26,6 @@ export default function App() {
 
   if (!state.user.name) return <Login />;
   else if (!state.projectId) return <Home />;
+  else if (state.layout === "canvas") return <Canvas />;
   else return <Project />;
 }
