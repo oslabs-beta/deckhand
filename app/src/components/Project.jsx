@@ -392,6 +392,25 @@ export default function Project() {
     );
   }
 
+  const useECR = async (e) => {
+    
+    e.preventDefault();
+
+    await fetch('/api/awsEcr/repositoryMaker', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify({
+        repoName: document.getElementById('repoName').value,
+        imageName: document.getElementById('imageName').value,
+        githuburl: document.getElementById('githuburl').value
+      })
+    }).then(res => res.json())
+    .then(data => console.log(data));
+
+  };
+
   return (
     <div className="container">
       <FloatLogo />
@@ -417,6 +436,12 @@ export default function Project() {
           </div>
         </div>
       </div>
+      <form onSubmit={useECR}>
+        <input id='repoName' placeholder='repoName' />
+        <input id='imageName'placeholder='imageName' />
+        <input id='githuburl' placeholder='githuburl' />
+        <button>Click Me</button>
+      </form>
     </div>
   );
 }

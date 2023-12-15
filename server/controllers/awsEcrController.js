@@ -1,5 +1,6 @@
 const awsEcrController = {};
 require('dotenv').config();
+const { execSync } = require('child_process');
 
 // access credentials to access AWS ECR
 // must have AdministratorAccess for IAM user to use. 
@@ -19,6 +20,8 @@ awsEcrController.repositoryMaker = (req, res, next) => {
   const Name_of_the_image = req.body.imageName;
   const the_git_repo = req.body.githuburl;
 
+  console.log('got here in backend!')
+
   // for signing in:
     // This came from Dennis and may not be needed up until region if already signed in
   execSync(
@@ -28,6 +31,8 @@ awsEcrController.repositoryMaker = (req, res, next) => {
     `aws --profile default configure set aws_secret_access_key_id ${AWS_ECR_SECRET_ACCESS_KEY}`
   );
   execSync(`aws --profile default configure set region ${AWS_ECR_REGION}`);
+
+  console.log('Ive made it down here!');
 
   // new code -- creating the repository in ECR
 
@@ -40,6 +45,10 @@ awsEcrController.repositoryMaker = (req, res, next) => {
   execSync(`docker build -t ${Name_of_the_image} ${the_git_repo}`);
   execSync(`docker tag ${Name_of_the_image} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repoName}`);
   execSync(`docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repoName}`);
+
+  console.log('all the way down here')
+
+  return next();
 
 };
 
