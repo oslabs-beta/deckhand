@@ -48,10 +48,13 @@ const undeploytest = () => {
 const destroyTest = () => {
   // try destroying cluster with nodes inside it
   // make sure two EC2 instances get terminated
-  terraform.destroyCluster(2, 1, 1).then((output) => {
-    console.log(output);
-    terraform.destroyVPC(2, 1).then(console.log);
-  });
+
+  terraform.destroyVPC(2, 1).then(console.log);
+
+  // terraform.destroyCluster(2, 1, 1).then((output) => {
+  //   console.log(output);
+  //   terraform.destroyVPC(2, 1).then(console.log);
+  // });
 
   // try destroying VPC that has a cluster inside. What happens?
 };

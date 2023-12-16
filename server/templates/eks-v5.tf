@@ -1,3 +1,8 @@
+#######
+## This was the functioning version before integrating EFS
+######
+
+
 variable "clusterName" {
   type = string
 }
@@ -51,7 +56,6 @@ module "eks" {
   enable_irsa = true
 
   cluster_addons = {
-    ## Try without since degraded
     # coredns = {
     #   most_recent = true
     # }
