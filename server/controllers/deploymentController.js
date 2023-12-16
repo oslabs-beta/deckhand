@@ -121,51 +121,35 @@ deploymentController.configureCluster = async (req, res, next) => {
   next();
 };
 
-// to build a github repo and add it to AWS ECR
-
+// Dockerize github repo and push to AWS ECR
 deploymentController.build = (req, res, next) => {
-  const { accessKey, secretKey } = req.body;
-  const { region } = req.body;
-  const { repo, branch } = req.body;
-  
-  if (!repo || !branch) console.log('Missing a repository and/or a branch');
+  const { repo, branch, accessKey, secretKey, region } = req.body;
+  const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
 
-  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
-
-  const repositoryName = 'deckhandapp';
-  const imageName = branch;
-
-  // for signing in:
-  execSync(
-    `aws --profile default configure set aws_access_key_id ${accessKey}`
-  );
-  execSync(
-    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
-  );
+  // Sign in to AWS
+  execSync(`aws --profile default configure set aws_access_key_id ${accessKey}`);
+  execSync(`aws --profile default configure set aws_secret_access_key_id ${secretKey}`);
   execSync(`aws --profile default configure set region ${region}`);
 
-  // grabs the user's account id
+  // Get AWS Account ID
+  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, { encoding: 'utf8' });
+  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw);
+  const awsAccountId = parsedAwsAccountId.Account;
 
-    const grabTheAWSAccountID = execSync(`aws sts get-caller-identity`, {
-      encoding: 'utf8'
-    });
-    const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
-    const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
+  // Create ECR repository
+  const ecrUrl = `${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
+  execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ecrUrl}`);
+  execSync(`aws ecr create-repository --repository-name ${repo} --region ${region}`);
 
-  // creating the repository in ECR
-  
-    execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
-    );
-    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region}`);
+  // Dockerize and push image to ECR repository
+  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  const imageUrl = `${ecrUrl}/${repo}`;
+  execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  execSync(`docker tag ${imageName} ${imageUrl}`);
+  execSync(`docker push ${imageUrl}`);
 
-    // this creates an image and pushes it
-
-    execSync(`docker build -t ${imageName} ${cloneUrl}`);
-    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
-    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
-
-    res.locals.data = { imageName: imageName, imageTag: 'latest' };
-    return next();
+  res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
+  return next();
 };
 
 module.exports = deploymentController;
