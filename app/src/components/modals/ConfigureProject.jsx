@@ -53,7 +53,7 @@ export default function () {
           <label>
             Region:
             <select name="region">
-              <option defaultValue="US-East">US-East</option>
+              <option defaultValue="us-east-1">us-east-1</option>
             </select>
           </label>
           <div className="buttons">
