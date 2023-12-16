@@ -1,4 +1,5 @@
 const terraform = require('../terraform/terraformapi.js');
+const { execSync, exec } = require('child_process');
 
 const deploymentController = {};
 
@@ -84,11 +85,10 @@ deploymentController.configureCluster = (req, res, next) => {
 // to build a github repo and add it to AWS ECR
 
 deploymentController.build = (req, res, next) => {
-  console.log('i\'m here');
-  console.log('accessKey', req.body.accessKey);
   const { accessKey, secretKey } = req.body;
   const { region } = req.body;
   const { repo, branch } = req.body;
+  
   if (!repo || !branch) console.log('Missing a repository and/or a branch');
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
