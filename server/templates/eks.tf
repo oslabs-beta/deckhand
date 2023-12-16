@@ -32,6 +32,9 @@ variable "private_subnets" {
   type = list
 }
 
+variable "vpc_cidr_block" {
+  type = string
+}
 
 module "eks" {
   // next two lines are a copy and paste from terraform docs. This tells terraform what the module is
@@ -98,8 +101,8 @@ resource "aws_security_group" "efs" {
     from_port        = 2049
     to_port          = 2049
     protocol         = "TCP"
-    // TODO: get these from a variable...this file doesnt have access to vpc module 
-    cidr_blocks      = [module.vpc.vpc_cidr_block]
+    // TODO: make sure this is getting the variable properly 
+    cidr_blocks      = [var.vpc_cidr_block] 
   }
 }
 
@@ -137,8 +140,8 @@ resource "aws_efs_file_system" "kube" {
 resource "aws_efs_mount_target" "mount" {
     file_system_id = aws_efs_file_system.kube.id
     subnet_id = each.key
-    // TODO: need to get the below variables
-    for_each = toset(module.vpc.private_subnets)
+    // TODO: make sure these variable are connected properly
+    for_each = toset(var.private_subnets)
     security_groups = [aws_security_group.efs.id]
     
 }

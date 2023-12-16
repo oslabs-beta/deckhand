@@ -186,12 +186,23 @@ const addCluster = async (
     ).stdout
   );
 
+  // Get "vpc_cidr_block" from vpc outputs
+  const vpc_cidr_block = JSON.parse(
+    (
+      await execProm(
+        `cd ${projectPath} && terraform output -json vpc_cidr_block`
+      )
+    ).stdout
+  );
+
   console.log('SUBNET IDS:', private_subnets);
+  console.log('CIDR BLOCK:', vpc_cidr_block);
 
   const variables = {
     clusterName,
     vpcId,
     private_subnets,
+    vpc_cidr_block,
     min,
     max,
     desired,
@@ -250,5 +261,3 @@ module.exports = {
   initializeProject,
   destroyCluster,
 };
-
-

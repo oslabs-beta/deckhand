@@ -17,7 +17,7 @@ const buildTest = () => {
   terraform.connectToProvider(2, 1, 'aws', 'us-east-1', access_key, secret_key);
 
   // for user 2, project 1, provision VPC
-  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec15_1');
+  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec16_1');
   let vpcId;
 
   vpc_idPromise
@@ -26,7 +26,7 @@ const buildTest = () => {
       vpcId = vpc_id;
       // for user 2, project 1, provision an EKS cluster with id 1
       terraform
-        .addCluster(2, 1, 1, 'dec15_1', vpcId, 1, 3, 2, 't2.micro')
+        .addCluster(2, 1, 1, 'dec16_1', vpcId, 1, 3, 2, 't2.medium')
         .then(console.log);
     })
     .catch((err) => console.log('CATCH:', err));
@@ -59,7 +59,7 @@ const destroyTest = () => {
   // try destroying VPC that has a cluster inside. What happens?
 };
 
-// buildTest();
+buildTest();
 // k8deploytest();
 // undeploytest();
-destroyTest();
+// destroyTest();
