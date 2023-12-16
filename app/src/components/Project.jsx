@@ -109,7 +109,7 @@ export default function Project() {
         branch: pod.githubBranch,
         accessKey: state.user.awsAccessKey,
         secretKey: state.user.awsSecretKey,
-        region: project.vpcRegion
+        region: project.vpcRegion,
       }),
     })
       .then((res) => res.json())
