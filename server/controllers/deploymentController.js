@@ -1,4 +1,5 @@
 const terraform = require('../terraform/terraformapi.js');
+const { execSync, exec } = require('child_process');
 const k8 = require('../kubernetes/kubernetesapi.js');
 
 const deploymentController = {};
@@ -116,30 +117,55 @@ deploymentController.configureCluster = async (req, res, next) => {
   const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { vpcId, clusterId } = req.body.ids;
   const { yamls } = req.body.yamls;
-
-  await terraform.connectToProvider(provider, region, accessKey, secretKey);
-  k8.connectCLtoAWS(accessKey, secretKey, region);
-  k8.connectKubectltoEKS(region, clusterId);
-  k8.deploy(yamls);
-
-  return next();
+  // add command line function: apply yamls to cluster
+  next();
 };
 
-deploymentController.deletePod = (req, res, next) => {
-  // components is an array including the pod and all conneted components to remove from cluster
-  // Each element of the array should be an object with the resource's kind and name
-  // ex: [{kind: 'deployment', name: 'frontend'}, {kind: 'configMap', name: 'frontendConfig'}]
-  const { components, region } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { clusterId } = req.body.ids;
+// to build a github repo and add it to AWS ECR
 
-  k8.connectCLtoAWS(accessKey, secretKey, region);
-  k8.connectKubectltoEKS(region, clusterId);
-  components.forEach((component) => {
-    k8.remove(component.kind, component.name);
-  });
+deploymentController.build = (req, res, next) => {
+  const { accessKey, secretKey } = req.body;
+  const { region } = req.body;
+  const { repo, branch } = req.body;
+  
+  if (!repo || !branch) console.log('Missing a repository and/or a branch');
 
-  return next();
+  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+
+  const repositoryName = 'deckhandapp';
+  const imageName = branch;
+
+  // for signing in:
+  execSync(
+    `aws --profile default configure set aws_access_key_id ${accessKey}`
+  );
+  execSync(
+    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
+  );
+  execSync(`aws --profile default configure set region ${region}`);
+
+  // grabs the user's account id
+
+    const grabTheAWSAccountID = execSync(`aws sts get-caller-identity`, {
+      encoding: 'utf8'
+    });
+    const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
+    const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
+
+  // creating the repository in ECR
+  
+    execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
+    );
+    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region}`);
+
+    // this creates an image and pushes it
+
+    execSync(`docker build -t ${imageName} ${cloneUrl}`);
+    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
+    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
+
+    res.locals.data = { imageName: imageName, imageTag: 'latest' };
+    return next();
 };
 
 module.exports = deploymentController;

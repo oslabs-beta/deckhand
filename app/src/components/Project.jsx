@@ -99,7 +99,7 @@ export default function Project() {
   };
 
   const handleClickBuild = async (pod) => {
-    await fetch("/api/github/build", {
+    await fetch("/api/deployment/build", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -107,6 +107,9 @@ export default function Project() {
       body: JSON.stringify({
         repo: pod.githubRepo,
         branch: pod.githubBranch,
+        accessKey: state.user.awsAccessKey,
+        secretKey: state.user.awsSecretKey,
+        region: project.vpcRegion
       }),
     })
       .then((res) => res.json())
