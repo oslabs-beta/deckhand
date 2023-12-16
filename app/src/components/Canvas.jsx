@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   showModal,
@@ -14,11 +14,13 @@ import {
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
+import FloatToolbar from "./floats/FloatToolbar";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import ReactFlow, {
+  ReactFlowProvider,
   MiniMap,
   Controls,
   Background,
@@ -27,57 +29,17 @@ import ReactFlow, {
   addEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import TextUpdaterNode from "./nodes/TextUpdaterNode";
 
 const initialNodes = [
-  {
-    type: "input",
-    id: "1",
-    data: { label: "Testing" },
-    position: { x: 100, y: 0 },
-  },
-  {
-    id: "2",
-    data: { label: "Another test" },
-    position: { x: 0, y: 100 },
-  },
-  {
-    id: "3",
-    data: { label: "Hello world" },
-    position: { x: 200, y: 100 },
-  },
-  {
-    id: "4",
-    data: { label: "More tests" },
-    position: { x: 100, y: 200 },
-  },
+  // {
+  //   id: "node-1",
+  //   type: "textUpdater",
+  //   position: { x: 0, y: 0 },
+  //   data: { value: 123 },
+  // },
 ];
-
-const initialEdges = [
-  {
-    id: "1->2",
-    source: "1",
-    target: "2",
-    animated: true,
-  },
-  {
-    id: "1->3",
-    source: "1",
-    target: "3",
-    animated: true,
-  },
-  {
-    id: "2->4",
-    source: "2",
-    target: "4",
-    animated: true,
-  },
-  {
-    id: "3->4",
-    source: "3",
-    target: "4",
-    animated: true,
-  },
-];
+const nodeTypes = { textUpdater: TextUpdaterNode };
 
 export default function Project() {
   const state = useSelector((state) => state.deckhand);
@@ -87,13 +49,41 @@ export default function Project() {
     (cluster) => cluster.projectId === project.projectId
   );
 
+  const reactFlowWrapper = useRef(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    []
   );
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+      const type = event.dataTransfer.getData("application/reactflow");
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode = {
+        id: Math.floor(Math.random() * 10000).toString(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [reactFlowInstance]
+  );
 
   return (
     <div className="container">
@@ -102,16 +92,26 @@ export default function Project() {
       <FloatAccount />
       <Modals />
       <div style={{ width: "100vw", height: "100vh" }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Controls />
-        </ReactFlow>
+        <ReactFlowProvider>
+          <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onInit={setReactFlowInstance}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              nodeTypes={nodeTypes}
+              proOptions={{ hideAttribution: true }}
+            >
+              <Controls position="bottom-right" />
+              {/* <MiniMap /> */}
+            </ReactFlow>
+          </div>
+          <FloatToolbar />
+        </ReactFlowProvider>
       </div>
     </div>
   );
