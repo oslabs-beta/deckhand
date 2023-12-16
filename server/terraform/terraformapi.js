@@ -252,6 +252,20 @@ const destroyCluster = async (userId, projectId, clusterId) => {
   return status;
 };
 
+const getEFSId = (userId, projectId, clusterId) => {
+  const clusterPath = path.join(
+    'server/terraform/userData',
+    `user${userId}`,
+    `project${projectId}`,
+    `cluster${clusterId}`
+  );
+
+  const efsId = execSync(`cd ${clusterPath} && terraform output -json efs-id`, {
+    encoding: 'utf8',
+  });
+  return efsId;
+};
+
 module.exports = {
   connectToProvider,
   addVPC,
@@ -260,4 +274,5 @@ module.exports = {
   initializeUser,
   initializeProject,
   destroyCluster,
+  getEFSId,
 };

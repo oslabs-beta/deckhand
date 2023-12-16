@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-efs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: my-efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0a439aa6163c677a1 #EFS File System ID

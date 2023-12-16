@@ -1,4 +1,5 @@
-# Can delete this once get necessary info
+# arn:aws:iam::057477132536:user/deckhand2
+# Add that line then reapplied
 
 apiVersion: v1
 kind: ServiceAccount
@@ -7,6 +8,8 @@ metadata:
     app.kubernetes.io/name: aws-efs-csi-driver
   name: efs-csi-controller-sa
   namespace: kube-system
+  # annotations:
+  #   eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role
 ---
 apiVersion: v1
 kind: ServiceAccount

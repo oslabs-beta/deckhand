@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-mongo-set
+spec:
+  selector:
+    matchLabels:
+      app: my-mongo
+  serviceName: "my-mongo"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: my-mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: my-mongo
+        image: mongo
+        ports:
+          - containerPort: 27017
+        volumeMounts:
+          - name: my-mongo-store
+            mountPath: /data/db
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-mongo-password
+                key: my-mongo_ROOT_PASSWORD
+  volumeClaimTemplates:
+    - metadata:
+        name: my-mongo-store
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: my-efs-sc
+        resources:
+          requests:
+            storage: 5Gi
+
+
+------------------
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-ss
+  template:
+    metadata:
+      labels:
+        app: dennis2
+    spec:
+      containers:
+        - name: dennis2
+          image: nginx
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: my-efs-volume
+              mountPath: '/test'
+      volumes:
+        - name: my-efs-volume
+          persistentVolumeClaim:
+            claimName: my-efs-pvc

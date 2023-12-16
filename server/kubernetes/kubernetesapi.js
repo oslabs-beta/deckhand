@@ -22,7 +22,10 @@ const connectKubectltoEKS = (region, clusterName) => {
 // deploys each yaml string in the input array
 const deploy = (yamls) => {
   yamls.forEach((yaml) => {
-    execSync(`echo "${yaml}" | kubectl apply -f -`);
+    const output = execSync(`echo "${yaml}" | kubectl apply -f -`, {
+      encoding: 'utf8',
+    });
+    console.log(output);
   });
 };
 

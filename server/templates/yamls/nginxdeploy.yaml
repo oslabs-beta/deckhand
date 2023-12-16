@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dennis1
+  name: dennis2
   labels:
-    app: dennis1
+    app: dennis2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dennis1
+      app: dennis2
   template:
     metadata:
       labels:
-        app: dennis1
+        app: dennis2
     spec:
       containers:
-        - name: dennis1
+        - name: dennis2
           image: nginx
           ports:
             - containerPort: 3000
           volumeMounts:
             - name: my-efs-volume
-              mountPath: "/test"
+              mountPath: '/test'
       volumes:
         - name: my-efs-volume
           persistentVolumeClaim:

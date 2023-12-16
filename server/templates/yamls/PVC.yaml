@@ -8,4 +8,4 @@ spec:
   storageClassName: my-efs-sc
   resources:
     requests:
-      storage: 1Mi # Must be speficied, but is ignored since FS is elastic 
+      storage: 5Gi # Must be speficied, but is ignored since FS is elastic 
