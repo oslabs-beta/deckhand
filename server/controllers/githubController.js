@@ -5,8 +5,9 @@ require('dotenv').config();
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
-const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
+// keep these in case we add DockerHub pushing back into the application
+// const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
+// const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
 const githubController = {};
 
@@ -137,19 +138,19 @@ githubController.branches = async (req, res, next) => {
 
 // build repos
 githubController.build = (req, res, next) => {
-  const { repo, branch } = req.body;
-  if (!repo || !branch) console.log('Missing repo and/or branch');
+  // const { repo, branch } = req.body;
+  // if (!repo || !branch) console.log('Missing repo and/or branch')
 
-  const cloneUrl = `https://github.com/${repo}.git#${branch}`;
-  const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
+  // const cloneUrl = `https://github.com/${repo}.git#${branch}`;
+  // const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
 
-  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, {
-    input: DOCKER_PASSWORD,
-  });
-  execSync(`docker build -t ${imageName} ${cloneUrl}`);
-  execSync(`docker push ${imageName}`);
+  // this is the code to push images to Dockerhub if needed/re-added.
 
-  res.locals.data = { imageName: imageName, imageTag: 'latest' };
+  // execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+  // execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  // execSync(`docker push ${imageName}`);
+
+  // res.locals.data = { imageName: imageName, imageTag: 'latest' };
   return next();
 };
 
