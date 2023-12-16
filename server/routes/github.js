@@ -30,8 +30,9 @@ router.post('/branches', githubController.branches, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
+// (not currently used) dockerize and push to Docker Hub
 router.post('/build', githubController.build, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+  res.status(200).json(res.locals.data);
 });
 
 router.post('/scan', githubController.scanRepo, (req, res) => {
