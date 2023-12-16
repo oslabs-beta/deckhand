@@ -151,7 +151,7 @@ githubController.build = (req, res, next) => {
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   // const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
   const repositoryName = 'deckhandapp';
-  const nameOfImage = 'testing-image';
+  const nameOfImage = branch;
 
     // for signing in:
     // This came from Dennis and may not be needed up until region if already signed in
@@ -162,24 +162,37 @@ githubController.build = (req, res, next) => {
       `aws --profile default configure set aws_secret_access_key_id ${AWS_ECR_SECRET_ACCESS_KEY}`
     );
     execSync(`aws --profile default configure set region ${AWS_ECR_REGION}`);
+
+    // const grabTheAWSAccountID = execSync(`aws sts get-caller-identity`, {
+    //   encoding: 'utf8'
+    // });
+    // const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
+    // const awsAccountId = makeGrabTheAWSAccountID.Account;
+
   
     // new code -- creating the repository in ECR
   
-    execSync(`aws ecr get-login-password --region ${AWS_ECR_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com`
-    );
+    // execSync(`aws ecr get-login-password --region ${AWS_ECR_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com`
+    // );
     // execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${AWS_ECR_REGION}`);
   
     // this creates an image and pushes it
   
-    execSync(`docker build -t ${nameOfImage} ${cloneUrl}`);
-    execSync(`docker tag ${nameOfImage} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repositoryName}`);
-    execSync(`docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repositoryName}`);
+    // execSync(`docker build -t ${nameOfImage} ${cloneUrl}`);
+    // execSync(`docker tag ${nameOfImage} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repositoryName}`);
+    // execSync(`docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_ECR_REGION}.amazonaws.com/${repositoryName}`);
 
-  // execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
-  // execSync(`docker build -t ${imageName} ${cloneUrl}`);
-  // execSync(`docker push ${imageName}`);
+      // would need the name of the repositry
 
+      // the --force deletes all images inside as well
 
+      // execSync(`aws ecr delete-repository --repository-name ${repoName} --force --region ${AWS_ECR_REGION}`);
+
+      // this is old code for dockerhub if needed.
+
+      // execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+      // execSync(`docker build -t ${imageName} ${cloneUrl}`);
+      // execSync(`docker push ${imageName}`);
 
   res.locals.data = { imageName: nameOfImage, imageTag: 'latest' };
   return next();

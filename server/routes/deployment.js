@@ -22,4 +22,8 @@ router.post('/configureCluster', deploymentController.configureCluster, (req, re
   res.sendStatus(200);
 });
 
+router.post('/build', deploymentController.build, (req, res) => {
+  res.status(200).json(res.locals.data);
+});
+
 module.exports = router;

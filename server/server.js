@@ -8,7 +8,6 @@ const PORT = 3000;
 const apiRouter = require(path.join(__dirname, './routes/api.js'));
 const githubRouter = require(path.join(__dirname, './routes/github.js'));
 const deploymentRouter = require(path.join(__dirname, './routes/deployment.js'));
-const awsEcrRouter = require(path.join(__dirname, './routes/awsEcr.js'));
 
 // parse incoming requests
 app.use(express.json());
@@ -21,7 +20,6 @@ app.use('/build', express.static(path.join(__dirname, '../app/build')));
 // define route handlers
 app.use('/api/github', githubRouter);
 app.use('/api/deployment', deploymentRouter);
-app.use('/api/awsEcr', awsEcrRouter);
 app.use('/api', apiRouter);
 
 // route handler to respond with main app

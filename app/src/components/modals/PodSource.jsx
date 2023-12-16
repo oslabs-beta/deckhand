@@ -233,7 +233,6 @@ export default function () {
               <option value="docker-hub">Docker Hub</option>
               <option value="my-github">My Github</option>
               <option value="public-github">Public Github</option>
-              <option value="aws-ecr">AWS ECR</option>
             </select>
           </label>
           {type === "docker-hub" && (
@@ -293,17 +292,6 @@ export default function () {
               >
                 {publicRepos}
               </div>
-            </>
-          )}
-          {type === "aws-ecr" && (
-            <>
-            <label>
-              Use AWS ECR
-              <input 
-                type='text'
-                
-              />
-            </label>
             </>
           )}
           {/* <div className="buttons">
