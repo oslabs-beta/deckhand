@@ -20,7 +20,7 @@ export const deckhandSlice = createSlice({
 
     projects: [
       {
-        projectId: 1,
+        projectId: '1',
         name: 'Moodsight', // store as tag in AWS to allow renaming
         createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
@@ -32,8 +32,8 @@ export const deckhandSlice = createSlice({
 
     clusters: [
       {
-        clusterId: 1, // store as unique identifier in AWS
-        projectId: 1,
+        clusterId: '1', // store as unique identifier in AWS
+        projectId: '1',
         name: 'New Cluster', // store as tag in AWS to allow renaming
         instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
         minNodes: 1,
@@ -44,8 +44,8 @@ export const deckhandSlice = createSlice({
 
     pods: [
       {
-        podId: 1,
-        clusterId: 1,
+        podId: '1',
+        clusterId: '1',
         name: 'Moodsight',
         type: 'github',
         config: true,
@@ -56,23 +56,23 @@ export const deckhandSlice = createSlice({
         deployed: false,
       },
       {
-        podId: 2,
-        clusterId: 1,
+        podId: '2',
+        clusterId: '1',
         name: 'postgres',
         type: 'docker-hub',
         config: true,
         imageName: 'postgres',
         imageTag: 'latest',
         imageTags: ['latest', 'alpine3.19', 'alpine3.18', 'alpine', '16.1-alpine3.19', '16.1-alpine3.18', '16.1-alpine', '16-alpine3.19', '16-alpine3.18', '16-alpine', '15.5-alpine3.19', '15.5-alpine3.18', '15.5-alpine', '15-alpine3.19', '15-alpine3.18', '15-alpine', '14.10-alpine3.19', '14.10-alpine3.18', '14.10-alpine', '14-alpine3.19', '14-alpine3.18', '14-alpine', '13.13-alpine3.19', '13.13-alpine3.18', '13.13-alpine', '13-alpine3.19'],
-        replicas: 1,
+        replicas: '1',
         deployed: false,
       },
     ],
 
     varSets: [
       {
-        varSetId: 1,
-        podId: 1,
+        varSetId: '1',
+        podId: '1',
         variables: [
           { key: 'user1', value: 'abc123', secret: true },
           { key: 'PG_URI', value: 'db_address', secret: false }
@@ -82,8 +82,8 @@ export const deckhandSlice = createSlice({
 
     ingresses: [
       {
-        ingressId: 1,
-        podId: 1,
+        ingressId: '1',
+        podId: '1',
         host: 'example.com',
         path: '/path',
       },
@@ -91,7 +91,7 @@ export const deckhandSlice = createSlice({
 
     volumes: [
       {
-        volumeId: 1,
+        volumeId: '1',
         podId: 2,
         directory: '/mnt/data',
       },

@@ -232,7 +232,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addVarSet({
-                        varSetId: Math.floor(Math.random() * 10000),
+                        varSetId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -259,7 +259,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addIngress({
-                        ingressId: Math.floor(Math.random() * 10000),
+                        ingressId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -286,7 +286,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addVolume({
-                        volumeId: Math.floor(Math.random() * 10000),
+                        volumeId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -373,7 +373,7 @@ export default function Project() {
           <div
             className="card"
             onClick={() => {
-              const podId = Math.floor(Math.random() * 10000); // fetch new pod ID from SQL
+              const podId = Math.floor(Math.random() * 10000).toString(); // fetch new pod ID from SQL
               dispatch(
                 addPod({
                   podId: podId,
@@ -404,7 +404,7 @@ export default function Project() {
               onClick={() =>
                 dispatch(
                   addCluster({
-                    clusterId: Math.floor(Math.random() * 10000), // get from SQL once connected
+                    clusterId: Math.floor(Math.random() * 10000).toString(), // get from SQL once connected
                     projectId: project.projectId,
                   })
                 )
