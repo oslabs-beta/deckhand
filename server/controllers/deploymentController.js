@@ -133,7 +133,7 @@ deploymentController.build = (req, res, next) => {
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
 
   const repositoryName = 'deckhandapp';
-  const nameOfImage = branch;
+  const imageName = branch;
 
   // for signing in:
   execSync(
@@ -160,11 +160,11 @@ deploymentController.build = (req, res, next) => {
 
     // this creates an image and pushes it
 
-    execSync(`docker build -t ${nameOfImage} ${cloneUrl}`);
-    execSync(`docker tag ${nameOfImage} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
+    execSync(`docker build -t ${imageName} ${cloneUrl}`);
+    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
     execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
 
-    res.locals.data = { imageName: nameOfImage, imageTag: 'latest' };
+    res.locals.data = { imageName: imageName, imageTag: 'latest' };
     return next();
 };
 

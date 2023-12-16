@@ -103,7 +103,7 @@ export default function ConfigureDockerHubPod() {
             <input type="text" name="name" defaultValue={pod ? pod.name : ""} />
           </label>
           <label>
-            Public Docker Hub Image:
+            Docker Hub Image:
             <input
               type="text"
               name="image"
@@ -117,7 +117,7 @@ export default function ConfigureDockerHubPod() {
             </select>
           </label> */}
           <label>
-            Public Version:
+            Version:
             <select name="imageTag">{imageTags}</select>
           </label>
           <div className="buttons">

@@ -6,8 +6,8 @@ require('dotenv').config();
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 // keep these in case we add DockerHub pushing back into the application
-const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
-const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
+// const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
+// const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
 const githubController = {};
 
@@ -150,7 +150,7 @@ githubController.build = (req, res, next) => {
   // execSync(`docker build -t ${imageName} ${cloneUrl}`);
   // execSync(`docker push ${imageName}`);
 
-  // res.locals.data = { imageName: nameOfImage, imageTag: 'latest' };
+  // res.locals.data = { imageName: imageName, imageTag: 'latest' };
   return next();
 };
 

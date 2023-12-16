@@ -28,7 +28,6 @@ apiController.getDockerHubImageTags = async (req, res, next) => {
   await fetch(`https://hub.docker.com/v2/repositories/${image}/tags/`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       res.locals.data = data.results.map((el) => el.name)
       next();
     })
