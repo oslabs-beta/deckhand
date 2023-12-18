@@ -31,5 +31,10 @@ const remove = (kind, name) => {
   execSync(`kubectl delete ${kind} ${name}`);
 };
 
+// finds the exposed port in a github repo. 
+const getExposedPort = () =>{
+  
+}
+
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
 
