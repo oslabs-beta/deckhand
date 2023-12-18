@@ -1,3 +1,5 @@
+// This file is just for testing the terraform and k8 apis. It is not used in the functioning of the app.
+
 const terraform = require('./terraform/terraformapi');
 const k8 = require('./kubernetes/kubernetesapi');
 const dotenv = require('dotenv');
@@ -37,7 +39,7 @@ const buildTest = () => {
 
 const k8deploytest = () => {
   const fs = require('fs');
-  k8.connectKubectltoEKS('us-east-1', 'dec16_1');
+  k8.connectKubectltoEKS('us-east-1', 'dec16_2');
 
   const driver = fs.readFileSync(
     __dirname + '/terraform/public-ecr-driver.yaml'
@@ -54,6 +56,7 @@ const k8deploytest = () => {
   const yamls = [driver, storageClass, PV, PVC, deployment];
 
   k8.deploy(yamls);
+  // k8.deploy([deployment]);
 };
 
 const undeploytest = () => {
@@ -74,7 +77,7 @@ const destroyTest = () => {
   // try destroying VPC that has a cluster inside. What happens?
 };
 
-// buildTest();
+buildTest();
 // k8deploytest();
 // undeploytest();
 // destroyTest();

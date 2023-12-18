@@ -5,6 +5,6 @@ metadata:
 provisioner: efs.csi.aws.com
 parameters:
   provisioningMode: efs-ap # what is ap?
-  fileSystemId: fs-0a439aa6163c677a1 #  EFS File System ID
+  fileSystemId: fs-0eeb57a7aa9de13d6 #  EFS File System ID
   region: us-east-1
   directoryPerms: '777' # what is this?

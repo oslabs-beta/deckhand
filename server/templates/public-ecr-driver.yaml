@@ -1,5 +1,5 @@
 # arn:aws:iam::057477132536:user/deckhand2
-# Add that line then reapplied
+# This yaml needs to be applied before adding a volume to the EFS
 
 apiVersion: v1
 kind: ServiceAccount
@@ -8,8 +8,8 @@ metadata:
     app.kubernetes.io/name: aws-efs-csi-driver
   name: efs-csi-controller-sa
   namespace: kube-system
-  # annotations:
-  #   eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::057477132536:user/deckhand2 ## need to change per user
 ---
 apiVersion: v1
 kind: ServiceAccount
