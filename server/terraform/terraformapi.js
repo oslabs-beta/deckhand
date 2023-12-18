@@ -186,12 +186,23 @@ const addCluster = async (
     ).stdout
   );
 
+  // Get "vpc_cidr_block" from vpc outputs
+  const vpc_cidr_block = JSON.parse(
+    (
+      await execProm(
+        `cd ${projectPath} && terraform output -json vpc_cidr_block`
+      )
+    ).stdout
+  );
+
   console.log('SUBNET IDS:', private_subnets);
+  console.log('CIDR BLOCK:', vpc_cidr_block);
 
   const variables = {
     clusterName,
     vpcId,
     private_subnets,
+    vpc_cidr_block,
     min,
     max,
     desired,
@@ -241,6 +252,20 @@ const destroyCluster = async (userId, projectId, clusterId) => {
   return status;
 };
 
+const getEFSId = (userId, projectId, clusterId) => {
+  const clusterPath = path.join(
+    'server/terraform/userData',
+    `user${userId}`,
+    `project${projectId}`,
+    `cluster${clusterId}`
+  );
+
+  const efsId = execSync(`cd ${clusterPath} && terraform output -json efs-id`, {
+    encoding: 'utf8',
+  });
+  return efsId;
+};
+
 module.exports = {
   connectToProvider,
   addVPC,
@@ -249,6 +274,5 @@ module.exports = {
   initializeUser,
   initializeProject,
   destroyCluster,
+  getEFSId,
 };
-
-
