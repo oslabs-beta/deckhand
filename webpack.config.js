@@ -48,7 +48,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
   },
-  watch: true
   // watchOptions: {
   //   ignored: [path.resolve(__dirname, './server/toDocker')]
   // }

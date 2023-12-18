@@ -25,6 +25,9 @@ export default function ConfigureDockerHubPod() {
     if (state.modal === "ConfigureDockerHubPod") {
       getImages();
       getImageTags("centos");
+
+      getUsersImages();
+      getUsersImageTags('odinolson17-main1');
     }
   }, [state.modal]);
 
@@ -32,18 +35,24 @@ export default function ConfigureDockerHubPod() {
     await fetch("/api/dockerHubImages")
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.map((el) => (
-          <option key={el} value={el}>
+        const arr = data.map((el) => {
+          (<option key={el} value={el}>
             {el}
           </option>
-        ));
+        )});
         setImages(arr);
       })
       .catch((error) => console.log(error));
   };
 
   const getImageTags = async (image) => {
-    await fetch(`/api/dockerHubImageTags/${image}`)
+    await fetch(`/api/dockerHubImageTags/${image}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        image: image
+      })
+    })
       .then((res) => res.json())
       .then((data) => {
         const arr = data.map((el) => (
