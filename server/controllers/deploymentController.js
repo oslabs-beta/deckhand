@@ -132,7 +132,7 @@ deploymentController.build = (req, res, next) => {
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
 
-  const repositoryName = 'deckhandapp';
+  const repositoryName = repo;
   const imageName = branch;
 
   // for signing in:

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "NODE_ENV=production node ./server/server.js",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development nodemon -r dotenv/config ./server/server.js"
+    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development nodemon -r dotenv/config ./server/server.js",
+    "test": "jest"
   },
   "author": "Omar Mirza, Dennis Corsi, Odin Olson, Jeff Gottstein",
   "license": "MIT",
@@ -51,12 +52,14 @@
     "eslint-plugin-jest": "^27.6.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.3",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.1.0",
     "react-test-renderer": "^18.2.0",
     "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
+    "supertest": "^6.3.3",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
