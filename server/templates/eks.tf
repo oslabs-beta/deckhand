@@ -56,7 +56,6 @@ module "eks" {
   enable_irsa = true
 
   cluster_addons = {
-    ## Previously coredns showed up as degraded. Putting it back, hopefully can solve
     coredns = {
       most_recent = true
     }
@@ -71,7 +70,6 @@ module "eks" {
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
     vpc_security_group_ids = [aws_security_group.efs.id]
-    // Note: the docs has above as .eks. and I changed it to .efs. Was it a typo in the docs?
   }
 
   eks_managed_node_groups = {
