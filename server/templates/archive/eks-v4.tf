@@ -1,4 +1,3 @@
-## This version matches current running version, but with past pieces left in as comments
 
 variable "clusterName" {
   type = string
