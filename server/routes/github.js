@@ -31,11 +31,15 @@ router.post('/branches', githubController.branches, (req, res) => {
 });
 
 router.post('/build', githubController.build, (req, res) => {
-  res.status(200)//.json(res.locals.data);
+  res.status(200); //.json(res.locals.data);
 });
 
 router.post('/scan', githubController.scanRepo, (req, res) => {
   res.status(200).json(res.locals.envs);
+});
+
+router.post('/scanPort', githubController.findExposedPort, (req, res) => {
+  res.status(200).json(res.locals.port);
 });
 
 module.exports = router;

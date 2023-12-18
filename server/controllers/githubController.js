@@ -23,11 +23,11 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    CLIENT_ID +
-    '&client_secret=' +
-    CLIENT_SECRET +
-    '&code=' +
-    auth_code,
+      CLIENT_ID +
+      '&client_secret=' +
+      CLIENT_SECRET +
+      '&code=' +
+      auth_code,
     {
       method: 'POST',
       headers: {
@@ -101,8 +101,8 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-    input +
-    '+in:name&sort=stars&order=desc',
+      input +
+      '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -130,7 +130,7 @@ githubController.branches = async (req, res, next) => {
   })
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.map((el) => el.name)
+      res.locals.data = data.map((el) => el.name);
       return next();
     })
     .catch((err) => console.log(err));
@@ -165,8 +165,16 @@ githubController.scanRepo = (req, res, next) => {
   const cloneUrl = `https://github.com/${repo}.git`;
 
   // Clones repo into the temps folder
-  const tempsPath = path.join(__dirname, '..', 'temps');
-  execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
+  let tempsPath;
+  try {
+    tempsPath = path.join(__dirname, '..', 'temps');
+    execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
+  } catch {
+    console.log(`Could not clone ${repo} ${branch}`);
+    res.locals.envs = undefined;
+    return next();
+  }
+
   const repoPath = path.join(tempsPath, repoName);
 
   // An array to hold the paths of all files nested within the repo
@@ -241,6 +249,37 @@ githubController.scanRepo = (req, res, next) => {
   console.log('Scanned for env variables and found:', envArr);
 
   res.locals.envs = envArr;
+  return next();
+};
+
+// Finds the exposed port in the dockerfile
+githubController.findExposedPort = (req, res, next) => {
+  const { repo, branch } = req.body;
+  const repoName = repo.split('/')[1];
+
+  const cloneUrl = `https://github.com/${repo}.git`;
+
+  // Clones repo into the temps folder
+  const tempsPath = path.join(__dirname, '..', 'temps');
+  execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
+  const repoPath = path.join(tempsPath, repoName);
+
+  let port = undefined;
+  try {
+    const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
+    const regex = /expose\s+(\d+)/i;
+    port = Number(regex.exec(dockerfile)[1]);
+  } catch {
+    console.log('failed to find dockerfile');
+    res.locals.port = undefined;
+  }
+
+  // Delete cloned repo
+  execSync(`cd ${tempsPath} && rm -r ${repoName}`);
+
+  console.log('Scanned for exposed port and found:', port);
+
+  res.locals.port = port;
   return next();
 };
 
