@@ -257,11 +257,14 @@ githubController.findExposedPort = (req, res, next) => {
   const repoPath = path.join(tempsPath, repoName);
 
   let port = undefined;
-
-  const regex = /expose\s+(\d+)/i;
-
-  let result = regex.exec(fileString);
-  port = result[1];
+  try {
+    const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
+    const regex = /expose\s+(\d+)/i;
+    port = Number(regex.exec(dockerfile)[1]);
+  } catch {
+    console.log('failed to find dockerfile');
+    res.locals.port = undefined;
+  }
 
   // Delete cloned repo
   execSync(`cd ${tempsPath} && rm -r ${repoName}`);

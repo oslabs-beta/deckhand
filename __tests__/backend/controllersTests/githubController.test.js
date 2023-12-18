@@ -11,14 +11,32 @@ const githubController = require('../../../server/controllers/githubController.j
 // });
 
 describe('scan tests', () => {
+  const req = {
+    body: {},
+  };
+  const res = {
+    locals: {},
+  };
+  const next = jest.fn();
+
   it('Should return undefined if there is no dockerfile', () => {
-    console.log('hello!');
-    expect(1).toEqual(1);
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'main';
+    githubController.findExposedPort(req, res, next);
+    expect(res.locals.port).toEqual(undefined);
   });
 
-  it('Should return undefined if there is no exposed port in the dockerfile', () => {})
+  it('Should return undefined if there is no exposed port in the dockerfile', () => {
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'empty-docker';
+    githubController.findExposedPort(req, res, next);
+    expect(res.locals.port).toEqual(undefined);
+  });
 
-  it('Should return X', () => {})
-
-
+  it('Should return exposed port if there is one in the dockerfile', () => {
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'docker';
+    githubController.findExposedPort(req, res, next);
+    expect(res.locals.port).toEqual(3000);
+  });
 });
