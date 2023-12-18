@@ -57,9 +57,47 @@ describe('Scan envs tests', () => {
     expect(res.locals.envs).toBeUndefined();
   });
 
-  it('Should return an empty array if there are no env variables', () => {});
+  it('Should return an empty array if there are no env variables', () => {
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'no-envs';
+    githubController.scanRepo(req, res, next);
+    expect(res.locals.envs).toEqual([]);
+  });
 
-  it('Should return env variables from root directory', () => {});
+  it('Should return env variables from root directory', () => {
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'nonnested';
+    githubController.scanRepo(req, res, next);
+    const expected = [
+      'BRANCHVALUE',
+      'python1',
+      'python_2',
+      '$php_variable',
+      '$anotherPhp',
+    ].sort();
+    expect(res.locals.envs.sort()).toEqual(expected);
+  });
 
-  it('Should return env variables from nested directory', () => {});
+  it('Should return env variables from nested directory', () => {
+    req.body.repo = 'denniscorsi/envs';
+    req.body.branch = 'testbranch';
+    githubController.scanRepo(req, res, next);
+    const expected = [
+      'C_sharp_var',
+      'SECRET',
+      '_rubyVar',
+      'MONGOURI',
+      'value',
+      'VALID_VALUE',
+      '$VAL',
+      'Java$',
+      '$php_variable',
+      '$anotherPhp',
+      'python1',
+      'python_2',
+      'awskey',
+      'BRANCHVALUE',
+    ].sort();
+    expect(res.locals.envs.sort()).toEqual(expected);
+  });
 });
