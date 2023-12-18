@@ -43,4 +43,3 @@ spec:
             storage: 5Gi
 # Is this not working because I need difference PVCs for each replica? Is that the purpose of using a volumetemplate instead of connecting to a specific VPC?
 
-# Possibly redeploy something on harpoon in dummy account. But make it so I can see the still in AWS.
