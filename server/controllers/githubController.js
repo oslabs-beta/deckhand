@@ -165,8 +165,16 @@ githubController.scanRepo = (req, res, next) => {
   const cloneUrl = `https://github.com/${repo}.git`;
 
   // Clones repo into the temps folder
-  const tempsPath = path.join(__dirname, '..', 'temps');
-  execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
+  let tempsPath;
+  try {
+    tempsPath = path.join(__dirname, '..', 'temps');
+    execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
+  } catch {
+    console.log(`Could not clone ${repo} ${branch}`);
+    res.locals.envs = undefined;
+    return next();
+  }
+
   const repoPath = path.join(tempsPath, repoName);
 
   // An array to hold the paths of all files nested within the repo

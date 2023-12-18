@@ -41,8 +41,7 @@ describe('Scan dockerfile tests', () => {
   });
 });
 
-
-describe('Scan envs tests', ()=>{
+describe('Scan envs tests', () => {
   const req = {
     body: {},
   };
@@ -51,8 +50,16 @@ describe('Scan envs tests', ()=>{
   };
   const next = jest.fn();
 
-  
+  it('Should return undefined if github repo not found', () => {
+    req.body.repo = 'denniscorsi/xxxxx';
+    req.body.branch = 'main';
+    githubController.scanRepo(req, res, next);
+    expect(res.locals.envs).toBeUndefined();
+  });
 
+  it('Should return an empty array if there are no env variables', () => {});
 
+  it('Should return env variables from root directory', () => {});
 
-})
+  it('Should return env variables from nested directory', () => {});
+});
