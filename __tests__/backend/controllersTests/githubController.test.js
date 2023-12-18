@@ -10,7 +10,7 @@ const githubController = require('../../../server/controllers/githubController.j
 
 // });
 
-describe('scan tests', () => {
+describe('Scan dockerfile tests', () => {
   const req = {
     body: {},
   };
@@ -40,3 +40,19 @@ describe('scan tests', () => {
     expect(res.locals.port).toEqual(3000);
   });
 });
+
+
+describe('Scan envs tests', ()=>{
+  const req = {
+    body: {},
+  };
+  const res = {
+    locals: {},
+  };
+  const next = jest.fn();
+
+  
+
+
+
+})
