@@ -435,6 +435,7 @@ button:active {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
+  width: 200px;
 }
 
 .node select > label {
@@ -445,5 +446,13 @@ button:active {
 }
 
 .node .button {
-  padding: 10px 50px;
+  background-color: #5988da;
+  color: white;
+  padding: 10px;
+  width: 200px;
+}
+
+.node .button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
