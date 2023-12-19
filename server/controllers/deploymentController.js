@@ -127,12 +127,12 @@ deploymentController.build = (req, res, next) => {
   const { accessKey, secretKey } = req.body;
   const { region } = req.body;
   const { repo, branch } = req.body;
-  
+
   if (!repo || !branch) console.log('Missing a repository and/or a branch');
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
 
-  const repositoryName = repo;
+  const repositoryName = 'deckhand';
   const imageName = branch;
 
   // for signing in:
@@ -146,26 +146,33 @@ deploymentController.build = (req, res, next) => {
 
   // grabs the user's account id
 
-    const grabTheAWSAccountID = execSync(`aws sts get-caller-identity`, {
-      encoding: 'utf8'
-    });
-    const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
-    const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
+  const grabTheAWSAccountID = execSync(`aws sts get-caller-identity`, {
+    encoding: 'utf8',
+  });
+  const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
+  const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
 
   // creating the repository in ECR
-  
-    execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
-    );
-    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region}`);
 
-    // this creates an image and pushes it
+  execSync(
+    `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
+  );
+  execSync(
+    `aws ecr create-repository --repository-name ${repositoryName} --region ${region}`
+  );
 
-    execSync(`docker build -t ${imageName} ${cloneUrl}`);
-    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
-    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
+  // this creates an image and pushes it
 
-    res.locals.data = { imageName: imageName, imageTag: 'latest' };
-    return next();
+  execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  execSync(
+    `docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`
+  );
+  execSync(
+    `docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`
+  );
+
+  res.locals.data = { imageName: imageName, imageTag: 'latest' };
+  return next();
 };
 
 module.exports = deploymentController;

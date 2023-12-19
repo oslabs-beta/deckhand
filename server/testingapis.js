@@ -19,7 +19,7 @@ const buildTest = () => {
   terraform.connectToProvider(2, 1, 'aws', 'us-east-1', access_key, secret_key);
 
   // for user 2, project 1, provision VPC
-  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec16_2');
+  const vpc_idPromise = terraform.addVPC(2, 1, 'aws', 'dec19_1');
   let vpcId;
 
   vpc_idPromise
@@ -28,7 +28,7 @@ const buildTest = () => {
       vpcId = vpc_id;
       // for user 2, project 1, provision an EKS cluster with id 1
       terraform
-        .addCluster(2, 1, 1, 'dec16_2', vpcId, 1, 3, 2, 't2.medium')
+        .addCluster(2, 1, 1, 'dec19_1', vpcId, 1, 3, 2, 't2.medium')
         .then((output) => console.log(output.stdout));
     })
     .catch((err) => console.log('CATCH:', err));
