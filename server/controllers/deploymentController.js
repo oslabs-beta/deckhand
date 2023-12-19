@@ -214,7 +214,6 @@ deploymentController.getURL = (req, res, next) => {
   const address = k8.getURL();
   res.locals.address = address;
   return next();
-  // TODO: add a route to this
 };
 
 module.exports = deploymentController;
