@@ -132,7 +132,7 @@ deploymentController.build = (req, res, next) => {
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
 
-  const repositoryName = repo;
+  const repositoryName = 'deckhandapp';
   const imageName = branch;
 
   // for signing in:
@@ -140,7 +140,7 @@ deploymentController.build = (req, res, next) => {
     `aws --profile default configure set aws_access_key_id ${accessKey}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key ${secretKey}`
   );
   execSync(`aws --profile default configure set region ${region}`);
 
@@ -158,11 +158,11 @@ deploymentController.build = (req, res, next) => {
     );
     execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region}`);
 
-    // this creates an image and pushes it
+    // to help with architecture of images error
 
-    execSync(`docker build -t ${imageName} ${cloneUrl}`);
-    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
-    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}`);
+    execSync(`docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`);
+    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`);
+    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`);
 
     res.locals.data = { imageName: imageName, imageTag: 'latest' };
     return next();
