@@ -31,4 +31,3 @@ spec:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-pvc
-            # TODO: make these volume yamls

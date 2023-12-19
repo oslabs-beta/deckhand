@@ -4,3 +4,4 @@ metadata:
   name: app-config
 data:
   PG_URI: 'postgres://skptzoyf:u3kpKLsWJoZVDq8HU6irjCOOzhNDzJUz@suleiman.db.elephantsql.com/skptzoyf'
+# TODO: Adjsut this URI for the postgres-service
