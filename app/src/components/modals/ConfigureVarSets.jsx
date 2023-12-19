@@ -14,7 +14,7 @@ export default function () {
 
   const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState(
-    varSet ? varSet.variables : [{ key: "", value: "", secret: true }]
+    varSet.variables ? varSet.variables : [{ key: "", value: "", secret: true }]
   );
 
   useEffect(() => {
