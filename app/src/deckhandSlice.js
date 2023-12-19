@@ -256,18 +256,18 @@ export const deckhandSlice = createSlice({
     deleteNode: (state, action) => { // payload: id
       state.nodes = state.nodes.filter(node => node.nodeId !== action.payload);
     },
-    updateNode: (state, action) => { // payload: { id, ...props to merge }
+    updateNode: (state, action) => {
       const node = state.nodes.find(node => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop
-        const data = node.data;
+        const previousData = { ...node.data };
 
-        // Merge node (overwrites data prop)
+        // Merge node with new properties (including new data)
         Object.assign(node, action.payload);
 
-        // Merge the new and previous data props
+        // Merge the previous and new data props
         if (action.payload.data) {
-          node.data = { ...node.data, ...data };
+          node.data = { ...previousData, ...action.payload.data };
         }
       }
     },
