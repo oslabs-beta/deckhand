@@ -1,14 +1,32 @@
 const request = require('supertest');
 const githubController = require('../../../server/controllers/githubController.js');
 
-// describe('testing Github callback component', () => {
+describe('Testing the Github Oauth Login Redirect', () => {
 
-//   test('check if query code token is in the request', () => {
-//     const req = {query: {code: 'ur5j49dk2or5z34hg4p9'}};
-//     expect(req.query.code).toHaveLength(20);
-//   });
+  it('Does the link properly redirect', () => {
+    
+  });
 
-// });
+});
+
+describe('Testing Github callback component', () => {
+
+  const req = {
+    body: {},
+    query: {code: 'ur5j49dk2or5z34hg4p9'}
+  };
+  const res = {
+    locals: {}
+  }
+  const next = jest.fn();
+
+  it('check if query code token is in the request', () => {
+    githubController.callback(req, res, next);
+    expect(req.query.code).toHaveLength(20);
+    expect(req.query.code).not.toBeUndefined();
+  });
+
+});
 
 describe('Scan dockerfile tests', () => {
   const req = {
