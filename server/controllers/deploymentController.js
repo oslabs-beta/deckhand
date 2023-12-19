@@ -211,10 +211,10 @@ deploymentController.getURL = (req, res, next) => {
 
   k8.connectCLtoAWS(accessKey, secretKey, region);
   k8.connectKubectltoEKS = (region, clusterId);
-  const address = k8.getURL(); //TODO: build this function
+  const address = k8.getURL();
   res.locals.address = address;
   return next();
-  //TODO: add a route to this
+  // TODO: add a route to this
 };
 
 module.exports = deploymentController;
