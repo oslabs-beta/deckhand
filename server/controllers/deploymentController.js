@@ -5,16 +5,16 @@ const k8 = require('../kubernetes/kubernetesapi.js');
 const deploymentController = {};
 
 deploymentController.addProject = (req, res, next) => {
-  const { provider, name, region } = req.body.config;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, name, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   // Connect AWS credentials to Terraform state, then provision the VPC
   terraform
-    .connectToProvider(provider, region, accessKey, secretKey)
+    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
     .then(() => {
       console.log('Successfully connected to provider');
-      terraform.addVPC(region, cleanName);
+      terraform.addVPC(vpcRegion, cleanName);
     })
     .then((externalId) => {
       console.log('Successfully provisioned VPC with id:', externalId);
@@ -70,14 +70,14 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  const { provider, region, externalId } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, vpcRegion, externalId } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const { name, instanceType, minNodes, maxNodes, desiredNodes } =
     req.body.config;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   terraform
-    .connectToProvider(provider, region, accessKey, secretKey)
+    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
     .then(() => {
       terraform
         .addCluster(
@@ -113,8 +113,8 @@ deploymentController.deleteCluster = (req, res, next) => {
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
-  const { provider, region } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const { vpcId, clusterId } = req.body.ids;
   const { yamls } = req.body.yamls;
   // add command line function: apply yamls to cluster
@@ -123,14 +123,14 @@ deploymentController.configureCluster = async (req, res, next) => {
 
 // Dockerize github repo and push to AWS ECR
 deploymentController.build = (req, res, next) => {
-  const { repo, branch, accessKey, secretKey, region } = req.body;
+  const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
 
   // Sign in to AWS
-  execSync(`aws --profile default configure set aws_access_key_id ${accessKey}`);
-  execSync(`aws --profile default configure set aws_secret_access_key ${secretKey}`);
-  execSync(`aws --profile default configure set region ${region}`);
+  execSync(`aws --profile default configure set aws_access_key_id ${awsAccessKey}`);
+  execSync(`aws --profile default configure set aws_secret_access_key ${awsSecretKey}`);
+  execSync(`aws --profile default configure set region ${awsRegion}`);
 
   // Get AWS Account ID
   const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, { encoding: 'utf8' });
@@ -138,9 +138,9 @@ deploymentController.build = (req, res, next) => {
   const awsAccountId = parsedAwsAccountId.Account;
 
   // Create ECR repository
-  const ecrUrl = `${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
-  execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ecrUrl}`);
-  execSync(`aws ecr create-repository --repository-name ${awsRepo} --region ${region} || true`);
+  const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`
+  execSync(`aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`);
+  execSync(`aws ecr create-repository --repository-name ${awsRepo} --region ${vpcRegion} || true`);
 
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
@@ -154,18 +154,18 @@ deploymentController.build = (req, res, next) => {
 };
 
 deploymentController.destroyImage = (req, res, next) => {
-  const { accessKey, secretKey } = req.body;
-  const { region } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { vpcRegion } = req.body;
   const { repo, imageName, imageTag } = req.body;
   const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
 
   // Sign in to AWS
-  execSync(`aws --profile default configure set aws_access_key_id ${accessKey}`);
-  execSync(`aws --profile default configure set aws_secret_access_key ${secretKey}`);
-  execSync(`aws --profile default configure set region ${region}`);
+  execSync(`aws --profile default configure set aws_access_key_id ${awsAccessKey}`);
+  execSync(`aws --profile default configure set aws_secret_access_key ${awsSecretKey}`);
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Delete image
-  execSync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${region}`);
+  execSync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`);
 };
 
 module.exports = deploymentController;

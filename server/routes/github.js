@@ -43,4 +43,8 @@ router.post('/scanPort', githubController.findExposedPort, (req, res) => {
   res.status(200).json(res.locals.port);
 });
 
+router.post('/getURL', githubController.getURL, (req, res) => {
+  res.status(200).json(res.locals.address);
+});
+
 module.exports = router;
