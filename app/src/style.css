@@ -1,12 +1,22 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:300,800");
 
 body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: "Roboto", sans-serif;
-  background-color: #edf6ff;
+  font-family: "Lato", sans-serif;
+  /* background-color: #edf6ff; */
+  background: linear-gradient(
+    60deg,
+    rgb(213, 202, 255) 0%,
+    rgb(201, 249, 255) 100%
+  );
+  /* background: linear-gradient(
+    60deg,
+    rgba(84, 58, 183, 1) 0%,
+    rgba(0, 172, 193, 1) 100%
+  ); */
 }
 
 button {
@@ -32,6 +42,7 @@ button:active {
 
 .icon:hover {
   color: #000;
+  cursor: pointer;
 }
 
 .icon:active {
@@ -43,17 +54,23 @@ button:active {
   height: 100vh;
 }
 
-.logo {
+.float-logo {
   position: absolute;
   display: flex;
   align-items: center;
   top: 20px;
   left: 20px;
   cursor: pointer;
+  z-index: 10;
+  height: 40px;
+  color: black;
+  font-family: "Lato", sans-serif;
 }
 
-.logo img {
-  height: 40px;
+.float-logo span {
+  margin-left: 10px;
+  font-size: 32px;
+  font-weight: bold;
 }
 
 .active-project {
@@ -67,6 +84,7 @@ button:active {
   font-weight: bold;
   font-size: 18px;
   padding: 10px;
+  z-index: 10;
 }
 
 .float-account {
@@ -80,6 +98,7 @@ button:active {
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
   cursor: pointer;
+  z-index: 10;
 }
 
 .float-account img {
@@ -117,25 +136,6 @@ button:active {
   margin: 3px 6px;
 }
 
-.dev {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  bottom: 10px;
-  right: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
-}
-
-.dev button {
-  border: 0;
-  border-radius: 5px;
-  margin-top: 5px;
-  padding: 10px;
-}
-
 .content-container {
   padding-top: 100px;
 }
@@ -154,7 +154,7 @@ button:active {
   color: white;
 }
 
-/* Login Page */
+/* Login page */
 
 #login-container {
   display: flex;
@@ -167,7 +167,6 @@ button:active {
   background-image: url("./assets/loginbackground.jpg");
   background-size: cover;
   height: 100%;
-  padding: 20px;
 }
 
 .login-section {
@@ -203,7 +202,7 @@ button:active {
   transform: scale(0.98);
 }
 
-/* Projects Page */
+/* Home page */
 
 #project-cards {
   display: flex;
@@ -275,7 +274,7 @@ button:active {
   transform: scale(0.98);
 }
 
-/* Deckhand page */
+/* Projects page (cards) */
 
 #pod-cards {
   display: flex;
@@ -359,4 +358,101 @@ button:active {
 
 #new-cluster button:active {
   transform: scale(0.98);
+}
+
+/* Projects page (canvas) */
+
+.float-toolbar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 10px;
+  top: 40%;
+  transform: translateY(-40%);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  z-index: 10;
+  text-align: center;
+}
+
+.float-toolbar div.float-toolbar-item {
+  padding: 10px 0px;
+  cursor: move;
+}
+
+.float-toolbar div.float-toolbar-item span {
+  margin-top: 10px 0px;
+}
+
+.node-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #999;
+  background-color: white;
+}
+
+.node-menu:hover {
+  background-color: white;
+  color: #000;
+}
+
+.node-menu:active {
+  transform: scale(0.98);
+}
+
+.node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px 20px 20px;
+  width: 200px;
+  text-align: center;
+  background-color: white;
+}
+
+.node .icon {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+.node .title {
+  position: absolute;
+  top: 22px;
+  left: 50px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.node select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 200px;
+}
+
+.node select > label {
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  background-color: white;
+}
+
+.node .button {
+  background-color: #5988da;
+  color: white;
+  padding: 10px;
+  width: 200px;
+}
+
+.node .button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

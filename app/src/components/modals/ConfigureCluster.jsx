@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showModal, configureCluster } from "../../deckhandSlice";
+import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
@@ -10,6 +10,7 @@ export default function () {
     setShow(false);
     setTimeout(() => dispatch(showModal({})), 300);
   };
+  const id = state.modal.id;
   const cluster = state.modal.data;
 
   const [show, setShow] = useState(false);
@@ -22,13 +23,16 @@ export default function () {
     e.preventDefault();
     const formData = new FormData(e.target);
     dispatch(
-      configureCluster({
-        clusterId: cluster.clusterId,
-        name: formData.get("name"),
-        instanceType: formData.get("instanceType"),
-        minNodes: formData.get("minNodes"),
-        maxNodes: formData.get("maxNodes"),
-        desiredNodes: formData.get("desiredNodes"),
+      updateNode({
+        id,
+        data: {
+          ...cluster,
+          name: formData.get("name"),
+          instanceType: formData.get("instanceType"),
+          minNodes: formData.get("minNodes"),
+          maxNodes: formData.get("maxNodes"),
+          desiredNodes: formData.get("desiredNodes"),
+        },
       })
     );
     closeModal();
@@ -44,7 +48,11 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <label>
             Name:
-            <input type="text" name="name" defaultValue={cluster.name} />
+            <input
+              type="text"
+              name="name"
+              defaultValue={cluster.name ? cluster.name : "Cluster"}
+            />
           </label>
           <label>
             Instance Type:

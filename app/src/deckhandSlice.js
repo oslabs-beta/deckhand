@@ -15,93 +15,206 @@ export const deckhandSlice = createSlice({
     // },
 
     projectId: null, // selected project id
-    layout: 'cards', // cards or canvas
-    modal: {}, // {name, data}
+    layout: 'canvas', // cards or canvas
+    modal: {}, // {name, ...}
 
     projects: [
       {
-        projectId: 1,
-        name: 'Moodsight', // store as tag in AWS to allow renaming
+        projectId: '1',
+        name: 'Moodsight', // store id+name as tag in AWS to allow renaming
         createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
         modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
         provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
-        vpcRegion: 'us-east-1', // immutable once VPC provisioned (destroying and recreating will break external connections)
+        vpcRegion: 'US-East', // immutable once VPC provisioned (destroying and recreating will break external connections)
         vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
       },
     ],
 
-    clusters: [
+    nodes: [
       {
-        clusterId: 1, // store as unique identifier in AWS
-        projectId: 1,
-        name: 'New Cluster', // store as tag in AWS to allow renaming
-        instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
-        minNodes: 1,
-        maxNodes: 3,
-        desiredNodes: 2,
+        id: 'node-1',
+        type: 'cluster',
+        position: { x: 719, y: 396 },
+        projectId: '1',
+        data: {
+          name: 'Cluster', // store id+name as tag in AWS to allow renaming
+          instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
+          minNodes: 1,
+          maxNodes: 3,
+          desiredNodes: 2,
+        },
       },
-    ],
-
-    pods: [
       {
-        podId: 1,
-        clusterId: 1,
-        name: 'Moodsight',
+        id: 'node-2',
         type: 'github',
-        config: true,
-        githubRepo: 'o-mirza/Moodsight',
-        githubBranch: 'main',
-        githubBranches: ['main'],
-        replicas: 3,
-        deployed: false,
+        data: {
+          name: 'Moodsight',
+          githubRepo: 'o-mirza/Moodsight',
+          githubBranch: 'main',
+          githubBranches: ['main'],
+          replicas: 3,
+          deployed: false,
+        },
+        position: { x: 469, y: 175 },
+        projectId: '1',
       },
       {
-        podId: 2,
-        clusterId: 1,
-        name: 'postgres',
-        type: 'docker-hub',
-        config: true,
-        imageName: 'postgres',
-        imageTag: 'alpine3.19',
-        imageTags: ['alpine3.19', 'alpine3.18', 'alpine', '16.1-alpine3.19', '16.1-alpine3.18', '16.1-alpine', '16-alpine3.19', '16-alpine3.18', '16-alpine', '15.5-alpine3.19', '15.5-alpine3.18', '15.5-alpine', '15-alpine3.19', '15-alpine3.18', '15-alpine', '14.10-alpine3.19', '14.10-alpine3.18', '14.10-alpine', '14-alpine3.19', '14-alpine3.18', '14-alpine', '13.13-alpine3.19', '13.13-alpine3.18', '13.13-alpine', '13-alpine3.19'],
-        replicas: 1,
-        deployed: false,
+        id: 'node-3',
+        type: 'docker',
+        data: {
+          name: 'postgres',
+          imageName: 'postgres',
+          imageTag: 'latest',
+          imageTags: ['latest', 'alpine3.19', 'alpine3.18', 'alpine', '16.1-alpine3.19', '16.1-alpine3.18', '16.1-alpine', '16-alpine3.19', '16-alpine3.18', '16-alpine', '15.5-alpine3.19', '15.5-alpine3.18', '15.5-alpine', '15-alpine3.19', '15-alpine3.18', '15-alpine', '14.10-alpine3.19', '14.10-alpine3.18', '14.10-alpine', '14-alpine3.19', '14-alpine3.18', '14-alpine', '13.13-alpine3.19', '13.13-alpine3.18', '13.13-alpine', '13-alpine3.19'],
+          replicas: '1',
+          deployed: false,
+        },
+        position: { x: 976, y: 670 },
+        projectId: '1',
+      },
+      {
+        id: 'node-4',
+        type: 'variables',
+        data: {
+          varSetId: '1',
+          podId: '1',
+          variables: [
+            { key: 'user1', value: 'abc123', secret: true },
+            { key: 'PG_URI', value: 'db_address', secret: false }
+          ],
+        },
+        position: { x: 926, y: 171 },
+        projectId: '1',
+      },
+      {
+        id: 'node-5',
+        type: 'ingress',
+        data: {
+          ingressId: '1',
+          podId: '1',
+          host: 'example.com',
+          path: '/path',
+        },
+        position: { x: 403, y: 427 },
+        projectId: '1',
+      },
+      {
+        id: 'node-6',
+        type: 'volume',
+        data: {
+          volumeId: '1',
+          podId: 2,
+          directory: '/mnt/data',
+        },
+        position: { x: 638, y: 676 },
+        projectId: '1',
       },
     ],
 
-    varSets: [
+    edges: [
       {
-        varSetId: 1,
-        podId: 1,
-        variables: [
-          { key: 'user1', value: 'abc123', secret: true },
-          { key: 'PG_URI', value: 'db_address', secret: false }
-        ],
+        source: "node-2",
+        sourceHandle: "b",
+        target: "node-1",
+        targetHandle: null,
+        projectId: '1',
       },
     ],
 
-    ingresses: [
-      {
-        ingressId: 1,
-        podId: 1,
-        host: 'example.com',
-        path: '/path',
-      },
-    ],
+    // clusters: [
+    //   {
+    //     id: 'node-1',
+    //     clusterId: '1', // store as unique identifier in AWS
+    //     data: { id: '1' },
+    //     projectId: '1',
+    //     position: { x: 719, y: 396 },
+    //     type: 'cluster',
+    //     name: 'New Cluster', // store as tag in AWS to allow renaming
+    //     instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
+    //     minNodes: 1,
+    //     maxNodes: 3,
+    //     desiredNodes: 2,
+    //   },
+    // ],
 
-    volumes: [
-      {
-        volumeId: 1,
-        podId: 2,
-        directory: '/mnt/data',
-      },
-    ],
+    // pods: [
+    //   {
+    //     id: 'node-2',
+    //     podId: '1',
+    //     data: { id: '1' },
+    //     clusterId: '1',
+    //     position: { x: 469, y: 175 },
+    //     name: 'Moodsight',
+    //     type: 'github',
+    //     config: true,
+    //     githubRepo: 'o-mirza/Moodsight',
+    //     githubBranch: 'main',
+    //     githubBranches: ['main'],
+    //     replicas: 3,
+    //     deployed: false,
+    //   },
+    //   {
+    //     id: 'node-3',
+    //     podId: '2',
+    //     data: { id: '2' },
+    //     clusterId: '1',
+    //     position: { x: 976, y: 670 },
+    //     name: 'postgres',
+    //     type: 'docker',
+    //     config: true,
+    //     imageName: 'postgres',
+    //     imageTag: 'latest',
+    //     imageTags: ['latest', 'alpine3.19', 'alpine3.18', 'alpine', '16.1-alpine3.19', '16.1-alpine3.18', '16.1-alpine', '16-alpine3.19', '16-alpine3.18', '16-alpine', '15.5-alpine3.19', '15.5-alpine3.18', '15.5-alpine', '15-alpine3.19', '15-alpine3.18', '15-alpine', '14.10-alpine3.19', '14.10-alpine3.18', '14.10-alpine', '14-alpine3.19', '14-alpine3.18', '14-alpine', '13.13-alpine3.19', '13.13-alpine3.18', '13.13-alpine', '13-alpine3.19'],
+    //     replicas: '1',
+    //     deployed: false,
+    //   },
+    // ],
+
+    // varSets: [
+    //   {
+    //     id: 'node-4',
+    //     varSetId: '1',
+    //     data: { id: '1' },
+    //     podId: '1',
+    //     position: { x: 926, y: 171 },
+    //     type: 'variables',
+    //     variables: [
+    //       { key: 'user1', value: 'abc123', secret: true },
+    //       { key: 'PG_URI', value: 'db_address', secret: false }
+    //     ],
+    //   },
+    // ],
+
+    // ingresses: [
+    //   {
+    //     id: 'node-5',
+    //     ingressId: '1',
+    //     data: { id: '1' },
+    //     podId: '1',
+    //     position: { x: 403, y: 427 },
+    //     type: 'ingress',
+    //     host: 'example.com',
+    //     path: '/path',
+    //   },
+    // ],
+
+    // volumes: [
+    //   {
+    //     id: 'node-6',
+    //     volumeId: '1',
+    //     data: { id: '1' },
+    //     podId: 2,
+    //     position: { x: 638, y: 676 },
+    //     type: 'volume',
+    //     directory: '/mnt/data',
+    //   },
+    // ],
   },
   reducers: {
-    setUser: (state, action) => { // payload: users (merge properties)
+    setUser: (state, action) => { // payload: user (merge props)
       Object.assign(state.user, action.payload);
     },
-    setState: (state, action) => { // payload: {projects, clusters, pods, varSets, ingresses, volumes}
+    setState: (state, action) => { // payload: {projects, nodes, edges}
       Object.assign(state, action.payload);
     },
     setProjectId: (state, action) => { // payload: projectId
@@ -110,11 +223,11 @@ export const deckhandSlice = createSlice({
     toggleLayout: (state, action) => {
       state.layout === 'cards' ? state.layout = 'canvas' : state.layout = 'cards';
     },
-    showModal: (state, action) => { // payload: {name, data}
+    showModal: (state, action) => { // payload: {name, ...}
       state.modal = action.payload;
     },
 
-    // Projects Reducers
+    // Project Reducers
     addProject: (state, action) => { // payload: projectId
       state.projects.push({
         projectId: action.payload,
@@ -122,7 +235,7 @@ export const deckhandSlice = createSlice({
         createdDate: new Date().toString(),
         modifiedDate: new Date().toString(),
         provider: 'aws', // default
-        vpcRegion: 'us-east-1', // default
+        vpcRegion: 'US-East', // default
       });
     },
     deleteProject: (state, action) => { // payload: projectId
@@ -136,11 +249,47 @@ export const deckhandSlice = createSlice({
       if (project) Object.assign(project, action.payload);
     },
 
+    // Node Reducers
+    addNode: (state, action) => { // payload: { id, type, data, position, projectId }
+      state.nodes.push(action.payload);
+    },
+    deleteNode: (state, action) => { // payload: id
+      state.nodes = state.nodes.filter(node => node.nodeId !== action.payload);
+    },
+    updateNode: (state, action) => { // payload: { id, ...props to merge }
+      const node = state.nodes.find(node => node.id === action.payload.id);
+      if (node) {
+        // Copy previous data prop
+        const data = node.data;
+
+        // Merge node (overwrites data prop)
+        Object.assign(node, action.payload);
+
+        // Merge the new and previous data props
+        if (action.payload.data) {
+          node.data = { ...node.data, ...data };
+        }
+      }
+    },
+
+    // Edge Reducers
+    addNewEdge: (state, action) => { // payload: { id, ...params, project.id }
+      state.edges.push(action.payload);
+    },
+    deleteEdge: (state, action) => { // payload: id
+      state.edges = state.edges.filter(edge => edge.id !== action.payload);
+    },
+    updateEdge: (state, action) => { // payload: { id, ...props to merge }
+      const edge = state.edges.find(edge => edge.id === action.payload.id);
+      if (edge) Object.assign(edge, action.payload);
+    },
+
     // Cluster Reducers
     addCluster: (state, action) => { // payload: { clusterId, projectId }
       state.clusters.push({
         clusterId: action.payload.clusterId,
         projectId: action.payload.projectId,
+        position: action.payload.position,
         name: `Default Cluster`,
       });
     },
@@ -156,10 +305,11 @@ export const deckhandSlice = createSlice({
     },
 
     // Pod Reducers
-    addPod: (state, action) => { // payload: { podId, clusterId}
+    addPod: (state, action) => { // payload: { podId, clusterId, position}
       state.pods.push({
         podId: action.payload.podId,
         clusterId: action.payload.clusterId,
+        position: action.payload.position,
         name: `New Pod`,
         replicas: 3,
       });
@@ -240,6 +390,14 @@ export const {
   addProject,
   deleteProject,
   configureProject,
+
+  addNode,
+  deleteNode,
+  updateNode,
+
+  addNewEdge,
+  deleteEdge,
+  updateEdge,
 
   addCluster,
   deleteCluster,
