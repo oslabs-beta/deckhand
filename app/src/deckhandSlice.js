@@ -37,7 +37,7 @@ export const deckhandSlice = createSlice({
         position: { x: 719, y: 396 },
         projectId: '1',
         data: {
-          name: 'New Cluster', // store id+name as tag in AWS to allow renaming
+          name: 'Cluster', // store id+name as tag in AWS to allow renaming
           instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
           minNodes: 1,
           maxNodes: 3,
@@ -211,10 +211,10 @@ export const deckhandSlice = createSlice({
     // ],
   },
   reducers: {
-    setUser: (state, action) => { // payload: users (merge properties)
+    setUser: (state, action) => { // payload: user (merge props)
       Object.assign(state.user, action.payload);
     },
-    setState: (state, action) => { // payload: {projects, clusters, pods, varSets, ingresses, volumes}
+    setState: (state, action) => { // payload: {projects, nodes, edges}
       Object.assign(state, action.payload);
     },
     setProjectId: (state, action) => { // payload: projectId
@@ -227,7 +227,7 @@ export const deckhandSlice = createSlice({
       state.modal = action.payload;
     },
 
-    // Projects Reducers
+    // Project Reducers
     addProject: (state, action) => { // payload: projectId
       state.projects.push({
         projectId: action.payload,
@@ -257,7 +257,6 @@ export const deckhandSlice = createSlice({
       state.nodes = state.nodes.filter(node => node.nodeId !== action.payload);
     },
     updateNode: (state, action) => { // payload: { id, ...props to merge }
-      console.log(action.payload)
       const node = state.nodes.find(node => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop
