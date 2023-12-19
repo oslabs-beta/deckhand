@@ -1,0 +1,1 @@
+User's terraform state files will be stored here

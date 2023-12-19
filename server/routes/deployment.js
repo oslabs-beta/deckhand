@@ -26,4 +26,8 @@ router.post('/build', deploymentController.build, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
+router.post('/destroyImage', deploymentController.destroyImage, (req, res) => {
+  res.sendStatus(200);
+});
+
 module.exports = router;

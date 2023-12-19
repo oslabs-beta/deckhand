@@ -124,11 +124,12 @@ deploymentController.configureCluster = async (req, res, next) => {
 // Dockerize github repo and push to AWS ECR
 deploymentController.build = (req, res, next) => {
   const { repo, branch, accessKey, secretKey, region } = req.body;
+  const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
 
   // Sign in to AWS
   execSync(`aws --profile default configure set aws_access_key_id ${accessKey}`);
-  execSync(`aws --profile default configure set aws_secret_access_key_id ${secretKey}`);
+  execSync(`aws --profile default configure set aws_secret_access_key ${secretKey}`);
   execSync(`aws --profile default configure set region ${region}`);
 
   // Get AWS Account ID
@@ -139,17 +140,32 @@ deploymentController.build = (req, res, next) => {
   // Create ECR repository
   const ecrUrl = `${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
   execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ecrUrl}`);
-  execSync(`aws ecr create-repository --repository-name ${repo} --region ${region}`);
+  execSync(`aws ecr create-repository --repository-name ${awsRepo} --region ${region} || true`);
 
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
-  const imageUrl = `${ecrUrl}/${repo}`;
-  execSync(`docker build -t ${imageName} ${cloneUrl}`);
+  const imageUrl = `${ecrUrl}/${awsRepo}`;
+  execSync(`docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`);
   execSync(`docker tag ${imageName} ${imageUrl}`);
   execSync(`docker push ${imageUrl}`);
 
   res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
   return next();
+};
+
+deploymentController.destroyImage = (req, res, next) => {
+  const { accessKey, secretKey } = req.body;
+  const { region } = req.body;
+  const { repo, imageName, imageTag } = req.body;
+  const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
+
+  // Sign in to AWS
+  execSync(`aws --profile default configure set aws_access_key_id ${accessKey}`);
+  execSync(`aws --profile default configure set aws_secret_access_key ${secretKey}`);
+  execSync(`aws --profile default configure set region ${region}`);
+
+  // Delete image
+  execSync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${region}`);
 };
 
 module.exports = deploymentController;
