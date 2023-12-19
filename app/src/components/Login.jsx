@@ -15,6 +15,7 @@ export default function Login() {
         <div className="button-container">
           <div
             id="github-button"
+            data-testid="github-button"
             onClick={() => {
               window.location.href = "/api/github/login";
             }}
