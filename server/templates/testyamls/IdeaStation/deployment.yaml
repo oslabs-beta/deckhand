@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ideastation
-          image: 057477132536.dkr.ecr.us-east-1.amazonaws.com/deckhandapp:docker
+          image: 057477132536.dkr.ecr.us-east-1.amazonaws.com/goblin-shark-cs-brainstormapp:latest
           ports:
             - containerPort: 3000
           env:
