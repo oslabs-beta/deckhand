@@ -4,12 +4,12 @@ import {} from "../../deckhandSlice";
 import LinkedCloudProviders from "../modals/LinkedCloudProviders";
 import ConfigureProject from "../modals/ConfigureProject";
 import ConfigureCluster from "../modals/ConfigureCluster";
+import ConfigureIngress from "../modals/ConfigureIngress";
+import ConfigureVolume from "../modals/ConfigureVolume";
+import ConfigureVarSets from "../modals/ConfigureVarSets";
 import PodSource from "../modals/PodSource";
-import ConfigurePodReplicas from "../modals/ConfigurePodReplicas";
-import ConfigurePodIngress from "../modals/ConfigurePodIngress";
-import ConfigurePodVolume from "../modals/ConfigurePodVolume";
-import ConfigurePodVariables from "../modals/ConfigurePodVariables";
-import ConfigurePodYaml from "../modals/ConfigurePodYaml";
+import PodReplicas from "../modals/PodReplicas";
+import PodYaml from "../modals/PodYaml";
 
 export default function Modals() {
   const state = useSelector((state) => state.deckhand);
@@ -20,18 +20,12 @@ export default function Modals() {
       {state.modal.name === "LinkedCloudProviders" && <LinkedCloudProviders />}
       {state.modal.name === "ConfigureProject" && <ConfigureProject />}
       {state.modal.name === "ConfigureCluster" && <ConfigureCluster />}
+      {state.modal.name === "ConfigureIngress" && <ConfigureIngress />}
+      {state.modal.name === "ConfigureVolume" && <ConfigureVolume />}
+      {state.modal.name === "ConfigureVarSets" && <ConfigureVarSets />}
       {state.modal.name === "PodSource" && <PodSource />}
-      {state.modal.name === "ConfigureGithubPod" && <ConfigureGithubPod />}
-      {state.modal.name === "ConfigureDockerHubPod" && (
-        <ConfigureDockerHubPod />
-      )}
-      {state.modal.name === "ConfigurePodReplicas" && <ConfigurePodReplicas />}
-      {state.modal.name === "ConfigurePodIngress" && <ConfigurePodIngress />}
-      {state.modal.name === "ConfigurePodVolume" && <ConfigurePodVolume />}
-      {state.modal.name === "ConfigurePodVariables" && (
-        <ConfigurePodVariables />
-      )}
-      {state.modal.name === "ConfigurePodYaml" && <ConfigurePodYaml />}
+      {state.modal.name === "PodReplicas" && <PodReplicas />}
+      {state.modal.name === "PodYaml" && <PodYaml />}
     </>
   );
 }

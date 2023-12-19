@@ -46,14 +46,30 @@ export default function () {
           </label>
           <label>
             Provider:
-            <select name="provider">
-              <option defaultValue="aws">Amazon Web Services (AWS)</option>
+            <select name="provider" defaultValue="aws">
+              <option value="aws">Amazon Web Services (AWS)</option>
             </select>
           </label>
           <label>
             Region:
-            <select name="region">
-              <option defaultValue="US-East">US-East</option>
+            <select name="region" defaultValue="us-east-1">
+              <option value="us-east-1">US East (Virginia)</option>
+              <option value="us-east-2">US East (Ohio)</option>
+              <option value="us-west-1">US West (N. California)</option>
+              <option value="us-west-2">US West (Oregon)</option>
+              <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+              <option value="ap-northeast-3">Asia Pacific (Osaka)</option>
+              <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+              <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+              <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+              <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+              <option value="ca-central-1">Canada (Central)</option>
+              <option value="eu-central-1">Europe (Frankfurt)</option>
+              <option value="eu-west-1">Europe (Ireland)</option>
+              <option value="eu-west-2">Europe (London)</option>
+              <option value="eu-west-3">Europe (Paris)</option>
+              <option value="eu-north-1">Europe (Stockholm)</option>
+              <option value="sa-east-1">South America (São Paulo)</option>
             </select>
           </label>
           <div className="buttons">
