@@ -11,7 +11,7 @@ export default function FloatLogo() {
     <div className="float-logo" onClick={() => dispatch(setProjectId(null))}>
       <svg
         version="1.1"
-        class="logo"
+        className="logo"
         baseProfile="tiny"
         id="Layer_1"
         xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@ export default function FloatLogo() {
           r="200"
           fill="none"
           stroke="#333"
-          stroke-width="40"
+          strokeWidth="40"
         />
 
         <circle
@@ -35,7 +35,7 @@ export default function FloatLogo() {
           r="60"
           fill="#333"
           stroke="none"
-          stroke-width="40"
+          strokeWidth="40"
         />
 
         <line
@@ -44,7 +44,7 @@ export default function FloatLogo() {
           x2="250"
           y2="500"
           stroke="#333"
-          stroke-width="40"
+          strokeWidth="40"
         />
         <line
           x1="0"
@@ -52,7 +52,7 @@ export default function FloatLogo() {
           x2="500"
           y2="250"
           stroke="#333"
-          stroke-width="20"
+          strokeWidth="20"
         />
         <line
           x1="35.36"
@@ -60,7 +60,7 @@ export default function FloatLogo() {
           x2="464.64"
           y2="464.64"
           stroke="#333"
-          stroke-width="20"
+          strokeWidth="20"
         />
         <line
           x1="464.64"
@@ -68,7 +68,7 @@ export default function FloatLogo() {
           x2="35.36"
           y2="464.64"
           stroke="#333"
-          stroke-width="20"
+          strokeWidth="20"
         />
       </svg>
       <span>Deckhand</span>
