@@ -168,4 +168,17 @@ deploymentController.destroyImage = (req, res, next) => {
   execSync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`);
 };
 
+// Gets the public address of the ingress
+deploymentController.getURL = (req, res, next) => {
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { provider, vpcRegion } = req.body;
+  const { clusterId } = req.body.ids;
+
+  k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
+  k8.connectKubectltoEKS = (vpcRegion, clusterId);
+  const address = k8.getURL();
+  res.locals.address = address;
+  return next();
+};
+
 module.exports = deploymentController;
