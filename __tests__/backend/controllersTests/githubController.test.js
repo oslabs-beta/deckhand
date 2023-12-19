@@ -1,7 +1,15 @@
 const request = require('supertest');
 const githubController = require('../../../server/controllers/githubController.js');
 
-describe('testing Github callback component', () => {
+describe('Testing the Github Oauth Login Redirect', () => {
+
+  it('Does the link properly redirect', () => {
+    
+  });
+
+});
+
+describe('Testing Github callback component', () => {
 
   const req = {
     body: {},
