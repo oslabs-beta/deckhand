@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Lato:300:400");
+@import url("https://fonts.googleapis.com/css?family=Lato:300,800");
 
 body,
 html {
@@ -386,15 +386,64 @@ button:active {
   margin-top: 10px 0px;
 }
 
-.text-updater-node {
-  height: 50px;
-  border: 1px solid #eee;
-  padding: 10px;
-  border-radius: 10px;
-  background: white;
+.node-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #999;
+  background-color: white;
 }
 
-.text-updater-node label {
-  display: block;
-  color: #777;
+.node-menu:hover {
+  background-color: white;
+  color: #000;
+}
+
+.node-menu:active {
+  transform: scale(0.98);
+}
+
+.node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px 20px 20px;
+  width: 200px;
+  text-align: center;
+  background-color: white;
+}
+
+.node .icon {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+.node .title {
+  position: absolute;
+  top: 22px;
+  left: 50px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.node select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.node select > label {
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  background-color: white;
+}
+
+.node .button {
+  padding: 10px 50px;
 }
