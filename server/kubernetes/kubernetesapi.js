@@ -6,7 +6,7 @@ const connectCLtoAWS = (accessKey, secretKey, region) => {
     `aws --profile default configure set aws_access_key_id ${accessKey}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key ${secretKey}`
   );
   execSync(`aws --profile default configure set region ${region}`);
 };
@@ -33,6 +33,5 @@ const deploy = (yamls) => {
 const remove = (kind, name) => {
   execSync(`kubectl delete ${kind} ${name}`);
 };
-
 
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };

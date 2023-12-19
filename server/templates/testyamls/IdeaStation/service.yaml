@@ -6,9 +6,9 @@ metadata:
     app: app-service
 spec:
   ports:
-    - port: 80
-    - targetPort: 3000 # has to match container port
+    - protocol: TCP
+      port: 80
+      targetPort: 3000 # has to match container port
   clusterIP: None
   selector:
     app: ideastation
-

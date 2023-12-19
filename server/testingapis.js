@@ -39,21 +39,27 @@ const buildTest = () => {
 
 const k8deploytest = () => {
   const fs = require('fs');
-  k8.connectKubectltoEKS('us-east-1', 'dec16_2');
+  k8.connectKubectltoEKS('us-east-1', 'dec19_1');
 
-  const driver = fs.readFileSync(
-    __dirname + '/terraform/public-ecr-driver.yaml'
-  );
-  const storageClass = fs.readFileSync(
-    __dirname + '/templates/yamls/StorageClass.yaml'
-  );
-  const PV = fs.readFileSync(__dirname + '/templates/yamls/PV.yaml');
-  const PVC = fs.readFileSync(__dirname + '/templates/yamls/PVC.yaml');
   const deployment = fs.readFileSync(
-    __dirname + '/templates/yamls/nginxdeploy.yaml'
+    __dirname + '/templates/testyamls/IdeaStation/deployment.yaml'
   );
 
-  const yamls = [driver, storageClass, PV, PVC, deployment];
+  const configMap = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/configMap.yaml'
+  );
+
+  const service = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/service.yaml'
+  );
+
+  const ingress = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/ingress.yaml'
+  );
+
+  const nginx = fs.readFileSync(__dirname + '/kubernetes/nginx-ingress.yaml');
+
+  const yamls = [deployment, configMap, service, nginx, ingress];
 
   k8.deploy(yamls);
   // k8.deploy([deployment]);
@@ -77,8 +83,8 @@ const destroyTest = () => {
   // try destroying VPC that has a cluster inside. What happens?
 };
 
-buildTest();
-// k8deploytest();
+// buildTest();
+k8deploytest();
 // undeploytest();
 // destroyTest();
 
