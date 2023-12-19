@@ -4,7 +4,7 @@ import { toggleLayout } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import {
   mdiDotsHexagon,
-  mdiDocker,
+  mdiCircle,
   mdiPackageVariantClosed,
   mdiKeyVariant,
   mdiImport,
@@ -30,7 +30,7 @@ export default function FloatNav() {
         onDragStart={(event) => onDragStart(event, "cluster")}
         draggable
       >
-        <Icon path={mdiDotsHexagon} size={1} />
+        <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1} />
         <br />
         <b>Cluster</b>
       </div>
@@ -40,7 +40,7 @@ export default function FloatNav() {
         onDragStart={(event) => onDragStart(event, "pod")}
         draggable
       >
-        <Icon path={mdiDocker} size={1} />
+        <Icon path={mdiCircle} style={{ color: "#0db7ed" }} size={1} />
         <br />
         <b>Pod</b>
       </div>
@@ -50,7 +50,7 @@ export default function FloatNav() {
         onDragStart={(event) => onDragStart(event, "variables")}
         draggable
       >
-        <Icon path={mdiKeyVariant} size={1} />
+        <Icon path={mdiKeyVariant} style={{ color: "orange" }} size={1} />
         <br />
         <b>Variables</b>
       </div>
@@ -59,7 +59,7 @@ export default function FloatNav() {
         onDragStart={(event) => onDragStart(event, "ingress")}
         draggable
       >
-        <Icon path={mdiImport} size={1} />
+        <Icon path={mdiImport} style={{ color: "green" }} size={1} />
         <br />
         <b>Ingress</b>
       </div>
@@ -68,7 +68,7 @@ export default function FloatNav() {
         onDragStart={(event) => onDragStart(event, "volume")}
         draggable
       >
-        <Icon path={mdiDatabase} size={1} />
+        <Icon path={mdiDatabase} style={{ color: "violet" }} size={1} />
         <br />
         <b>Volume</b>
       </div>
