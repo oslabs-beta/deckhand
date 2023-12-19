@@ -63,7 +63,7 @@ export default function Canvas() {
     );
     setNodes(projectNodes);
     setEdges(projectEdges);
-  }, [state.nodes, state.edges]);
+  }, [state.nodes, state.edges, setNodes, setEdges]);
 
   const onConnect = useCallback((params) => {
     // setEdges((eds) => addEdge(params, eds)), [];
