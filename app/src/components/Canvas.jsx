@@ -2,14 +2,12 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   showModal,
-  addCluster,
-  deleteCluster,
-  addPod,
-  deletePod,
-  configurePod,
-  addVarSet,
-  addIngress,
-  addVolume,
+  addNode,
+  deleteNode,
+  updateNode,
+  addNewEdge,
+  deleteEdge,
+  updateEdge,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
@@ -29,35 +27,53 @@ import ReactFlow, {
   addEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import TextUpdaterNode from "./nodes/TextUpdaterNode";
+import ClusterNode from "./nodes/ClusterNode";
+import PodNode from "./nodes/PodNode";
+import GithubNode from "./nodes/GithubNode";
+import DockerNode from "./nodes/DockerNode";
+import VariablesNode from "./nodes/VariablesNode";
+import IngressNode from "./nodes/IngressNode";
+import VolumeNode from "./nodes/VolumeNode";
 
-const initialNodes = [
-  // {
-  //   id: "node-1",
-  //   type: "textUpdater",
-  //   position: { x: 0, y: 0 },
-  //   data: { value: 123 },
-  // },
-];
-const nodeTypes = { textUpdater: TextUpdaterNode };
+const nodeTypes = {
+  cluster: ClusterNode,
+  pod: PodNode,
+  github: GithubNode,
+  docker: DockerNode,
+  variables: VariablesNode,
+  ingress: IngressNode,
+  volume: VolumeNode,
+};
 
-export default function Project() {
+export default function Canvas() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
-  const project = state.projects.find((p) => p.projectId === state.projectId);
-  const clusters = state.clusters?.filter(
-    (cluster) => cluster.projectId === project.projectId
-  );
 
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    []
-  );
+  useEffect(() => {
+    const projectNodes = state.nodes.filter(
+      (nds) => nds.projectId === state.projectId
+    );
+    const projectEdges = state.edges.filter(
+      (eds) => eds.projectId === state.projectId
+    );
+    setNodes(projectNodes);
+    setEdges(projectEdges);
+  }, [state.nodes, state.edges]);
+
+  const onConnect = useCallback((params) => {
+    // setEdges((eds) => addEdge(params, eds)), [];
+    const newEdge = {
+      id: `${params.source}-${params.target}`,
+      ...params,
+      projectId: state.projectId,
+    };
+    dispatch(addNewEdge(newEdge));
+  });
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -67,23 +83,26 @@ export default function Project() {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      const type = event.dataTransfer.getData("application/reactflow");
-      const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
 
       const newNode = {
-        id: Math.floor(Math.random() * 10000).toString(),
-        type,
-        position,
-        data: { label: `${type} node` },
+        id: Math.floor(Math.random() * 10000).toString(), // fetch from SQL
+        type: event.dataTransfer.getData("application/reactflow"),
+        projectId: state.projectId,
+        position: reactFlowInstance.screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        }),
+        data: [],
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      dispatch(addNode(newNode));
     },
     [reactFlowInstance]
   );
+
+  const onNodeDragStop = (event, node) => {
+    dispatch(updateNode({ id: node.id, position: node.position }));
+  };
 
   return (
     <div className="container">
@@ -103,6 +122,7 @@ export default function Project() {
               onInit={setReactFlowInstance}
               onDrop={onDrop}
               onDragOver={onDragOver}
+              onNodeDragStop={onNodeDragStop}
               nodeTypes={nodeTypes}
               proOptions={{ hideAttribution: true }}
             >
