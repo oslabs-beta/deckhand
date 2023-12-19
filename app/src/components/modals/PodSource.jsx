@@ -14,7 +14,7 @@ export default function () {
   const data = state.modal.data;
 
   const [show, setShow] = useState(false);
-  const [type, setType] = useState("docker");
+  const [type, setType] = useState("docker-hub");
   const [dockerHubImages, setDockerHubImages] = useState([]);
   const [userRepos, setUserRepos] = useState([]);
   const [publicRepos, setPublicRepos] = useState([]);
@@ -166,16 +166,17 @@ export default function () {
   const handleClickDockerHub = async (image) => {
     await fetch(`/api/dockerHubImageTags/${image}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((imageTags) => {
         dispatch(
           updateNode({
             id,
             type: "docker",
             data: {
+              ...data,
               name: image.split("/").pop(),
               imageName: image,
-              imageTag: data[0],
-              imageTags: data,
+              imageTag: imageTags.includes("latest") ? "latest" : imageTags[0],
+              imageTags,
             },
           })
         );
@@ -194,16 +195,19 @@ export default function () {
       body: JSON.stringify({ repo }),
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then((githubBranches) => {
         dispatch(
           updateNode({
             id,
             type: "github",
             data: {
+              ...data,
               name: repo.split("/").pop(),
               githubRepo: repo,
-              githubBranch: data[0],
-              githubBranches: data,
+              githubBranch: githubBranches.includes("main")
+                ? "main"
+                : githubBranches[0],
+              githubBranches,
             },
           })
         );
@@ -223,12 +227,12 @@ export default function () {
         <form>
           <label>
             <select name="source" onChange={(e) => setType(e.target.value)}>
-              <option value="docker">Docker Hub</option>
+              <option value="docker-hub">Docker Hub</option>
               <option value="my-github">My Github</option>
               <option value="public-github">Public Github</option>
             </select>
           </label>
-          {type === "docker" && (
+          {type === "docker-hub" && (
             <>
               <label>
                 Search Docker Hub:
@@ -242,8 +246,6 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {dockerHubImages}
@@ -257,8 +259,6 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {userRepos}
@@ -279,22 +279,12 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {publicRepos}
               </div>
             </>
           )}
-          {/* <div className="buttons">
-            <button type="button" onClick={closeModal}>
-              Cancel
-            </button>
-            <button type="submit" className="blue">
-              Submit
-            </button>
-          </div> */}
         </form>
       </div>
     </div>
