@@ -1,24 +1,51 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import {
-  showModal,
-  addCluster,
-  deleteCluster,
-  addPod,
-  deletePod,
-  configurePod,
-  addVarSet,
-  addIngress,
-  addVolume,
-} from "../../deckhandSlice";
+import { showModal, updateNode, deleteNode } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiGithub } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-export default function ({ data, isConnectable }) {
+export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      await fetch("/api/github/branches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ repo: data.githubRepo }),
+      })
+        .then((res) => res.json())
+        .then((githubBranches) => {
+          dispatch(
+            updateNode({
+              id,
+              data: {
+                ...data,
+                githubBranches,
+              },
+            })
+          );
+        })
+        .catch((err) => console.log(err));
+    })();
+  }, []);
+
+  const setBranch = (githubBranch) => {
+    dispatch(
+      updateNode({
+        id,
+        data: {
+          ...data,
+          githubBranch,
+        },
+      })
+    );
+  };
 
   return (
     <div className="node">
@@ -41,14 +68,16 @@ export default function ({ data, isConnectable }) {
             >
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(showModal({ name: "PodSource", data }))}
+                onClick={() =>
+                  dispatch(showModal({ name: "PodSource", id, data }))
+                }
               >
-                Select Source
+                Change Source
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(deletePod(data.podId))}
+                onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
               </DropdownMenu.Item>
@@ -59,12 +88,21 @@ export default function ({ data, isConnectable }) {
           <Icon path={mdiGithub} style={{ color: "black" }} size={1} />
         </div>
         <div className="title">{data.name}</div>
-        <button
-          className="button"
-          onClick={() => dispatch(showModal({ name: "PodSource", data }))}
+        <select
+          name="githubBranch"
+          className="select nodrag"
+          onChange={(e) => setBranch(e.target.value)}
+          value={data.githubBranch}
         >
-          Select Source
-        </button>
+          {data.githubBranches
+            ? data.githubBranches.map((el) => (
+                <option key={el} value={el}>
+                  {el}
+                </option>
+              ))
+            : ""}
+        </select>
+        <button className="button nodrag disabled">Deploy</button>
       </div>
       <Handle
         type="source"
