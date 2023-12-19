@@ -5,16 +5,16 @@ const k8 = require('../kubernetes/kubernetesapi.js');
 const deploymentController = {};
 
 deploymentController.addProject = (req, res, next) => {
-  const { provider, name, region } = req.body.config;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, name, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   // Connect AWS credentials to Terraform state, then provision the VPC
   terraform
-    .connectToProvider(provider, region, accessKey, secretKey)
+    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
     .then(() => {
       console.log('Successfully connected to provider');
-      terraform.addVPC(region, cleanName);
+      terraform.addVPC(vpcRegion, cleanName);
     })
     .then((externalId) => {
       console.log('Successfully provisioned VPC with id:', externalId);
@@ -70,14 +70,14 @@ deploymentController.deleteProject = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  const { provider, region, externalId } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, vpcRegion, externalId } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const { name, instanceType, minNodes, maxNodes, desiredNodes } =
     req.body.config;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   terraform
-    .connectToProvider(provider, region, accessKey, secretKey)
+    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
     .then(() => {
       terraform
         .addCluster(
@@ -113,8 +113,8 @@ deploymentController.deleteCluster = (req, res, next) => {
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
-  const { provider, region } = req.body;
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
   const { vpcId, clusterId } = req.body.ids;
   const { yamls } = req.body.yamls;
   // add command line function: apply yamls to cluster
@@ -124,8 +124,8 @@ deploymentController.configureCluster = async (req, res, next) => {
 // to build a github repo and add it to AWS ECR
 
 deploymentController.build = (req, res, next) => {
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { region } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { vpcRegion } = req.body;
   const { repo, branch } = req.body;
 
   if (!repo || !branch) console.log('Missing a repository and/or a branch');
@@ -138,12 +138,12 @@ deploymentController.build = (req, res, next) => {
   // for signing in:
 
   execSync(
-    `aws --profile default configure set aws_access_key_id ${accessKey}`
+    `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  execSync(`aws --profile default configure set region ${region}`);
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // grabs the user's account id
 
@@ -156,11 +156,11 @@ deploymentController.build = (req, res, next) => {
   // creating the repository in ECR
 
   execSync(
-    `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
+    `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`
   );
   // the true checks if there is a repository already and uses the one already in place.
   execSync(
-    `aws ecr create-repository --repository-name ${repositoryName} --region ${region} || true`
+    `aws ecr create-repository --repository-name ${repositoryName} --region ${vpcRegion} || true`
   );
 
   // to help with architecture of images error
@@ -169,10 +169,10 @@ deploymentController.build = (req, res, next) => {
     `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
   );
   execSync(
-    `docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`
+    `docker tag ${imageName} ${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com/${repositoryName}:${imageName}`
   );
   execSync(
-    `docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`
+    `docker push ${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com/${repositoryName}:${imageName}`
   );
 
   res.locals.data = { imageName: imageName, imageTag: 'latest' };
@@ -180,8 +180,8 @@ deploymentController.build = (req, res, next) => {
 };
 
 deploymentController.destroyImage = (req, res, next) => {
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { region } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { vpcRegion } = req.body;
   const { branch } = req.body;
 
   if (!branch) console.log('Missing a branch');
@@ -190,10 +190,10 @@ deploymentController.destroyImage = (req, res, next) => {
 
   // this logs the user into the AWS CLI
   execSync(
-    `aws --profile default configure set aws_access_key_id ${accessKey}`
+    `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
   execSync(`aws --profile default configure set region ${region}`);
 
@@ -205,12 +205,12 @@ deploymentController.destroyImage = (req, res, next) => {
 
 // Gets the public address of the ingress
 deploymentController.getURL = (req, res, next) => {
-  const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { provider, region } = req.body.config;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { provider, vpcRegion } = req.body;
   const { clusterId } = req.body.ids;
 
-  k8.connectCLtoAWS(accessKey, secretKey, region);
-  k8.connectKubectltoEKS = (region, clusterId);
+  k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
+  k8.connectKubectltoEKS = (vpcRegion, clusterId);
   const address = k8.getURL();
   res.locals.address = address;
   return next();
