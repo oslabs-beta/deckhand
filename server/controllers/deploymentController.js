@@ -153,11 +153,12 @@ deploymentController.build = (req, res, next) => {
     const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
     const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
 
-  // creating the repository in ECR
+    // creating the repository in ECR
   
     execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
     );
-    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region}`);
+    // the true checks if there is a repository already and uses the one already in place.
+    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region} || true`);
 
     // to help with architecture of images error
 
@@ -178,6 +179,7 @@ deploymentController.destroyImage = (req, res, next) => {
 
   const repositoryName = 'deckhandapp';
 
+  // this logs the user into the AWS CLI
   execSync(
     `aws --profile default configure set aws_access_key_id ${accessKey}`
   );
@@ -186,6 +188,7 @@ deploymentController.destroyImage = (req, res, next) => {
   );
   execSync(`aws --profile default configure set region ${region}`);
 
+  // this deletes the image
   execSync(`aws ecr batch-delete-image --repository-name ${repositoryName} --image-ids imageTag=${branch} --region ${region}`);
 };
 
