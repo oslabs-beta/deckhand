@@ -124,7 +124,7 @@ deploymentController.configureCluster = async (req, res, next) => {
 // to build a github repo and add it to AWS ECR
 
 deploymentController.build = (req, res, next) => {
-  const { accessKey, secretKey } = req.body;
+  const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { region } = req.body;
   const { repo, branch } = req.body;
 
@@ -153,25 +153,34 @@ deploymentController.build = (req, res, next) => {
   const makeGrabTheAWSAccountIdAString = JSON.parse(grabTheAWSAccountID);
   const awsAccountId = makeGrabTheAWSAccountIdAString.Account;
 
-    // creating the repository in ECR
-  
-    execSync(`aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
-    );
-    // the true checks if there is a repository already and uses the one already in place.
-    execSync(`aws ecr create-repository --repository-name ${repositoryName} --region ${region} || true`);
+  // creating the repository in ECR
 
-    // to help with architecture of images error
+  execSync(
+    `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${awsAccountId}.dkr.ecr.${region}.amazonaws.com`
+  );
+  // the true checks if there is a repository already and uses the one already in place.
+  execSync(
+    `aws ecr create-repository --repository-name ${repositoryName} --region ${region} || true`
+  );
 
-    execSync(`docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`);
-    execSync(`docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`);
-    execSync(`docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`);
+  // to help with architecture of images error
+
+  execSync(
+    `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
+  );
+  execSync(
+    `docker tag ${imageName} ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`
+  );
+  execSync(
+    `docker push ${awsAccountId}.dkr.ecr.${region}.amazonaws.com/${repositoryName}:${imageName}`
+  );
 
   res.locals.data = { imageName: imageName, imageTag: 'latest' };
   return next();
 };
 
 deploymentController.destroyImage = (req, res, next) => {
-  const { accessKey, secretKey } = req.body;
+  const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { region } = req.body;
   const { branch } = req.body;
 
@@ -189,10 +198,23 @@ deploymentController.destroyImage = (req, res, next) => {
   execSync(`aws --profile default configure set region ${region}`);
 
   // this deletes the image
-  execSync(`aws ecr batch-delete-image --repository-name ${repositoryName} --image-ids imageTag=${branch} --region ${region}`);
+  execSync(
+    `aws ecr batch-delete-image --repository-name ${repositoryName} --image-ids imageTag=${branch} --region ${region}`
+  );
 };
 
+// Gets the public address of the ingress
+deploymentController.getURL = (req, res, next) => {
+  const { accessKey, secretKey } = req.body.cloudProviders[provider];
+  const { provider, region } = req.body.config;
+  const { clusterId } = req.body.ids;
 
-deploymentController.getURL = (req, res, next) =>{}
+  k8.connectCLtoAWS(accessKey, secretKey, region);
+  k8.connectKubectltoEKS = (region, clusterId);
+  const address = k8.getURL(); //TODO: build this function
+  res.locals.address = address;
+  return next();
+  //TODO: add a route to this
+};
 
 module.exports = deploymentController;

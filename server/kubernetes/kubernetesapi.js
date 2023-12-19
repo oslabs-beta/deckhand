@@ -34,5 +34,10 @@ const remove = (kind, name) => {
   execSync(`kubectl delete ${kind} ${name}`);
 };
 
+// get the public ingress url 
+const getUrl = () ={
+
+}
+
 
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
