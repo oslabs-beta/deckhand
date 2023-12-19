@@ -136,6 +136,7 @@ deploymentController.build = (req, res, next) => {
   const imageName = branch;
 
   // for signing in:
+
   execSync(
     `aws --profile default configure set aws_access_key_id ${accessKey}`
   );
@@ -166,6 +167,26 @@ deploymentController.build = (req, res, next) => {
 
     res.locals.data = { imageName: imageName, imageTag: 'latest' };
     return next();
+};
+
+deploymentController.destroyImage = (req, res, next) => {
+  const { accessKey, secretKey } = req.body;
+  const { region } = req.body;
+  const { branch } = req.body;
+
+  if (!branch) console.log('Missing a branch');
+
+  const repositoryName = 'deckhandapp';
+
+  execSync(
+    `aws --profile default configure set aws_access_key_id ${accessKey}`
+  );
+  execSync(
+    `aws --profile default configure set aws_secret_access_key ${secretKey}`
+  );
+  execSync(`aws --profile default configure set region ${region}`);
+
+  execSync(`aws ecr batch-delete-image --repository-name ${repositoryName} --image-ids imageTag=${branch} --region ${region}`);
 };
 
 module.exports = deploymentController;
