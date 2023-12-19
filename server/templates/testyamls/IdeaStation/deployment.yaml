@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ideastation
-          image: 057477132536.dkr.ecr.us-east-1.amazonaws.com/deckhand:latest
+          image: 057477132536.dkr.ecr.us-east-1.amazonaws.com/deckhandapp:docker
           ports:
             - containerPort: 3000
           env:

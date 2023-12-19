@@ -34,4 +34,5 @@ const remove = (kind, name) => {
   execSync(`kubectl delete ${kind} ${name}`);
 };
 
+
 module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };

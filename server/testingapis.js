@@ -60,9 +60,9 @@ const k8deploytest = () => {
   const nginx = fs.readFileSync(__dirname + '/kubernetes/nginx-ingress.yaml');
 
   const yamls = [deployment, configMap, service, nginx, ingress];
+  // const yamls = [deployment, configMap, service, ingress];
 
   k8.deploy(yamls);
-  // k8.deploy([deployment]);
 };
 
 const undeploytest = () => {
@@ -89,3 +89,5 @@ k8deploytest();
 // destroyTest();
 
 // console.log(terraform.getEFSId(2, 1, 1));
+
+// k8.connectCLtoAWS(access_key, secret_key, 'us-east-1');

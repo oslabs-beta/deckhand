@@ -175,4 +175,7 @@ deploymentController.build = (req, res, next) => {
   return next();
 };
 
+
+deploymentController.getURL = (req, res, next) =>{}
+
 module.exports = deploymentController;
