@@ -1,17 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import {
-  showModal,
-  addCluster,
-  deleteCluster,
-  addPod,
-  deletePod,
-  configurePod,
-  addVarSet,
-  addIngress,
-  addVolume,
-} from "../../deckhandSlice";
+import { showModal, deleteNode } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiCircle } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -50,7 +40,7 @@ export default function ({ id, data, isConnectable }) {
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(deletePod(data.podId))}
+                onClick={() => dispatch(deleteNode(data.podId))}
               >
                 Delete
               </DropdownMenu.Item>
