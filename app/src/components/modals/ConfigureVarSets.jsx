@@ -11,11 +11,11 @@ export default function () {
     setTimeout(() => dispatch(showModal({})), 300);
   };
   const id = state.modal.id;
-  const varSet = state.modal.data;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState(
-    varSet.variables ? varSet.variables : [{ key: "", value: "", secret: true }]
+    data.variables ? data.variables : [{ key: "", value: "", secret: true }]
   );
 
   useEffect(() => {
