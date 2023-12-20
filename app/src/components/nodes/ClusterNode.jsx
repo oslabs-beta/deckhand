@@ -18,7 +18,7 @@ export default function ({ id, data, isConnectable }) {
   const handleClickStart = () => {
     dispatch(updateNode({ id, data: { status: "creating" } }));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: "running" } }));
       const edges = state.edges.filter((edge) => edge.source === id);
@@ -33,10 +33,22 @@ export default function ({ id, data, isConnectable }) {
     const edges = state.edges.filter((edge) => edge.source === id);
     edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: null } }));
     }, 1000);
+  };
+
+  const getConnectedPods = () => {
+    const edges = state.edges.filter((edge) => edge.source === id);
+    return edges.map((edge) =>
+      state.nodes.find((node) => node.id === edge.target)
+    );
+  };
+
+  const countDeployedPods = () => {
+    const pods = getConnectedPods();
+    return pods.filter((pod) => pod.data.status === "running").length;
   };
 
   return (
@@ -108,7 +120,7 @@ export default function ({ id, data, isConnectable }) {
                 paddingBottom: "10px",
               }}
             >
-              <b>0</b> of{" "}
+              <b>{countDeployedPods()}</b> of{" "}
               <b>{state.edges.filter((edge) => edge.source === id).length}</b>{" "}
               pods deployed
             </div>
