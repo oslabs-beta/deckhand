@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 
 const createYaml = {};
 
-createYaml.deployment = (name, imageName, imageTag, replicas, port) => {
+createYaml.deployment = (name, imageName, imageTag, replicas, exposedPort, variables = null, volume = null) => {
   const deploymentConfig = {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
@@ -28,64 +28,111 @@ createYaml.deployment = (name, imageName, imageTag, replicas, port) => {
             name: name,
             image: `${imageName}:${imageTag}`,
             ports: [{
-              containerPort: port
-            }]
-          }]
+              containerPort: exposedPort,
+            }],
+            volumeMounts: [],
+            env: [],
+          }],
+          volumes: [],
         }
-      }
+      },
     }
   };
+
+  if (volume) {
+    deploymentConfig.spec.template.spec.containers[0].volumeMounts.push({
+      name: name + '-volume',
+      mountPath: volume.mountPath || '/var/lib/' + name + '/data/',
+    })
+    deploymentConfig.spec.template.spec.volumes.push({
+      name: name + '-volume',
+      persistentVolumeClaim: { claimName: name + '-pvc' }
+    })
+  }
+
+  if (variables) {
+    const configMapData = variables.data.variables
+      .filter(item => !item.secret)
+      .reduce((acc, item) => {
+        acc.name = item.key;
+        acc.valueFrom = {
+          configMapKeyRef: {
+            name: name + '-config',
+            key: item.key,
+          }
+        }
+        return acc;
+      }, {});
+
+    if (Object.keys(configMapData).length) {
+      deploymentConfig.spec.template.spec.containers[0].env.push(configMapData)
+    }
+
+    const secretData = variables.data.variables
+      .filter(item => item.secret)
+      .reduce((acc, item) => {
+        acc.name = item.key;
+        acc.valueFrom = {
+          secretKeyRef: {
+            name: name + '-secret',
+            key: item.key,
+          }
+        }
+        return acc;
+      }, {});
+
+    if (Object.keys(secretData).length) {
+      deploymentConfig.spec.template.spec.containers[0].env.push(secretData)
+    }
+  }
 
   return YAML.stringify(deploymentConfig);
 };
 
-// Example usage
-// const deploymentYAML = createYaml.deployment('my-app', 'mydockerhubuser/myimage', 'latest', 3, 8080);
-// console.log(deploymentYAML);
-
-createYaml.service = (name, type, port, targetPort, selector) => {
+createYaml.service = (name, exposedPort, port = 80) => {
   const serviceConfig = {
     apiVersion: 'v1',
     kind: 'Service',
     metadata: {
-      name: name
+      name: name + '-service'
     },
     spec: {
-      type: type,
+      type: 'ClusterIP',
       ports: [{
+        protocol: 'TCP',
         port: port,
-        targetPort: targetPort
+        targetPort: exposedPort
       }],
-      selector: selector
+      selector: {
+        app: name,
+      }
     }
   };
 
   return YAML.stringify(serviceConfig);
 };
 
-// Example usage
-// const serviceYAML = createYaml.service('my-service', 'ClusterIP', 80, 8080, { app: 'my-app' });
-// console.log(serviceYAML);
-
-createYaml.ingress = (name, host, path, serviceName, servicePort) => {
+createYaml.ingress = (name, port = 80) => {
   return YAML.stringify({
     apiVersion: 'networking.k8s.io/v1',
     kind: 'Ingress',
     metadata: {
-      name: name
+      name: name + '-ingress',
+      annotations: {
+        'kubernetes.io/ingress.class': 'nginx',
+      }
     },
     spec: {
       rules: [{
-        host: host,
         http: {
           paths: [{
-            path: path,
+            path: '/',
             pathType: 'Prefix',
             backend: {
               service: {
-                name: serviceName,
+                name: name + '-service',
                 port: {
-                  number: servicePort
+                  number: port
                 }
               }
             }
@@ -96,33 +143,35 @@ createYaml.ingress = (name, host, path, serviceName, servicePort) => {
   });
 };
 
-// Example usage
-// const ingressYAML = createYaml.ingress('my-ingress', 'example.com', '/path', 'my-service', 80);
-// console.log(ingressYAML);
+createYaml.configMap = (name, variables) => {
+  const configMapData = variables.data.variables
+    .filter(item => !item.secret)
+    .reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
 
-createYaml.configMap = (name, data) => {
   return YAML.stringify({
     apiVersion: 'v1',
     kind: 'ConfigMap',
     metadata: {
-      name: name
+      name: name + '-config'
     },
-    data: data
+    data: configMapData
   });
 };
 
-// Example usage
-// const data = {
-//   'key1': 'value1',
-//   'key2': 'value2'
-// };
-// const configMapYAML = createYaml.configMap('my-configmap', data);
-// console.log(configMapYAML);
+createYaml.secret = (name, variables) => {
+  const secretData = variables.data.variables
+    .filter(item => item.secret)
+    .reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
 
-createYaml.secret = (name, data) => {
   // Base64-encode all values in the data object
   const encodedData = {};
-  for (const [key, value] of Object.entries(data)) {
+  for (const [key, value] of Object.entries(secretData)) {
     encodedData[key] = Buffer.from(value).toString('base64');
   }
 
@@ -130,27 +179,19 @@ createYaml.secret = (name, data) => {
     apiVersion: 'v1',
     kind: 'Secret',
     metadata: {
-      name: name
+      name: name + '-secret'
     },
     type: 'Opaque', // Change this as needed for different types of secrets
     data: encodedData
   });
 };
 
-// Example usage
-// const secretData = {
-//   'username': 'admin',
-//   'password': 'secretPassword'
-// };
-// const secretYAML = createYaml.secret('my-secret', secretData);
-// console.log(secretYAML);
-
-createYaml.persistentVolume = (name, storage, storageClassName, accessModes, hostPath) => {
+createYaml.persistentVolume = (name, volumeHandle, storage = '10Gi', accessModes = ['ReadWriteMany']) => {
   const pvConfig = {
     apiVersion: 'v1',
     kind: 'PersistentVolume',
     metadata: {
-      name: name
+      name: name + '-pv'
     },
     spec: {
       capacity: {
@@ -159,69 +200,81 @@ createYaml.persistentVolume = (name, storage, storageClassName, accessModes, hos
       volumeMode: 'Filesystem',
       accessModes: accessModes,
       persistentVolumeReclaimPolicy: 'Retain',
-      storageClassName: storageClassName,
-      hostPath: {
-        path: hostPath
+      storageClassName: name + '-sc',
+      csi: {
+        driver: 'efs.csi.aws.com',
+        volumeHandle: volumeHandle,
       }
+    },
+  };
+
+  return YAML.stringify(pvConfig);
+};
+
+createYaml.persistentVolumeClaim = (name, storage = '1Gi', accessModes = ['ReadWriteMany']) => {
+  const pvConfig = {
+    apiVersion: 'v1',
+    kind: 'PersistentVolumeClaim',
+    metadata: {
+      name: name + '-pvc'
+    },
+    spec: {
+      accessModes: accessModes,
+      storageClassName: name + '-sc',
+      resources: {
+        requests: {
+          storage: storage,
+        }
+      }
+    },
+  };
+
+  return YAML.stringify(pvConfig);
+};
+
+createYaml.storageClass = (name, volumeHandle, vpcRegion) => {
+  const pvConfig = {
+    apiVersion: 'storage.k8s.io/v1',
+    kind: 'StorageClass',
+    metadata: {
+      name: name + '-sc'
+    },
+    provisioner: 'efs.csi.aws.com',
+    parameters: {
+      provisioningMode: 'efs-ap',
+      fileSystemId: volumeHandle,
+      region: vpcRegion,
+      directoryPermms: '777',
     }
   };
 
   return YAML.stringify(pvConfig);
 };
 
-createYaml.all = (pod) => {
+createYaml.all = (data, connectedNodes, exposedPort, volumeHandle, vpcRegion) => {
   const yamlArr = [];
 
-  const appName = pod.name.replace(/[^A-Z0-9]/gi, "_").toLowerCase();
-  const imageName = pod.imageName;
-  const imageTag = pod.imageTag;
-  const replicas = pod.replicas;
-  const serviceType = 'ClusterIP';
-  const targetPort = 8080;
-  const host = pod.host;
-  const path = pod.path;
-  const configMapData = pod.variables
-    .filter(item => !item.secret)
-    .reduce((acc, item) => {
-      acc[item.key] = item.value;
-      return acc;
-    }, {});
-  const secretData = pod.variables
-    .filter(item => item.secret)
-    .reduce((acc, item) => {
-      acc[item.key] = item.value;
-      return acc;
-    }, {});
-  const pvStorage = '10Gi';
-  const storageClassName = 'standard';
-  const accessModes = ['ReadWriteOnce'];
-  const hostPath = pod.volume;
+  const name = data.name.replace(/[^A-Z0-9]/gi, "_").toLowerCase();
+  const imageName = data.imageName;
+  const imageTag = data.imageTag;
+  const replicas = data.replicas;
+  const ingress = connectedNodes.find((node) => node.type === "ingress")
+  const port = ingress.port || '80'
+  const variables = connectedNodes.find((node) => node.type === "variables")
+  const configMapData = variables.data.variables.filter(item => !item.secret)
+  const secretData = variables.data.variables.filter(item => item.secret)
+  const volume = connectedNodes.find((node) => node.type === "volume")
 
-  yamlArr.push(createYaml.deployment(appName, imageName, imageTag, replicas, targetPort));
-  yamlArr.push(createYaml.service(appName, serviceType, targetPort, targetPort, { app: appName }));
-  if (host && path) yamlArr.push(createYaml.ingress(`${appName}-ingress`, host, path, appName, targetPort));
-  if (Object.keys(configMapData).length) yamlArr.push(createYaml.configMap(`${appName}-config`, configMapData));
-  if (Object.keys(secretData).length) yamlArr.push(createYaml.secret(`${appName}-secret`, secretData));
-  if (hostPath) yamlArr.push(createYaml.persistentVolume(`${appName}-pv`, pvStorage, storageClassName, accessModes, hostPath));
+  yamlArr.push(createYaml.deployment(name, imageName, imageTag, replicas, exposedPort, variables, volume))
+  yamlArr.push(createYaml.service(name, exposedPort, port))
+  if (ingress) yamlArr.push(createYaml.ingress(name, port))
+  if (configMapData.length) yamlArr.push(createYaml.configMap(name, variables))
+  if (secretData.length) yamlArr.push(createYaml.secret(name, variables))
+  if (volume) yamlArr.push(createYaml.persistentVolume(name, volumeHandle))
+  if (volume) yamlArr.push(createYaml.persistentVolumeClaim(name))
+  if (volume) yamlArr.push(createYaml.storageClass(name, volumeHandle, vpcRegion))
 
   return yamlArr.join('\n---\n\n');
 };
-
-// Example usage
-// const examplePod = {
-//   id: 2,
-//   name: 'Database',
-//   type: 'docker-hub',
-//   config: true,
-//   imageName: 'mongo',
-//   imageTag: 'latest',
-//   replicas: 1,
-//   variables: [{ key: 'user1', value: 'abc123', secret: true }, { key: 'PG_URI', value: 'db_address', secret: false }],
-//   ingress: null,
-//   volume: null, // directory string
-//   deployed: false,
-// }
-// const completeYaml = createYaml.all(examplePod);
-// console.log(completeYaml);
 
 export default createYaml;
