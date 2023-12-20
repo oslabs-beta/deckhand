@@ -417,6 +417,10 @@ button:active {
   background-color: white;
 }
 
+.node.pod {
+  width: 235px;
+}
+
 .node.running {
   box-shadow: 0px 0px 25px 0px rgba(70, 180, 51, 0.52);
 }
@@ -468,4 +472,13 @@ button:active {
 
 .node .button.stop {
   background-color: darkred;
+}
+
+.arrow {
+  color: #ccc;
+  cursor: pointer;
+}
+
+.arrow:hover {
+  color: #000;
 }
