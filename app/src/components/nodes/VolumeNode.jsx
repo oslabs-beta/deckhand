@@ -51,7 +51,14 @@ export default function ({ id, data, isConnectable }) {
           <Icon path={mdiDatabase} style={{ color: "violet" }} size={1} />
         </div>
         <div className="title">Volume</div>
-        {/* <button className="button nodrag">Configure</button> */}
+        <button
+          className="button nodrag"
+          onClick={() =>
+            dispatch(showModal({ name: "ConfigureVolume", id, data }))
+          }
+        >
+          Configure
+        </button>
       </div>
       <Handle
         type="source"

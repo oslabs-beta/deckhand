@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showModal, addIngress, configureIngress } from "../../deckhandSlice";
+import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
@@ -10,7 +10,8 @@ export default function () {
     setShow(false);
     setTimeout(() => dispatch(showModal({})), 300);
   };
-  const ingress = state.modal.data;
+  const id = state.modal.id;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
 
@@ -21,13 +22,7 @@ export default function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    dispatch(
-      configureIngress({
-        ingressId: ingress.ingressId,
-        host: formData.get("host"),
-        path: formData.get("path"),
-      })
-    );
+    dispatch(updateNode({ id, data: { port: formData.get("port") } }));
     closeModal();
   };
 
@@ -40,12 +35,8 @@ export default function () {
         <h2>Configure Ingress Route</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Host:
-            <input type="text" name="host" defaultValue="example.com" />
-          </label>
-          <label>
-            Path:
-            <input type="text" name="path" defaultValue="/path" />
+            Enter port:
+            <input type="text" name="port" defaultValue="80" />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

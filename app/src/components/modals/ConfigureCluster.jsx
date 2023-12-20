@@ -11,7 +11,7 @@ export default function () {
     setTimeout(() => dispatch(showModal({})), 300);
   };
   const id = state.modal.id;
-  const cluster = state.modal.data;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
 
@@ -26,7 +26,7 @@ export default function () {
       updateNode({
         id,
         data: {
-          ...cluster,
+          ...data,
           name: formData.get("name"),
           instanceType: formData.get("instanceType"),
           minNodes: formData.get("minNodes"),
@@ -51,7 +51,7 @@ export default function () {
             <input
               type="text"
               name="name"
-              defaultValue={cluster.name ? cluster.name : "Cluster"}
+              defaultValue={data.name ? data.name : "Cluster"}
             />
           </label>
           <label>
