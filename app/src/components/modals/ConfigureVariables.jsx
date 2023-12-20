@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showModal, configureVarSet } from "../../deckhandSlice";
+import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
@@ -10,11 +10,12 @@ export default function () {
     setShow(false);
     setTimeout(() => dispatch(showModal({})), 300);
   };
-  const varSet = state.modal.data;
+  const id = state.modal.id;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState(
-    varSet.variables ? varSet.variables : [{ key: "", value: "", secret: true }]
+    data.variables ? data.variables : [{ key: "", value: "", secret: true }]
   );
 
   useEffect(() => {
@@ -23,11 +24,14 @@ export default function () {
 
   const handleInputChange = (index, event) => {
     const values = [...inputs];
-    if (event.target.name === "secret") {
-      values[index][event.target.name] = event.target.checked;
-    } else {
-      values[index][event.target.name] = event.target.value;
-    }
+    const updatedValue = {
+      ...values[index],
+      [event.target.name]:
+        event.target.name === "secret"
+          ? event.target.checked
+          : event.target.value,
+    };
+    values[index] = updatedValue;
     setInputs(values);
   };
 
@@ -43,12 +47,7 @@ export default function () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      configureVarSet({
-        varSet: varSet.varSetId,
-        variables: inputs,
-      })
-    );
+    dispatch(updateNode({ id, data: { variables: inputs } }));
     closeModal();
   };
 
