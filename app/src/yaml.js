@@ -259,10 +259,10 @@ createYaml.all = (data, connectedNodes, exposedPort, volumeHandle, vpcRegion) =>
   const imageTag = data.imageTag;
   const replicas = data.replicas;
   const ingress = connectedNodes.find((node) => node.type === "ingress")
-  const port = ingress.port || '80'
+  const port = ingress?.data.port || '80'
   const variables = connectedNodes.find((node) => node.type === "variables")
-  const configMapData = variables.data.variables.filter(item => !item.secret)
-  const secretData = variables.data.variables.filter(item => item.secret)
+  const configMapData = variables?.data.variables.filter(item => !item.secret)
+  const secretData = variables?.data.variables.filter(item => item.secret)
   const volume = connectedNodes.find((node) => node.type === "volume")
 
   yamlArr.push(createYaml.deployment(name, imageName, imageTag, replicas, exposedPort, variables, volume))
