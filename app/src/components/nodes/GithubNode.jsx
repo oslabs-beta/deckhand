@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import { showModal, updateNode, deleteNode } from "../../deckhandSlice";
+import {
+  showModal,
+  updateNode,
+  deleteNode,
+  updateEdge,
+} from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiGithub } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -45,6 +50,33 @@ export default function ({ id, data, isConnectable }) {
         },
       })
     );
+  };
+
+  const handleClickStart = () => {
+    console.log("deploying!");
+    console.log(id);
+    console.log(data);
+    dispatch(updateNode({ id, data: { status: "deploying" } }));
+
+    // Add 5 second delay to simulate fetch request
+    setTimeout(() => {
+      dispatch(updateNode({ id, data: { status: "running" } }));
+      const edges = state.edges.filter((edge) => edge.source === id);
+      edges.map((edge) =>
+        dispatch(updateEdge({ id: edge.id, animated: true }))
+      );
+    }, 1000);
+  };
+
+  const handleClickStop = () => {
+    dispatch(updateNode({ id, data: { status: "stopping" } }));
+    const edges = state.edges.filter((edge) => edge.source === id);
+    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
+
+    // Add 5 second delay to simulate fetch request
+    setTimeout(() => {
+      dispatch(updateNode({ id, data: { status: null } }));
+    }, 1000);
   };
 
   return (
@@ -102,7 +134,21 @@ export default function ({ id, data, isConnectable }) {
               ))
             : ""}
         </select>
-        <button className="button nodrag disabled">Deploy</button>
+        {!state.edges.find((edge) => edge.target === id)?.animated ? (
+          <button className="button nodrag disabled">Deploy</button>
+        ) : !data.status ? (
+          <button className="button nodrag" onClick={handleClickStart}>
+            Deploy
+          </button>
+        ) : data.status === "deploying" ? (
+          <button className="button busy nodrag">Deploying...</button>
+        ) : data.status === "running" ? (
+          <button className="button stop nodrag" onClick={handleClickStop}>
+            Stop Deployment
+          </button>
+        ) : (
+          <button className="button busy nodrag">Stopping...</button>
+        )}
       </div>
       <Handle
         type="source"
