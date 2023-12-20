@@ -417,14 +417,6 @@ button:active {
   background-color: white;
 }
 
-.node.pod {
-  width: 235px;
-}
-
-.node.running {
-  box-shadow: 0px 0px 25px 0px rgba(70, 180, 51, 0.52);
-}
-
 .node .icon {
   position: absolute;
   top: 20px;
@@ -463,22 +455,4 @@ button:active {
 .node .button.disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-.node .button.busy {
-  background-color: rgb(160, 114, 28);
-  cursor: wait;
-}
-
-.node .button.stop {
-  background-color: darkred;
-}
-
-.arrow {
-  color: #ccc;
-  cursor: pointer;
-}
-
-.arrow:hover {
-  color: #000;
 }

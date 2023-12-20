@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const deploymentController = require('../controllers/deploymentController');
 
-router.post('/addVPC', deploymentController.addVPC, (req, res) => {
+router.post('/addProject', deploymentController.addProject, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-router.post('/deleteVPC', deploymentController.deleteVPC, (req, res) => {
+router.post('/deleteProject', deploymentController.deleteProject, (req, res) => {
   res.sendStatus(200);
 });
 

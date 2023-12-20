@@ -4,7 +4,7 @@ const k8 = require('../kubernetes/kubernetesapi.js');
 
 const deploymentController = {};
 
-deploymentController.addVPC = (req, res, next) => {
+deploymentController.addProject = (req, res, next) => {
   const { provider, name, vpcRegion } = req.body;
   const { awsAccessKey, awsSecretKey } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
@@ -30,7 +30,7 @@ deploymentController.addVPC = (req, res, next) => {
     });
 };
 
-deploymentController.deleteVPC = (req, res, next) => {
+deploymentController.deleteProject = (req, res, next) => {
   // const { externalId } = req.body;
   // const { accessKey, secretKey } = req.body.cloudProviders[provider];
   const { userId, projectId } = req.body.ids;
@@ -70,18 +70,10 @@ deploymentController.deleteVPC = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
-  const {
-    provider,
-    vpcRegion,
-    externalId,
-    awsAccessKey,
-    awsSecretKey,
-    name,
-    instanceType,
-    minNodes,
-    maxNodes,
-    desiredNodes
-  } = req.body;
+  const { provider, vpcRegion, externalId } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { name, instanceType, minNodes, maxNodes, desiredNodes } =
+    req.body.config;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   terraform
@@ -97,7 +89,7 @@ deploymentController.addCluster = (req, res, next) => {
           instanceType
         )
         .then(() => {
-          res.locals.data = { volumeHandle: terraform.getEFSId(cleanName, externalId) }; // TODO:
+          res.locals.data = {}; // Put a cluster ID here if needed ... may not need
           return next();
         })
         .catch((err) => {
@@ -121,8 +113,11 @@ deploymentController.deleteCluster = (req, res, next) => {
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
-  const { provider, awsAccessKey, awsSecretKey, vpcRegion, vpcId, yaml } = req.body;
-  // add command line function: apply yaml to cluster
+  const { provider, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey } = req.body;
+  const { vpcId, clusterId } = req.body.ids;
+  const { yamls } = req.body.yamls;
+  // add command line function: apply yamls to cluster
   next();
 };
 

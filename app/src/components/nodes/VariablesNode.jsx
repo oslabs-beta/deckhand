@@ -32,7 +32,7 @@ export default function ({ id, data, isConnectable }) {
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() =>
-                  dispatch(showModal({ name: "ConfigureVariables", id, data }))
+                  dispatch(showModal({ name: "ConfigureVarSets", id, data }))
                 }
               >
                 Edit Variables
@@ -54,7 +54,7 @@ export default function ({ id, data, isConnectable }) {
         <button
           className="button nodrag"
           onClick={() =>
-            dispatch(showModal({ name: "ConfigureVariables", id, data }))
+            dispatch(showModal({ name: "ConfigureVarSets", id, data }))
           }
         >
           Edit Variables
