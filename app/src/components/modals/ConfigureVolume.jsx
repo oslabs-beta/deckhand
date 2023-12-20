@@ -22,8 +22,8 @@ export default function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const directory = formData.get("directory");
-    dispatch(updateNode({ id, data: { directory } }));
+    const mountPath = formData.get("mountPath");
+    dispatch(updateNode({ id, data: { mountPath } }));
     closeModal();
   };
 
@@ -36,8 +36,8 @@ export default function () {
         <h2>Configure Volume</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Enter volume directory:
-            <input type="text" name="directory" defaultValue={data.directory} />
+            Enter Mount Path:
+            <input type="text" name="mountPath" defaultValue={data.mountPath} />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
