@@ -50,7 +50,7 @@ export default function ({ id, data, isConnectable }) {
     console.log(data);
     dispatch(updateNode({ id, data: { status: "deploying" } }));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: "running" } }));
       const edges = state.edges.filter((edge) => edge.source === id);
@@ -65,7 +65,7 @@ export default function ({ id, data, isConnectable }) {
     const edges = state.edges.filter((edge) => edge.source === id);
     edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: null } }));
     }, 1000);
@@ -103,6 +103,33 @@ export default function ({ id, data, isConnectable }) {
               className="dropdown"
               onClick={(e) => e.stopPropagation()}
             >
+              {data.imageName.split("/").length === 1 ? (
+                <DropdownMenu.Item
+                  className="dropdown-item"
+                  onClick={() =>
+                    window.open(
+                      "https://hub.docker.com/_/" + data.imageName,
+                      "_blank"
+                    )
+                  }
+                >
+                  Show Documentation
+                </DropdownMenu.Item>
+              ) : data.imageName.split("/").length > 1 ? (
+                <DropdownMenu.Item
+                  className="dropdown-item"
+                  onClick={() =>
+                    window.open(
+                      "https://hub.docker.com/r/" + data.imageName,
+                      "_blank"
+                    )
+                  }
+                >
+                  Show Documentation
+                </DropdownMenu.Item>
+              ) : (
+                ""
+              )}
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() =>
