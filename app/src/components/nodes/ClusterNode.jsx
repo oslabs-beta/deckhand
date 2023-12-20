@@ -6,6 +6,7 @@ import {
   updateNode,
   deleteNode,
   updateEdge,
+  configureProject,
 } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDotsHexagon } from "@mdi/js";
@@ -15,8 +16,38 @@ export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
-  const handleClickStart = () => {
+  const handleClickStart = async () => {
     dispatch(updateNode({ id, data: { status: "creating" } }));
+
+    const project = state.projects.find(
+      (project) => project.projectId === state.projectId
+    );
+
+    // if (!project.vpcId) {
+    //   await fetch("/api/deployment/addVPC", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       provider: project.provider,
+    //       name: project.name,
+    //       vpcRegion: project.vpcRegion,
+    //       awsAccessKey: state.user.awsAccessKey,
+    //       awsSecretKey: state.user.awsSecretKey,
+    //     }),
+    //   })
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       dispatch(
+    //         configureProject({
+    //           projectId: state.projectId,
+    //           vpcId: data.externalId,
+    //         })
+    //       );
+    //     })
+    //     .catch((err) => console.log(err));
+    // }
 
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
@@ -26,6 +57,39 @@ export default function ({ id, data, isConnectable }) {
         dispatch(updateEdge({ id: edge.id, animated: true }))
       );
     }, 1000);
+
+    // await fetch("/api/deployment/addCluster", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     provider: project.provider,
+    //     vpcRegion: project.vpcRegion,
+    //     externalId: project.vpcId,
+    //     awsAccessKey: state.user.awsAccessKey,
+    //     awsSecretKey: state.user.awsSecretKey,
+    //     name: data.name,
+    //     instanceType: data.instanceType,
+    //     minNodes: data.minNodes,
+    //     maxNodes: data.maxNodes,
+    //     desiredNodes: data.desiredNodes,
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     dispatch(
+    //       updateNode({
+    //         id,
+    //         data: { volumeHandle: data.volumeHandle, status: "running" },
+    //       })
+    //     );
+    //     const edges = state.edges.filter((edge) => edge.source === id);
+    //     edges.map((edge) =>
+    //       dispatch(updateEdge({ id: edge.id, animated: true }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
   const handleClickStop = () => {
@@ -41,9 +105,9 @@ export default function ({ id, data, isConnectable }) {
 
   const getConnectedPods = () => {
     const edges = state.edges.filter((edge) => edge.source === id);
-    return edges.map((edge) =>
-      state.nodes.find((node) => node.id === edge.target)
-    );
+    return state.edges
+      .filter((edge) => edge.source === id)
+      .map((edge) => state.nodes.find((node) => node.id === edge.target));
   };
 
   const countDeployedPods = () => {
