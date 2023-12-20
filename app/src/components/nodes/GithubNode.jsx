@@ -53,12 +53,9 @@ export default function ({ id, data, isConnectable }) {
   };
 
   const handleClickStart = () => {
-    console.log("deploying!");
-    console.log(id);
-    console.log(data);
     dispatch(updateNode({ id, data: { status: "deploying" } }));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: "running" } }));
       const edges = state.edges.filter((edge) => edge.source === id);
@@ -68,12 +65,47 @@ export default function ({ id, data, isConnectable }) {
     }, 1000);
   };
 
+  const handleClickBuild = async () => {
+    dispatch(updateNode({ id, data: { status: "building" } }));
+    setTimeout(() => {
+      dispatch(
+        updateNode({
+          id,
+          data: { status: null, build: true },
+        })
+      );
+    }, 1000);
+    // await fetch("/api/deployment/build", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     repo: data.githubRepo,
+    //     branch: data.githubBranch,
+    //     awsAccessKey: state.user.awsAccessKey,
+    //     awsSecretKey: state.user.awsSecretKey,
+    //     vpcRegion: state.project.vpcRegion,
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((image) => {
+    //     dispatch(
+    //       updateNode({
+    //         id,
+    //         data: { imageName: image.imageName, imageTag: image.imageTag },
+    //       })
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
+  };
+
   const handleClickStop = () => {
     dispatch(updateNode({ id, data: { status: "stopping" } }));
     const edges = state.edges.filter((edge) => edge.source === id);
     edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
-    // Add 5 second delay to simulate fetch request
+    // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: null } }));
     }, 1000);
@@ -111,6 +143,21 @@ export default function ({ id, data, isConnectable }) {
               className="dropdown"
               onClick={(e) => e.stopPropagation()}
             >
+              {data.githubRepo && data.githubBranch ? (
+                <DropdownMenu.Item
+                  className="dropdown-item"
+                  onClick={() =>
+                    window.open(
+                      `https://github.com/${data.githubRepo}.git#${data.githubBranch}`,
+                      "_blank"
+                    )
+                  }
+                >
+                  Show GitHub
+                </DropdownMenu.Item>
+              ) : (
+                ""
+              )}
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() =>
@@ -189,7 +236,13 @@ export default function ({ id, data, isConnectable }) {
                   ))
                 : ""}
             </select>
-            {!state.edges.find((edge) => edge.target === id)?.animated ? (
+            {data.status === "building" ? (
+              <button className="button busy nodrag">Building...</button>
+            ) : !data.build ? (
+              <button className="button nodrag" onClick={handleClickBuild}>
+                Build
+              </button>
+            ) : !state.edges.find((edge) => edge.target === id)?.animated ? (
               <button className="button nodrag disabled">Deploy</button>
             ) : !data.status ? (
               <button className="button nodrag" onClick={handleClickStart}>
