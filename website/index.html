@@ -2,19 +2,171 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Deckhand: Fully automated, drag-and-drop Kubernetes deployment
-    </title>
+    <title>Deckhand</title>
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
-    <div>
-      <h1>Deckhand</h1>
-      <input
-        type="button"
-        onclick="location.href='http://localhost:8080';"
-        value="Log In"
-      />
+    <div class="header">
+      <!--Content before waves-->
+      <div class="inner-header flex">
+        <div class="logo-and-tagline fade-in">
+          <div class="flex">
+            <!--Logo-->
+            <svg
+              version="1.1"
+              class="logo"
+              baseProfile="tiny"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              viewBox="0 0 500 500"
+              xml:space="preserve"
+              style="width: 50px; height: 50px"
+            >
+              <circle
+                cx="250"
+                cy="250"
+                r="200"
+                fill="none"
+                stroke="#fff"
+                stroke-width="40"
+              />
+
+              <circle
+                cx="250"
+                cy="250"
+                r="60"
+                fill="#fff"
+                stroke="none"
+                stroke-width="40"
+              />
+
+              <line
+                x1="250"
+                y1="0"
+                x2="250"
+                y2="500"
+                stroke="#fff"
+                stroke-width="40"
+              />
+              <line
+                x1="0"
+                y1="250"
+                x2="500"
+                y2="250"
+                stroke="#fff"
+                stroke-width="20"
+              />
+              <line
+                x1="35.36"
+                y1="35.36"
+                x2="464.64"
+                y2="464.64"
+                stroke="#fff"
+                stroke-width="20"
+              />
+              <line
+                x1="464.64"
+                y1="35.36"
+                x2="35.36"
+                y2="464.64"
+                stroke="#fff"
+                stroke-width="20"
+              />
+            </svg>
+            <h1>Deckhand</h1>
+          </div>
+          <div class="tagline">
+            Fully-automated, no-code Kubernetes.<br /><br /><br />
+            <p id="countdown">&nbsp;</p>
+            <script>
+              // Set the date we're counting down to
+              var countDownDate = new Date("Dec 21, 2023 09:00:00").getTime();
+
+              // Update the count down every 1 second
+              var x = setInterval(function () {
+                // Get today's date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                var distance = countDownDate - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor(
+                  (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                );
+                var minutes = Math.floor(
+                  (distance % (1000 * 60 * 60)) / (1000 * 60)
+                );
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the element with id="countdown"
+                document.getElementById("countdown").innerHTML =
+                  days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                document.getElementById("countdown").className = "fade-in";
+
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                  clearInterval(x);
+                  document.getElementById("countdown").innerHTML =
+                    "Hop aboard.";
+                }
+              }, 1000);
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!--Waves Container-->
+      <div>
+        <svg
+          class="waves"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28"
+          preserveAspectRatio="none"
+          shape-rendering="auto"
+        >
+          <defs>
+            <path
+              id="gentle-wave"
+              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+            />
+          </defs>
+          <g class="parallax">
+            <use
+              xlink:href="#gentle-wave"
+              x="48"
+              y="0"
+              fill="rgba(255,255,255,0.7)"
+            />
+            <use
+              xlink:href="#gentle-wave"
+              x="48"
+              y="3"
+              fill="rgba(255,255,255,0.5)"
+            />
+            <use
+              xlink:href="#gentle-wave"
+              x="48"
+              y="5"
+              fill="rgba(255,255,255,0.3)"
+            />
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+          </g>
+        </svg>
+      </div>
+      <!--Waves end-->
     </div>
+    <!--Header ends-->
+
+    <!--Content starts-->
+    <div class="content flex">
+      <p>© Deckhand</p>
+    </div>
+    <!--Content ends-->
   </body>
 </html>

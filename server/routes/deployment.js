@@ -30,4 +30,8 @@ router.post('/destroyImage', deploymentController.destroyImage, (req, res) => {
   res.sendStatus(200);
 });
 
+router.post('/getURL', deploymentController.getURL, (req, res) => {
+  res.status(200).json(res.locals.address);
+});
+
 module.exports = router;

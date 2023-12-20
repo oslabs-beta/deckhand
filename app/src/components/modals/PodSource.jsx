@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showModal, configurePod } from "../../deckhandSlice";
+import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
@@ -10,7 +10,8 @@ export default function () {
     setShow("");
     setTimeout(() => dispatch(showModal({})), 300);
   };
-  const pod = state.modal.data;
+  const id = state.modal.id;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
   const [type, setType] = useState("docker-hub");
@@ -163,23 +164,20 @@ export default function () {
   }
 
   const handleClickDockerHub = async (image) => {
-    dispatch(
-      configurePod({
-        podId: pod.podId,
-        name: image,
-        type: "docker-hub",
-        imageName: image,
-      })
-    );
-
     await fetch(`/api/dockerHubImageTags/${image}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((imageTags) => {
         dispatch(
-          configurePod({
-            podId: pod.podId,
-            imageTag: data[0],
-            imageTags: data,
+          updateNode({
+            id,
+            type: "docker",
+            data: {
+              ...data,
+              name: image.split("/").pop(),
+              imageName: image,
+              imageTag: imageTags.includes("latest") ? "latest" : imageTags[0],
+              imageTags,
+            },
           })
         );
       })
@@ -189,15 +187,6 @@ export default function () {
   };
 
   const handleClickGithub = async (repo) => {
-    dispatch(
-      configurePod({
-        podId: pod.podId,
-        name: repo.split("/")[1],
-        type: "github",
-        githubRepo: repo,
-      })
-    );
-
     await fetch("/api/github/branches", {
       method: "POST",
       headers: {
@@ -206,12 +195,20 @@ export default function () {
       body: JSON.stringify({ repo }),
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then((githubBranches) => {
         dispatch(
-          configurePod({
-            podId: pod.podId,
-            githubBranch: data[0],
-            githubBranches: data,
+          updateNode({
+            id,
+            type: "github",
+            data: {
+              ...data,
+              name: repo.split("/").pop(),
+              githubRepo: repo,
+              githubBranch: githubBranches.includes("main")
+                ? "main"
+                : githubBranches[0],
+              githubBranches,
+            },
           })
         );
       })
@@ -249,8 +246,6 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {dockerHubImages}
@@ -264,8 +259,6 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {userRepos}
@@ -286,22 +279,12 @@ export default function () {
                 style={{
                   maxHeight: "300px",
                   overflow: "auto",
-                  // maskImage:
-                  //   "linear-gradient(to bottom, black calc(100% - 50px), transparent 100%)",
                 }}
               >
                 {publicRepos}
               </div>
             </>
           )}
-          {/* <div className="buttons">
-            <button type="button" onClick={closeModal}>
-              Cancel
-            </button>
-            <button type="submit" className="blue">
-              Submit
-            </button>
-          </div> */}
         </form>
       </div>
     </div>

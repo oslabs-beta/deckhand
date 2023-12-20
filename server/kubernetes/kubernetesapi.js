@@ -6,7 +6,7 @@ const connectCLtoAWS = (accessKey, secretKey, region) => {
     `aws --profile default configure set aws_access_key_id ${accessKey}`
   );
   execSync(
-    `aws --profile default configure set aws_secret_access_key_id ${secretKey}`
+    `aws --profile default configure set aws_secret_access_key ${secretKey}`
   );
   execSync(`aws --profile default configure set region ${region}`);
 };
@@ -34,5 +34,20 @@ const remove = (kind, name) => {
   execSync(`kubectl delete ${kind} ${name}`);
 };
 
+// get the public ingress url
+const getUrl = () => {
+  const output = execSync(
+    `kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`,
+    { encoding: 'utf8' }
+  );
+  return output;
+};
 
-module.exports = { connectCLtoAWS, connectKubectltoEKS, deploy, remove };
+
+module.exports = {
+  connectCLtoAWS,
+  connectKubectltoEKS,
+  deploy,
+  remove,
+  getUrl,
+};

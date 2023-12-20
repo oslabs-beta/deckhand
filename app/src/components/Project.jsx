@@ -16,8 +16,6 @@ import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
-import { mdiTrashCanOutline } from "@mdi/js";
-import { mdiCogOutline } from "@mdi/js";
 import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
@@ -111,7 +109,7 @@ export default function Project() {
         branch: pod.githubBranch,
         accessKey: state.user.awsAccessKey,
         secretKey: state.user.awsSecretKey,
-        region: project.vpcRegion
+        region: project.vpcRegion,
       }),
     })
       .then((res) => res.json())
@@ -187,6 +185,7 @@ export default function Project() {
             <select
               name="tag"
               onChange={(e) => setImageTag(pod.podId, e.target.value)}
+              value={pod.imageTag}
             >
               {pod.imageTags
                 ? pod.imageTags.map((el) => (
@@ -201,6 +200,7 @@ export default function Project() {
             <select
               name="branch"
               onChange={(e) => setBranch(pod.podId, e.target.value)}
+              value={pod.githubBranch}
             >
               {pod.githubBranches
                 ? pod.githubBranches.map((el) => (
@@ -225,9 +225,7 @@ export default function Project() {
             <>
               <button
                 onClick={() =>
-                  dispatch(
-                    showModal({ name: "ConfigurePodReplicas", data: pod })
-                  )
+                  dispatch(showModal({ name: "PodReplicas", data: pod }))
                 }
               >
                 <b>Edit Replicas ({pod.replicas})</b>
@@ -237,7 +235,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addVarSet({
-                        varSetId: Math.floor(Math.random() * 10000),
+                        varSetId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -250,7 +248,7 @@ export default function Project() {
                   onClick={() =>
                     dispatch(
                       showModal({
-                        name: "ConfigurePodVariables",
+                        name: "ConfigureVarSets",
                         data: varSets[0],
                       })
                     )
@@ -264,7 +262,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addIngress({
-                        ingressId: Math.floor(Math.random() * 10000),
+                        ingressId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -277,7 +275,7 @@ export default function Project() {
                   onClick={() =>
                     dispatch(
                       showModal({
-                        name: "ConfigurePodIngress",
+                        name: "ConfigureIngress",
                         data: ingresses[0],
                       })
                     )
@@ -291,7 +289,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       addVolume({
-                        volumeId: Math.floor(Math.random() * 10000),
+                        volumeId: Math.floor(Math.random() * 10000).toString(),
                         podId: pod.podId,
                       })
                     );
@@ -304,7 +302,7 @@ export default function Project() {
                   onClick={() => {
                     dispatch(
                       showModal({
-                        name: "ConfigurePodVolume",
+                        name: "ConfigureVolume",
                         data: volumes[0],
                       })
                     );
@@ -378,7 +376,7 @@ export default function Project() {
           <div
             className="card"
             onClick={() => {
-              const podId = Math.floor(Math.random() * 10000); // fetch new pod ID from SQL
+              const podId = Math.floor(Math.random() * 10000).toString(); // fetch new pod ID from SQL
               dispatch(
                 addPod({
                   podId: podId,
@@ -409,7 +407,7 @@ export default function Project() {
               onClick={() =>
                 dispatch(
                   addCluster({
-                    clusterId: Math.floor(Math.random() * 10000), // get from SQL once connected
+                    clusterId: Math.floor(Math.random() * 10000).toString(), // get from SQL once connected
                     projectId: project.projectId,
                   })
                 )

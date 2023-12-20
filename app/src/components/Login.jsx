@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../deckhandSlice";
-import logo from "../assets/logo.png";
+import {} from "../deckhandSlice";
+import FloatLogo from "./floats/FloatLogo";
 
 export default function Login() {
   const state = useSelector((state) => state.deckhand);
@@ -9,9 +9,8 @@ export default function Login() {
 
   return (
     <div id="login-container">
-      <div className="image-section">
-        <img src={logo} alt="Deckhand" />
-      </div>
+      <FloatLogo />
+      <div className="image-section"></div>
       <div className="login-section">
         <div className="button-container">
           <div

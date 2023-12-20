@@ -1,362 +1,108 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   showModal,
-  addCluster,
-  deleteCluster,
-  addPod,
-  deletePod,
-  configurePod,
-  addVarSet,
-  addIngress,
-  addVolume,
+  addNode,
+  deleteNode,
+  updateNode,
+  addNewEdge,
+  deleteEdge,
+  updateEdge,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
+import FloatToolbar from "./floats/FloatToolbar";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
-import { mdiTrashCanOutline } from "@mdi/js";
-import { mdiCogOutline } from "@mdi/js";
+import { mdiDotsVertical } from "@mdi/js";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import ReactFlow, {
+  ReactFlowProvider,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import ClusterNode from "./nodes/ClusterNode";
+import PodNode from "./nodes/PodNode";
+import GithubNode from "./nodes/GithubNode";
+import DockerNode from "./nodes/DockerNode";
+import VariablesNode from "./nodes/VariablesNode";
+import IngressNode from "./nodes/IngressNode";
+import VolumeNode from "./nodes/VolumeNode";
 
-export default function Project() {
+const nodeTypes = {
+  cluster: ClusterNode,
+  pod: PodNode,
+  github: GithubNode,
+  docker: DockerNode,
+  variables: VariablesNode,
+  ingress: IngressNode,
+  volume: VolumeNode,
+};
+
+export default function Canvas() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
-  const project = state.projects.find((p) => p.projectId === state.projectId);
-  const clusters = state.clusters?.filter(
-    (cluster) => cluster.projectId === project.projectId
-  );
+
+  const reactFlowWrapper = useRef(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   useEffect(() => {
-    const fetchPodData = async () => {
-      for (let cluster of clusters) {
-        const pods = state.pods?.filter(
-          (pod) => pod.clusterId === cluster.clusterId
-        );
-        for (let pod of pods) {
-          if (pod.type === "docker-hub" && pod.imageName) {
-            await getImageTags(pod.podId, pod.imageName);
-          }
-          if (pod.type === "github" && pod.githubRepo) {
-            await getBranches(pod.podId, pod.githubRepo);
-          }
-        }
-      }
+    const projectNodes = state.nodes.filter(
+      (nds) => nds.projectId === state.projectId
+    );
+    const projectEdges = state.edges.filter(
+      (eds) => eds.projectId === state.projectId
+    );
+    setNodes(projectNodes);
+    setEdges(projectEdges);
+  }, [state.nodes, state.edges, setNodes, setEdges]);
+
+  const onConnect = useCallback((params) => {
+    // setEdges((eds) => addEdge(params, eds)), [];
+    const newEdge = {
+      id: `${params.source}-${params.target}`,
+      ...params,
+      projectId: state.projectId,
     };
-    fetchPodData().catch(console.error);
+    dispatch(addNewEdge(newEdge));
+  });
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
-  const getBranches = async (podId, repo) => {
-    await fetch("/api/github/branches", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ repo }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(
-          configurePod({
-            podId: podId,
-            githubBranches: data,
-          })
-        );
-      })
-      .catch((err) => console.log(err));
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const newNode = {
+        id: Math.floor(Math.random() * 10000).toString(), // fetch from SQL
+        type: event.dataTransfer.getData("application/reactflow"),
+        projectId: state.projectId,
+        position: reactFlowInstance.screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        }),
+        data: [],
+      };
+
+      dispatch(addNode(newNode));
+    },
+    [reactFlowInstance]
+  );
+
+  const onNodeDragStop = (event, node) => {
+    dispatch(updateNode({ id: node.id, position: node.position }));
   };
-
-  const setImageTag = (podId, imageTag) => {
-    dispatch(
-      configurePod({
-        podId: podId,
-        imageTag: imageTag,
-      })
-    );
-  };
-
-  const setBranch = (podId, branch) => {
-    dispatch(
-      configurePod({
-        podId: podId,
-        githubBranch: branch,
-      })
-    );
-  };
-
-  const getImageTags = async (podId, image) => {
-    await fetch(`/api/dockerHubImageTags/${image}`)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(
-          configurePod({
-            podId: podId,
-            imageTags: data,
-          })
-        );
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleClickBuild = async (pod) => {
-    await fetch("/api/github/build", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        repo: pod.githubRepo,
-        branch: pod.githubBranch,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(
-          configurePod({
-            podId: pod.podId,
-            ...data,
-          })
-        );
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const clusterBundle = [];
-  for (const cluster of clusters) {
-    // bundle pods
-    const podBundle = [];
-    const pods = state.pods?.filter(
-      (pod) => pod.clusterId === cluster.clusterId
-    );
-    for (const pod of pods) {
-      const varSets = state.varSets.filter(
-        (varSet) => varSet.podId === pod.podId
-      );
-      const ingresses = state.ingresses.filter(
-        (ingress) => ingress.podId === pod.podId
-      );
-      const volumes = state.volumes.filter(
-        (volume) => volume.podId === pod.podId
-      );
-      podBundle.push(
-        <div key={pod.podId} className="card">
-          <div className="name">{`${pod.name} (${pod.type})`}</div>
-          {pod.type === "docker-hub" && pod.imageName && (
-            <select
-              name="tag"
-              onChange={(e) => setImageTag(pod.podId, e.target.value)}
-            >
-              {pod.imageTags
-                ? pod.imageTags.map((el) => (
-                    <option key={el} value={el}>
-                      {el}
-                    </option>
-                  ))
-                : ""}
-            </select>
-          )}
-          {pod.type === "github" && pod.githubRepo && (
-            <select
-              name="branch"
-              onChange={(e) => setBranch(pod.podId, e.target.value)}
-            >
-              {pod.githubBranches
-                ? pod.githubBranches.map((el) => (
-                    <option key={el} value={el}>
-                      {el}
-                    </option>
-                  ))
-                : ""}
-            </select>
-          )}
-          {!pod.type ? (
-            <>
-              <button
-                onClick={() =>
-                  dispatch(showModal({ name: "PodSource", data: pod }))
-                }
-              >
-                Select Source
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() =>
-                  dispatch(showModal({ name: "PodSource", data: pod }))
-                }
-              >
-                Edit Source
-              </button>
-              <button
-                onClick={() =>
-                  dispatch(
-                    showModal({ name: "ConfigurePodReplicas", data: pod })
-                  )
-                }
-              >
-                <b>Edit Replicas ({pod.replicas})</b>
-              </button>
-              {!varSets.length ? (
-                <button
-                  onClick={() => {
-                    dispatch(
-                      addVarSet({
-                        varSetId: Math.floor(Math.random() * 10000),
-                        podId: pod.podId,
-                      })
-                    );
-                  }}
-                >
-                  Add Variables
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    dispatch(
-                      showModal({
-                        name: "ConfigurePodVariables",
-                        data: varSets[0],
-                      })
-                    )
-                  }
-                >
-                  <b>Edit Variables</b>
-                </button>
-              )}
-              {!ingresses.length ? (
-                <button
-                  onClick={() => {
-                    dispatch(
-                      addIngress({
-                        ingressId: Math.floor(Math.random() * 10000),
-                        podId: pod.podId,
-                      })
-                    );
-                  }}
-                >
-                  Add Ingress
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    dispatch(
-                      showModal({
-                        name: "ConfigurePodIngress",
-                        data: ingresses[0],
-                      })
-                    )
-                  }
-                >
-                  <b>Edit Ingress</b>
-                </button>
-              )}
-              {!volumes.length ? (
-                <button
-                  onClick={() => {
-                    dispatch(
-                      addVolume({
-                        volumeId: Math.floor(Math.random() * 10000),
-                        podId: pod.podId,
-                      })
-                    );
-                  }}
-                >
-                  Add Volume
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    dispatch(
-                      showModal({
-                        name: "ConfigurePodVolume",
-                        data: volumes[0],
-                      })
-                    );
-                  }}
-                >
-                  <b>Edit Volume</b>
-                </button>
-              )}
-              {pod.type === "github" ? (
-                <button
-                  onClick={() => {
-                    handleClickBuild(pod);
-                  }}
-                >
-                  <b>Build</b>
-                </button>
-              ) : (
-                ""
-              )}
-              {!pod.deployed ? (
-                <button>
-                  <b>Deploy</b>
-                </button>
-              ) : (
-                <button>
-                  <b>Stop</b>
-                </button>
-              )}
-              <button
-                onClick={() =>
-                  dispatch(showModal({ name: "ConfigurePodYaml", data: pod }))
-                }
-              >
-                Create YAML
-              </button>
-            </>
-          )}
-          <button
-            className="delete"
-            onClick={() => dispatch(deletePod(pod.podId))}
-          >
-            Delete Pod
-          </button>
-        </div>
-      );
-    }
-
-    // bundle clusters
-    clusterBundle.push(
-      <div key={cluster.clusterId}>
-        <h2>
-          {cluster.name}
-          <Icon
-            path={mdiCogOutline}
-            size={0.75}
-            className="icon"
-            onClick={() => {
-              dispatch(showModal({ name: "ConfigureCluster", data: project }));
-            }}
-          />
-          <Icon
-            path={mdiTrashCanOutline}
-            size={0.75}
-            className="icon"
-            onClick={() => dispatch(deleteCluster(cluster.clusterId))}
-          />
-        </h2>
-        <div id="pod-cards">
-          <div
-            className="card"
-            onClick={() => {
-              const podId = Math.floor(Math.random() * 10000); // fetch new pod ID from SQL
-              dispatch(
-                addPod({
-                  podId: podId,
-                  clusterId: cluster.clusterId,
-                })
-              );
-            }}
-          >
-            <div className="new-pod">New Pod</div>
-          </div>
-          {podBundle}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container">
@@ -364,24 +110,28 @@ export default function Project() {
       <FloatProject />
       <FloatAccount />
       <Modals />
-      <div className="content-container">
-        <div className="content">
-          {clusterBundle}
-          <div id="new-cluster">
-            <button
-              onClick={() =>
-                dispatch(
-                  addCluster({
-                    clusterId: Math.floor(Math.random() * 10000), // get from SQL once connected
-                    projectId: project.projectId,
-                  })
-                )
-              }
+      <div style={{ width: "100vw", height: "100vh" }}>
+        <ReactFlowProvider>
+          <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onInit={setReactFlowInstance}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onNodeDragStop={onNodeDragStop}
+              nodeTypes={nodeTypes}
+              proOptions={{ hideAttribution: true }}
             >
-              + Add Cluster
-            </button>
+              <Controls position="bottom-right" />
+              {/* <MiniMap /> */}
+            </ReactFlow>
           </div>
-        </div>
+          <FloatToolbar />
+        </ReactFlowProvider>
       </div>
     </div>
   );
