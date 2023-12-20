@@ -92,7 +92,7 @@ export default function Canvas() {
           x: event.clientX,
           y: event.clientY,
         }),
-        data: [],
+        data: {},
       };
 
       dispatch(addNode(newNode));
