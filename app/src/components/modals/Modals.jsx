@@ -8,7 +8,6 @@ import ConfigureIngress from "../modals/ConfigureIngress";
 import ConfigureVolume from "../modals/ConfigureVolume";
 import ConfigureVarSets from "../modals/ConfigureVarSets";
 import PodSource from "../modals/PodSource";
-import PodReplicas from "../modals/PodReplicas";
 import PodYaml from "../modals/PodYaml";
 
 export default function Modals() {
@@ -24,7 +23,6 @@ export default function Modals() {
       {state.modal.name === "ConfigureVolume" && <ConfigureVolume />}
       {state.modal.name === "ConfigureVarSets" && <ConfigureVarSets />}
       {state.modal.name === "PodSource" && <PodSource />}
-      {state.modal.name === "PodReplicas" && <PodReplicas />}
       {state.modal.name === "PodYaml" && <PodYaml />}
     </>
   );
