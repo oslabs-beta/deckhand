@@ -1,4 +1,7 @@
 const { execSync, exec } = require('child_process');
+const util = require('util');
+const execProm = util.promisify(exec);
+
 const apiController = {};
 
 apiController.getProjects = (req, res, next) => {
@@ -50,20 +53,20 @@ apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
   //could only get the command to work with execSync as of right now
 
   try {
-    execSync(`docker image pull --platform linux/amd64 ${repo_name}/${image}:${tag}`);
+    await execProm(`docker image pull --platform linux/amd64 ${repo_name}/${image}:${tag}`);
   } catch {
     return 'Wrong type of image architecture';
   }
-  const imageInformation = execSync(`docker image inspect ${repo_name}/${image}:${tag}`, {
-    encoding: 'utf8',
-  });
-  const imageInformationAsJSON = JSON.parse(imageInformation);
+  const imageInformation = await execProm(`docker image inspect ${repo_name}/${image}:${tag} -f json`);
+  console.log('imageInformation', imageInformation);
+  const imageInformationAsJSON = JSON.parse(imageInformation.stdout);
   // this gives us the port in an object
   const imagePortAsAnObject = imageInformationAsJSON[0].Config.ExposedPorts;
   const imagePortAsAKey = Object.keys(imagePortAsAnObject);
   const imagePortAsString = imagePortAsAKey[0].match(/\d+/g);
 
   const imagePort = Number(imagePortAsString);
+  // we can switch the name of this if needed. This gives the port number needed for the YAML files for the container port and the target port
   res.locals.data = {imagePort: imagePort};
   return next();
 };
