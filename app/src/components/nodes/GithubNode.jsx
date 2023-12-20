@@ -79,8 +79,21 @@ export default function ({ id, data, isConnectable }) {
     }, 1000);
   };
 
+  const handleClickIncrementReplicas = () => {
+    dispatch(updateNode({ id, data: { replicas: data.replicas + 1 } }));
+  };
+
+  const handleClickDecrementReplicas = () => {
+    dispatch(
+      updateNode({
+        id,
+        data: { replicas: data.replicas > 1 ? data.replicas - 1 : 1 },
+      })
+    );
+  };
+
   return (
-    <div className="node">
+    <div className={`node pod ${data.status === "running" ? "running" : ""}`}>
       <Handle
         type="target"
         position={Position.Top}
@@ -120,35 +133,79 @@ export default function ({ id, data, isConnectable }) {
           <Icon path={mdiGithub} style={{ color: "black" }} size={1} />
         </div>
         <div className="title">{data.name}</div>
-        <select
-          name="githubBranch"
-          className="select nodrag"
-          onChange={(e) => setBranch(e.target.value)}
-          value={data.githubBranch}
-        >
-          {data.githubBranches
-            ? data.githubBranches.map((el) => (
-                <option key={el} value={el}>
-                  {el}
-                </option>
-              ))
-            : ""}
-        </select>
-        {!state.edges.find((edge) => edge.target === id)?.animated ? (
-          <button className="button nodrag disabled">Deploy</button>
-        ) : !data.status ? (
-          <button className="button nodrag" onClick={handleClickStart}>
-            Deploy
-          </button>
-        ) : data.status === "deploying" ? (
-          <button className="button busy nodrag">Deploying...</button>
-        ) : data.status === "running" ? (
-          <button className="button stop nodrag" onClick={handleClickStop}>
-            Stop Deployment
-          </button>
-        ) : (
-          <button className="button busy nodrag">Stopping...</button>
-        )}
+        <div style={{ display: "flex" }}>
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20px",
+                fontWeight: "bold",
+              }}
+            >
+              <div
+                onClick={() => handleClickIncrementReplicas()}
+                style={{
+                  flex: 1,
+                  margin: "2px",
+                  textAlign: "center",
+                }}
+              >
+                <span className="arrow nodrag">▲</span>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  margin: "2px",
+                  textAlign: "center",
+                }}
+              >
+                {data.replicas}
+              </div>
+              <div
+                onClick={() => handleClickDecrementReplicas()}
+                style={{
+                  flex: 1,
+                  margin: "2px",
+                  textAlign: "center",
+                }}
+              >
+                <span className="arrow nodrag">▼</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ flex: 1 }}>
+            <select
+              name="githubBranch"
+              className="select nodrag"
+              onChange={(e) => setBranch(e.target.value)}
+              value={data.githubBranch}
+            >
+              {data.githubBranches
+                ? data.githubBranches.map((el) => (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  ))
+                : ""}
+            </select>
+            {!state.edges.find((edge) => edge.target === id)?.animated ? (
+              <button className="button nodrag disabled">Deploy</button>
+            ) : !data.status ? (
+              <button className="button nodrag" onClick={handleClickStart}>
+                Deploy
+              </button>
+            ) : data.status === "deploying" ? (
+              <button className="button busy nodrag">Deploying...</button>
+            ) : data.status === "running" ? (
+              <button className="button stop nodrag" onClick={handleClickStop}>
+                Stop Deployment
+              </button>
+            ) : (
+              <button className="button busy nodrag">Stopping...</button>
+            )}
+          </div>
+        </div>
       </div>
       <Handle
         type="source"
