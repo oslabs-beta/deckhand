@@ -98,7 +98,7 @@ export const deckhandSlice = createSlice({
         position: { x: 1152, y: 676 },
         projectId: '5259',
         data: {
-          directory: '/mnt/data',
+          mountPath: '/var/lib/postgresql/data',
         },
       },
     ],
@@ -181,7 +181,7 @@ export const deckhandSlice = createSlice({
         createdDate: new Date().toString(),
         modifiedDate: new Date().toString(),
         provider: 'aws', // default
-        vpcRegion: 'US-East', // default
+        vpcRegion: 'us-east-1', // default
       });
     },
     deleteProject: (state, action) => { // payload: projectId
