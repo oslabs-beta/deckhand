@@ -15,7 +15,7 @@ router.get('/dockerHubImageTags/*', apiController.getDockerHubImageTags, (req, r
 });
 
 router.post('/pushDockerHubImagesToKluster', apiController.pushDockerHubImagesToKluster, (req, res) => {
-  res.sendStatus(200)//.json(res.locals.data);
+  res.status(200).json(res.locals.data);
 });
 
 module.exports = router;

@@ -58,24 +58,13 @@ apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
     encoding: 'utf8',
   });
   const imageInformationAsJSON = JSON.parse(imageInformation);
-  // this shows us the architecture of the image. If not the correct type (linux/amd64 aka amd64), then it should tell user image is of wrong type. Docker Hub (to my knowledge) doesn't let you rewrite someone elses docker hub images to change the architecture. 
-  console.log(imageInformationAsJSON);
-  console.log('show arch', imageInformationAsJSON[0].Architecture);
-
-  const imageArchitecture = imageInformationAsJSON[0].Architecture;
-  // this gives us the port in an object 
-  console.log('show port', imageInformationAsJSON[0].Config.ExposedPorts);
-
+  // this gives us the port in an object
   const imagePortAsAnObject = imageInformationAsJSON[0].Config.ExposedPorts;
   const imagePortAsAKey = Object.keys(imagePortAsAnObject);
-
-  console.log(imagePortAsAKey);
-
   const imagePortAsString = imagePortAsAKey[0].match(/\d+/g);
+
   const imagePort = Number(imagePortAsString);
-
-  console.log(imagePort);
-
+  res.locals.data = {imagePort: imagePort};
   return next();
 };
 
