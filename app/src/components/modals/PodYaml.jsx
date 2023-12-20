@@ -13,6 +13,8 @@ export default function () {
   };
   const id = state.modal.id;
   const data = state.modal.data;
+  const project = state.modal.data;
+  const cluster = state.modal.data;
 
   const [show, setShow] = useState(false);
 
@@ -25,6 +27,21 @@ export default function () {
     closeModal();
   };
 
+  const generateYaml = () => {
+    // Find connected nodes
+    const connectedNodes = state.edges
+      .filter((edge) => edge.source === id)
+      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+
+    return createYaml.all(
+      data,
+      connectedNodes,
+      data.exposedPort || "(GENERATED DURING DEPLOYMENT)",
+      cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
+      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
+    );
+  };
+
   return (
     <div className={`modal ${show ? "show" : ""}`}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -35,7 +52,7 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <label>
             <pre className="yaml" name="yaml">
-              {createYaml.all(pods)}
+              {generateYaml()}
             </pre>
           </label>
         </form>
