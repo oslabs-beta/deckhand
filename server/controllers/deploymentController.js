@@ -169,7 +169,7 @@ deploymentController.destroyImage = (req, res, next) => {
   const { awsAccessKey, awsSecretKey } = req.body;
   const { vpcRegion } = req.body;
   const { repo, imageName, imageTag } = req.body;
-  const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
+  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
   execSync(
