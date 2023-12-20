@@ -34,7 +34,7 @@ apiController.getDockerHubImageTags = async (req, res, next) => {
     .catch((error) => next(error));
 };
 
-// function to push docker images from Dockerhub
+// function to pull docker images from Dockerhub so we can use them in AWS
 
 apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
 
@@ -49,14 +49,19 @@ apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
 
   //could only get the command to work with execSync as of right now
 
-  execSync(`docker image pull ${repo_name}/${image}:${tag}`);
+  try {
+    execSync(`docker image pull --platform linux/amd64 ${repo_name}/${image}:${tag}`);
+  } catch {
+    return 'Wrong type of image architecture';
+  }
   const imageInformation = execSync(`docker image inspect ${repo_name}/${image}:${tag}`, {
     encoding: 'utf8',
   });
   const imageInformationAsJSON = JSON.parse(imageInformation);
-  // this shows us the architecture of the image
+  // this shows us the architecture of the image. If not the correct type (linux/amd64 aka amd64), then it should tell user image is of wrong type. Docker Hub (to my knowledge) doesn't let you rewrite someone elses docker hub images to change the architecture. 
+  console.log(imageInformationAsJSON);
   console.log('show arch', imageInformationAsJSON[0].Architecture);
-  
+
   const imageArchitecture = imageInformationAsJSON[0].Architecture;
   // this gives us the port in an object 
   console.log('show port', imageInformationAsJSON[0].Config.ExposedPorts);

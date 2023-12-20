@@ -155,9 +155,7 @@ deploymentController.build = (req, res, next) => {
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageUrl = `${ecrUrl}/${awsRepo}`;
-  execSync(
-    `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
-  );
+  execSync(`docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`);
   execSync(`docker tag ${imageName} ${imageUrl}`);
   execSync(`docker push ${imageUrl}`);
 
