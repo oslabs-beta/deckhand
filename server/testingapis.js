@@ -41,26 +41,51 @@ const k8deploytest = () => {
   const fs = require('fs');
   k8.connectKubectltoEKS('us-east-1', 'dec19_1');
 
+  // App pod
   const deployment = fs.readFileSync(
     __dirname + '/templates/testyamls/IdeaStation/deployment.yaml'
   );
-
   const configMap = fs.readFileSync(
     __dirname + '/templates/testyamls/IdeaStation/configMap.yaml'
   );
-
   const service = fs.readFileSync(
     __dirname + '/templates/testyamls/IdeaStation/service.yaml'
   );
-
   const ingress = fs.readFileSync(
     __dirname + '/templates/testyamls/IdeaStation/ingress.yaml'
   );
-
   const nginx = fs.readFileSync(__dirname + '/kubernetes/nginx-ingress.yaml');
 
-  const yamls = [deployment, configMap, service, nginx, ingress];
-  // const yamls = [deployment, configMap, service, ingress];
+  // DB Pod
+  const dbDeployment = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/db-deployment.yaml'
+  );
+  const dbService = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/postgres-service.yaml'
+  );
+  const pvc = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/pvc.yaml'
+  );
+  const storageClass = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/StorageClass.yaml'
+  );
+  const pv = fs.readFileSync(
+    __dirname + '/templates/testyamls/IdeaStation/pv.yaml'
+  );
+
+  // Order matters!
+  const yamls = [
+    storageClass,
+    pv,
+    pvc,
+    dbDeployment,
+    dbService,
+    configMap,
+    deployment,
+    service,
+    // nginx,
+    ingress,
+  ];
 
   k8.deploy(yamls);
 };

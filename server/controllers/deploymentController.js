@@ -124,28 +124,40 @@ deploymentController.configureCluster = async (req, res, next) => {
 // Dockerize github repo and push to AWS ECR
 deploymentController.build = (req, res, next) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
-  const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
+  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
 
   // Sign in to AWS
-  execSync(`aws --profile default configure set aws_access_key_id ${awsAccessKey}`);
-  execSync(`aws --profile default configure set aws_secret_access_key ${awsSecretKey}`);
-  execSync(`aws --profile default configure set region ${awsRegion}`);
+  execSync(
+    `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
+  );
+  execSync(
+    `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
+  );
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Get AWS Account ID
-  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, { encoding: 'utf8' });
+  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
+    encoding: 'utf8',
+  });
   const parsedAwsAccountId = JSON.parse(awsAccountIdRaw);
   const awsAccountId = parsedAwsAccountId.Account;
 
   // Create ECR repository
-  const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`
-  execSync(`aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`);
-  execSync(`aws ecr create-repository --repository-name ${awsRepo} --region ${vpcRegion} || true`);
+  const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`;
+  execSync(
+    `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`
+  );
+  execSync(
+    `aws ecr create-repository --repository-name ${awsRepo} --region ${vpcRegion} || true`
+  );
 
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageUrl = `${ecrUrl}/${awsRepo}`;
-  execSync(`docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`);
+  execSync(
+    `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
+  );
   execSync(`docker tag ${imageName} ${imageUrl}`);
   execSync(`docker push ${imageUrl}`);
 
@@ -157,15 +169,21 @@ deploymentController.destroyImage = (req, res, next) => {
   const { awsAccessKey, awsSecretKey } = req.body;
   const { vpcRegion } = req.body;
   const { repo, imageName, imageTag } = req.body;
-  const awsRepo = repo.split('/').join('-'); // format: "githubUser-repoName"
+  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
-  execSync(`aws --profile default configure set aws_access_key_id ${awsAccessKey}`);
-  execSync(`aws --profile default configure set aws_secret_access_key ${awsSecretKey}`);
+  execSync(
+    `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
+  );
+  execSync(
+    `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
+  );
   execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Delete image
-  execSync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`);
+  execSync(
+    `aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`
+  );
 };
 
 // Gets the public address of the ingress

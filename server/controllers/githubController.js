@@ -23,11 +23,11 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    CLIENT_ID +
-    '&client_secret=' +
-    CLIENT_SECRET +
-    '&code=' +
-    auth_code,
+      CLIENT_ID +
+      '&client_secret=' +
+      CLIENT_SECRET +
+      '&code=' +
+      auth_code,
     {
       method: 'POST',
       headers: {
@@ -101,8 +101,8 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-    input +
-    '+in:name&sort=stars&order=desc',
+      input +
+      '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -139,12 +139,14 @@ githubController.branches = async (req, res, next) => {
 // (not currently used) dockerize and push repo to Docker Hub
 githubController.build = (req, res, next) => {
   const { repo, branch } = req.body;
-  if (!repo || !branch) console.log('Missing repo and/or branch')
+  if (!repo || !branch) console.log('Missing repo and/or branch');
 
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageName = 'deckhandapp/' + repo.split('/').join('-').toLowerCase();
 
-  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, { input: DOCKER_PASSWORD });
+  execSync(`docker login -u ${DOCKER_USERNAME} --password-stdin`, {
+    input: DOCKER_PASSWORD,
+  });
   execSync(`docker build -t ${imageName} ${cloneUrl}`);
   execSync(`docker push ${imageName}`);
 
@@ -217,7 +219,7 @@ githubController.scanRepo = (req, res, next) => {
     const regexPHP2 = /getenv\(['"]([\w$]+)/g;
     const regexCSharp = /Environment.GetEnvironmentVariable\(['"](\w+)/g;
 
-    regexes = [
+    const regexes = [
       regexJs,
       regexPy,
       regexPy2,
@@ -280,6 +282,5 @@ githubController.findExposedPort = (req, res, next) => {
   res.locals.port = port;
   return next();
 };
-
 
 module.exports = githubController;

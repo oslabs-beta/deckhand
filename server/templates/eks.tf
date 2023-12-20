@@ -65,7 +65,32 @@ module "eks" {
     vpc-cni = {
       most_recent = true
     }
+    vpc-cni = {
+      most_recent = true
+    }
   }
+
+  ##### EVERYTHING HERE ADDED TO TEST IF ADDS CSI DRIVER #####
+  # Enable the EFS CSI Driver add-on
+  manage_aws_auth = true
+  map_roles = [
+    {
+      rolearn  = "${module.eks_cluster.worker_iam_role_arn}"
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups   = ["system:bootstrappers", "system:nodes"]
+    }
+  ]
+  
+  additional_tags = {
+    Terraform = "true"
+    Environment = "production"
+  }
+
+  # Enable EFS CSI Driver add-on
+  efs_csi_provider = {
+    enabled = true
+  }
+  ################## END #################  
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
