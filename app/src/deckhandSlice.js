@@ -20,22 +20,22 @@ export const deckhandSlice = createSlice({
 
     projects: [
       {
-        projectId: '1',
-        name: 'Moodsight', // store id+name as tag in AWS to allow renaming
-        createdDate: 'Fri Dec 07 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
-        modifiedDate: 'Fri Dec 08 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
+        projectId: '5259',
+        name: 'Brainstorm App', // store id+name as tag in AWS to allow renaming
+        createdDate: 'Fri Dec 19 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        modifiedDate: 'Fri Dec 19 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
         provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
-        vpcRegion: 'US-East', // immutable once VPC provisioned (destroying and recreating will break external connections)
+        vpcRegion: 'us-east-1', // immutable once VPC provisioned (destroying and recreating will break external connections)
         vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
       },
     ],
 
     nodes: [
       {
-        id: 'node-1',
+        id: '8345',
         type: 'cluster',
-        position: { x: 719, y: 396 },
-        projectId: '1',
+        position: { x: 719, y: 109 },
+        projectId: '5259',
         data: {
           name: 'Cluster', // store id+name as tag in AWS to allow renaming
           instanceType: 't2.micro', // changing after provisioning requires destroying and recreating the EKS (should not break external connections)
@@ -45,22 +45,24 @@ export const deckhandSlice = createSlice({
         },
       },
       {
-        id: 'node-2',
+        id: '7250',
         type: 'github',
+        position: { x: 490, y: 352 },
+        projectId: '5259',
         data: {
-          name: 'Moodsight',
-          githubRepo: 'o-mirza/Moodsight',
+          name: 'brainstormapp',
+          githubRepo: 'Goblin-Shark-CS/brainstormapp',
           githubBranch: 'main',
           githubBranches: ['main'],
           replicas: 3,
           deployed: false,
         },
-        position: { x: 469, y: 175 },
-        projectId: '1',
       },
       {
-        id: 'node-3',
+        id: '8823',
         type: 'docker',
+        position: { x: 928, y: 355 },
+        projectId: '5259',
         data: {
           name: 'postgres',
           imageName: 'postgres',
@@ -69,12 +71,19 @@ export const deckhandSlice = createSlice({
           replicas: '1',
           deployed: false,
         },
-        position: { x: 976, y: 670 },
-        projectId: '1',
       },
       {
-        id: 'node-4',
+        id: '8075',
+        type: 'ingress',
+        position: { x: 211, y: 680 },
+        projectId: '5259',
+        data: {},
+      },
+      {
+        id: '8038',
         type: 'variables',
+        position: { x: 685, y: 679 },
+        projectId: '5259',
         data: {
           varSetId: '1',
           podId: '1',
@@ -83,41 +92,68 @@ export const deckhandSlice = createSlice({
             { key: 'PG_URI', value: 'db_address', secret: false }
           ],
         },
-        position: { x: 926, y: 171 },
-        projectId: '1',
       },
       {
-        id: 'node-5',
-        type: 'ingress',
-        data: {
-          ingressId: '1',
-          podId: '1',
-          host: 'example.com',
-          path: '/path',
-        },
-        position: { x: 403, y: 427 },
-        projectId: '1',
-      },
-      {
-        id: 'node-6',
+        id: '9634',
         type: 'volume',
+        position: { x: 1152, y: 676 },
+        projectId: '5259',
         data: {
-          volumeId: '1',
-          podId: 2,
           directory: '/mnt/data',
         },
-        position: { x: 638, y: 676 },
-        projectId: '1',
       },
     ],
 
     edges: [
       {
-        source: "node-2",
-        sourceHandle: "b",
-        target: "node-1",
+        id: '8345-7250',
+        source: '8345',
+        sourceHandle: 'b',
+        target: '7250',
         targetHandle: null,
-        projectId: '1',
+        projectId: '5259',
+        animated: false,
+      },
+      {
+        id: '7250-8075',
+        source: '7250',
+        sourceHandle: 'b',
+        target: '8075',
+        targetHandle: null,
+        projectId: '5259',
+        animated: false,
+      },
+      {
+        id: '7250-8038',
+        source: '7250',
+        sourceHandle: 'b',
+        target: '8038',
+        targetHandle: null,
+        projectId: '5259',
+      },
+      {
+        id: '8823-8038',
+        source: '8823',
+        sourceHandle: 'b',
+        target: '8038',
+        targetHandle: null,
+        projectId: '5259',
+      },
+      {
+        id: '8345-8823',
+        source: '8345',
+        sourceHandle: 'b',
+        target: '8823',
+        targetHandle: null,
+        projectId: '5259',
+      },
+      {
+        id: '8823-9634',
+        source: '8823',
+        sourceHandle: 'b',
+        target: '9634',
+        targetHandle: null,
+        projectId: '5259',
       },
     ],
 
