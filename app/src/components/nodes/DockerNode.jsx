@@ -10,10 +10,20 @@ import {
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDocker } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import createYaml from "../../yaml";
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
+
+  // Find parent project
+  const project = state.projects.find(
+    (project) => project.projectId === state.projectId
+  );
+
+  // Find parent cluster
+  const clusterEdge = state.edges.find((edge) => edge.target === id);
+  const cluster = state.nodes.find((node) => node.id === clusterEdge.source);
 
   useEffect(() => {
     (async () => {
@@ -44,11 +54,26 @@ export default function ({ id, data, isConnectable }) {
     );
   };
 
-  const handleClickStart = () => {
-    console.log("deploying!");
-    console.log(id);
-    console.log(data);
+  const generateYaml = () => {
+    // Find connected nodes
+    const connectedNodes = state.edges
+      .filter((edge) => edge.source === id)
+      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+
+    return createYaml.all(
+      data,
+      connectedNodes,
+      data.exposedPort || "(GENERATED DURING DEPLOYMENT)",
+      cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
+      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
+    );
+  };
+
+  const handleClickStart = async () => {
     dispatch(updateNode({ id, data: { status: "deploying" } }));
+
+    const yaml = generateYaml();
+    console.log(yaml);
 
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
@@ -58,6 +83,30 @@ export default function ({ id, data, isConnectable }) {
         dispatch(updateEdge({ id: edge.id, animated: true }))
       );
     }, 1000);
+
+    // await fetch("/api/deployment/build", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     provider: project.provider,
+    //     awsAccessKey: state.user.awsAccessKey,
+    //     awsSecretKey: state.user.awsSecretKey,
+    //     vpcRegion: state.project.vpcRegion,
+    //     vpcId: cluster.data.vpcId,
+    //     yaml: yaml,
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then(() => {
+    //     dispatch(updateNode({ id, data: { status: "running" } }));
+    //     const edges = state.edges.filter((edge) => edge.source === id);
+    //     edges.map((edge) =>
+    //       dispatch(updateEdge({ id: edge.id, animated: true }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
   };
 
   const handleClickStop = () => {
@@ -137,6 +186,16 @@ export default function ({ id, data, isConnectable }) {
                 }
               >
                 Change Source
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() =>
+                  dispatch(
+                    showModal({ name: "PodYaml", id, data, project, cluster })
+                  )
+                }
+              >
+                Show YAML
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
