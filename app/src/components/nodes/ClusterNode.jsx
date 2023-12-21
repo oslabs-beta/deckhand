@@ -19,7 +19,7 @@ export default function ({ id, data, isConnectable }) {
   const handleClickStart = async () => {
     dispatch(updateNode({ id, data: { status: 'creating' } }));
 
-    const project = state.projects.find(
+    let project = state.projects.find(
       (project) => project.projectId === state.projectId
     );
 
@@ -28,7 +28,7 @@ export default function ({ id, data, isConnectable }) {
     let data;
 
     if (!project.vpcId) {
-      await fetch('/api/deployment/addVPC', {
+      let res = await fetch('/api/deployment/addVPC', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,38 +63,36 @@ export default function ({ id, data, isConnectable }) {
     //   );
     // }, 1000);
 
-    // await fetch("/api/deployment/addCluster", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     provider: project.provider,
-    //     vpcRegion: project.vpcRegion,
-    //     externalId: project.vpcId,
-    //     awsAccessKey: state.user.awsAccessKey,
-    //     awsSecretKey: state.user.awsSecretKey,
-    //     name: data.name,
-    //     instanceType: data.instanceType,
-    //     minNodes: data.minNodes,
-    //     maxNodes: data.maxNodes,
-    //     desiredNodes: data.desiredNodes,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     dispatch(
-    //       updateNode({
-    //         id,
-    //         data: { volumeHandle: data.volumeHandle, status: "running" },
-    //       })
-    //     );
-    //     const edges = state.edges.filter((edge) => edge.source === id);
-    //     edges.map((edge) =>
-    //       dispatch(updateEdge({ id: edge.id, animated: true }))
-    //     );
-    //   })
-    //   .catch((err) => console.log(err));
+    console.log('All project data:', project);
+    console.log('About to fetch addCluster, ', data.externalId);
+
+    let res = await fetch('/api/deployment/addCluster', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        externalId: data.externalId,
+        name: node.data.name,
+        instanceType: node.data.instanceType,
+        minNodes: node.data.minNodes,
+        maxNodes: node.data.maxNodes,
+        desiredNodes: node.data.desiredNodes,
+        userId: state.user.id,
+        projectId: project.projectId,
+      }),
+    });
+    data = await res.json();
+    console.log('cluster made! Volume handle: ', data.volumeHandle);
+
+    dispatch(
+      updateNode({
+        id,
+        data: { volumeHandle: data.volumeHandle, status: 'running' },
+      })
+    );
+    const edges = state.edges.filter((edge) => edge.source === id);
+    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: true })));
   };
 
   const handleClickStop = () => {
