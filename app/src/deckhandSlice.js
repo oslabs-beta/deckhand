@@ -3,16 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    // user: {},
-    user: {
-      id: 1,
-      name: 'John',
-      email: 'john@example.com',
-      avatarUrl: 'http://example.com',
-      githubId: null,
-      awsAccessKey: null,
-      awsSecretKey: null,
-    },
+    user: {},
+    // user: {
+    //   id: 1,
+    //   name: 'John',
+    //   email: 'john@example.com',
+    //   avatarUrl: 'http://example.com',
+    //   githubId: null,
+    //   awsAccessKey: null,
+    //   awsSecretKey: null,
+    // },
 
     projectId: null, // selected project id
     modal: {}, // {name, ...}
@@ -191,10 +191,17 @@ export const deckhandSlice = createSlice({
         vpcRegion: 'us-east-1', // default
       });
     },
-    deleteProject: (state, action) => { // payload: projectId
-      state.projects = state.projects.filter(project => project.projectId !== action.payload);
-      state.nodes = state.nodes.filter(node => node.projectId !== action.payload);
-      state.edges = state.edges.filter(edge => edge.projectId !== action.payload);
+    deleteProject: (state, action) => {
+      // payload: projectId
+      state.projects = state.projects.filter(
+        (project) => project.projectId !== action.payload
+      );
+      state.nodes = state.nodes.filter(
+        (node) => node.projectId !== action.payload
+      );
+      state.edges = state.edges.filter(
+        (edge) => edge.projectId !== action.payload
+      );
     },
     configureProject: (state, action) => {
       // payload: {projectId, ...props to merge...}

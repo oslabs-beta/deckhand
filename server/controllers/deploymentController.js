@@ -1,13 +1,22 @@
 const terraform = require('../terraform/terraformapi.js');
 const { execSync, exec } = require('child_process');
+const util = require('util');
+const execProm = util.promisify(exec);
 const k8 = require('../kubernetes/kubernetesapi.js');
 
 const deploymentController = {};
 
 deploymentController.addVPC = (req, res, next) => {
-  const { provider, name, vpcRegion } = req.body;
-  const { userId, projectId, projectName } = req.body;
-  const { awsAccessKey, awsSecretKey } = req.body;
+  const {
+    provider,
+    name,
+    vpcRegion,
+    userId,
+    projectId,
+    projectName,
+    awsAccessKey,
+    awsSecretKey,
+  } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
 
   // create a user and project  directory
@@ -151,7 +160,7 @@ deploymentController.configureCluster = async (req, res, next) => {
 };
 
 // Dockerize github repo and push to AWS ECR
-deploymentController.build = (req, res, next) => {
+deploymentController.build = async (req, res, next) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
@@ -168,18 +177,16 @@ deploymentController.build = (req, res, next) => {
   execSync(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
-
   execSync(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  execSync(`aws --profile default configure set region ${vpcRegion}`);
   execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Get AWS Account ID
   const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });
-  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw);
+  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw.stdout);
   const awsAccountId = parsedAwsAccountId.Account;
 
   // Create ECR repository
@@ -187,27 +194,26 @@ deploymentController.build = (req, res, next) => {
   execSync(
     `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`
   );
-  execSync(
+  await execProm(
     `aws ecr create-repository --repository-name ${awsRepo} --region ${vpcRegion} || true`
   );
 
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageUrl = `${ecrUrl}/${awsRepo}`;
-  execSync(
+  await execProm(
     `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
   );
-  execSync(`docker tag ${imageName} ${imageUrl}`);
-  execSync(`docker push ${imageUrl}`);
+  await execProm(`docker tag ${imageName} ${imageUrl}`);
+  await execProm(`docker push ${imageUrl}`);
 
   res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
   return next();
 };
 
-deploymentController.destroyImage = (req, res, next) => {
-  const { awsAccessKey, awsSecretKey } = req.body;
-  const { vpcRegion } = req.body;
-  const { repo, imageName, imageTag } = req.body;
+deploymentController.destroyImage = async (req, res, next) => {
+  const { awsAccessKey, awsSecretKey, vpcRegion, repo, imageName, imageTag } =
+    req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
@@ -220,7 +226,7 @@ deploymentController.destroyImage = (req, res, next) => {
   execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Delete image
-  execSync(
+  await execProm(
     `aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`
   );
 
@@ -229,8 +235,7 @@ deploymentController.destroyImage = (req, res, next) => {
 
 // Gets the public address of the ingress
 deploymentController.getURL = (req, res, next) => {
-  const { awsAccessKey, awsSecretKey } = req.body;
-  const { provider, vpcRegion } = req.body;
+  const { awsAccessKey, awsSecretKey, provider, vpcRegion } = req.body;
   const { clusterName } = req.body.ids;
 
   k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
