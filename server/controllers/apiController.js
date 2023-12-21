@@ -6,19 +6,19 @@ const execProm = util.promisify(exec);
 const apiController = {};
 
 apiController.updateDatabase = async (req, res, next) => {
-  const { id, name, email, avatarUrl, githubId, awsAccessKey, awsSecretKey, state } = req.body;
+  const { id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state } = req.body;
 
   // Prepare the SQL query
   const updateQuery = `
     UPDATE users
-    SET name = $2, email = $3, avatarUrl = $4, githubId = $5, awsAccessKey = $6, awsSecretKey = $7, state = $8
+    SET name = $2, email = $3, avatarUrl = $4, githubId = $5, theme = $6, awsAccessKey = $7, awsSecretKey = $8, state = $9
     WHERE _id = $1
     RETURNING *
   `;
 
   try {
     // Execute the query with the provided values
-    const result = await db.query(updateQuery, [id, name, email, avatarUrl, githubId, awsAccessKey, awsSecretKey, state]);
+    const result = await db.query(updateQuery, [id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found.' });
