@@ -72,7 +72,7 @@ export default function ({ id, data, isConnectable }) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        externalId: data.externalId,
+        externalId: project.vpcId || data.externalId,
         name: node.data.name,
         instanceType: node.data.instanceType,
         minNodes: node.data.minNodes,

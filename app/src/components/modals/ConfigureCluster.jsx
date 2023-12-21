@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { showModal, updateNode } from "../../deckhandSlice";
-import "./modal.css";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { showModal, updateNode } from '../../deckhandSlice';
+import './modal.css';
 
 export default function () {
   const state = useSelector((state) => state.deckhand);
@@ -27,11 +27,11 @@ export default function () {
         id,
         data: {
           ...data,
-          name: formData.get("name"),
-          instanceType: formData.get("instanceType"),
-          minNodes: formData.get("minNodes"),
-          maxNodes: formData.get("maxNodes"),
-          desiredNodes: formData.get("desiredNodes"),
+          name: formData.get('name'),
+          instanceType: formData.get('instanceType'),
+          minNodes: formData.get('minNodes'),
+          maxNodes: formData.get('maxNodes'),
+          desiredNodes: formData.get('desiredNodes'),
         },
       })
     );
@@ -39,9 +39,9 @@ export default function () {
   };
 
   return (
-    <div className={`modal ${show ? "show" : ""}`}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <span className="close-button" onClick={closeModal}>
+    <div className={`modal ${show ? 'show' : ''}`}>
+      <div className='modal-content' onClick={(e) => e.stopPropagation()}>
+        <span className='close-button' onClick={closeModal}>
           &times;
         </span>
         <h2>Configure Cluster</h2>
@@ -49,34 +49,36 @@ export default function () {
           <label>
             Name:
             <input
-              type="text"
-              name="name"
-              defaultValue={data.name ? data.name : "Cluster"}
+              type='text'
+              name='name'
+              defaultValue={data.name ? data.name : 'Cluster'}
             />
           </label>
           <label>
             Instance Type:
-            <select name="instanceType">
-              <option defaultValue="t2.micro">t2.micro</option>
+            <select name='instanceType'>
+              <option defaultValue='t2.micro'>t2.micro</option>
+              <option defaultValue='t2.medium'>t2.medium</option>
+              <option defaultValue='t2.large'>t2.large</option>
             </select>
           </label>
           <label>
             Min Nodes:
-            <input type="text" name="minNodes" defaultValue="1" />
+            <input type='text' name='minNodes' defaultValue='1' />
           </label>
           <label>
             Max Nodes:
-            <input type="text" name="maxNodes" defaultValue="3" />
+            <input type='text' name='maxNodes' defaultValue='3' />
           </label>
           <label>
             Desired Nodes:
-            <input type="text" name="desiredNodes" defaultValue="2" />
+            <input type='text' name='desiredNodes' defaultValue='2' />
           </label>
-          <div className="buttons">
-            <button type="button" onClick={closeModal}>
+          <div className='buttons'>
+            <button type='button' onClick={closeModal}>
               Cancel
             </button>
-            <button type="submit" className="blue">
+            <button type='submit' className='blue'>
               Submit
             </button>
           </div>
