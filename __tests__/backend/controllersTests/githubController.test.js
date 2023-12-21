@@ -19,26 +19,6 @@ describe('Testing the Github Oauth Login Redirect', () => {
 
 });
 
-// describe('Testing Github callback component', () => {
-//   // edit
-//   const req = {
-//     body: {},
-//     query: {}
-//   };
-//   const res = {
-//     locals: {}
-//   }
-//   const next = jest.fn();
-
-//   it('check if query code token is in the request', async () => {
-//     await githubController.callback(req, res, next);
-//     const auth_code = req.query.code;
-//     expect(auth_code).toHaveLength(20);
-//     expect(auth_code).not.toBeUndefined();
-//   });
-
-// });
-
 describe('Scan dockerfile tests', () => {
   const req = {
     body: {},
