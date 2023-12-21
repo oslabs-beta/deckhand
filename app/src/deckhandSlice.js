@@ -157,24 +157,31 @@ export const deckhandSlice = createSlice({
     ],
   },
   reducers: {
-    setUser: (state, action) => { // payload: user (merge props)
+    setUser: (state, action) => {
+      // payload: user (merge props)
       Object.assign(state.user, action.payload);
     },
-    setState: (state, action) => { // payload: {projects, nodes, edges}
+    setState: (state, action) => {
+      // payload: {projects, nodes, edges}
       Object.assign(state, action.payload);
     },
-    setProjectId: (state, action) => { // payload: projectId
+    setProjectId: (state, action) => {
+      // payload: projectId
       state.projectId = action.payload;
     },
     toggleLayout: (state, action) => {
-      state.layout === 'cards' ? state.layout = 'canvas' : state.layout = 'cards';
+      state.layout === 'cards'
+        ? (state.layout = 'canvas')
+        : (state.layout = 'cards');
     },
-    showModal: (state, action) => { // payload: {name, ...}
+    showModal: (state, action) => {
+      // payload: {name, ...}
       state.modal = action.payload;
     },
 
     // Project Reducers
-    addProject: (state, action) => { // payload: projectId
+    addProject: (state, action) => {
+      // payload: projectId
       state.projects.push({
         projectId: action.payload,
         name: `Default Project`,
@@ -184,25 +191,39 @@ export const deckhandSlice = createSlice({
         vpcRegion: 'us-east-1', // default
       });
     },
-    deleteProject: (state, action) => { // payload: projectId
-      state.projects = state.projects.filter(project => project.projectId !== action.payload);
-      state.nodes = state.nodes.filter(node => node.projectId !== action.payload);
-      state.edges = state.edges.filter(edge => edge.projectId !== action.payload);
+    deleteProject: (state, action) => {
+      // payload: projectId
+      state.projects = state.projects.filter(
+        (project) => project.projectId !== action.payload
+      );
+      state.nodes = state.nodes.filter(
+        (node) => node.projectId !== action.payload
+      );
+      state.edges = state.edges.filter(
+        (edge) => edge.projectId !== action.payload
+      );
     },
-    configureProject: (state, action) => { // payload: {projectId, ...props to merge...}
-      const project = state.projects.find(project => project.projectId === action.payload.projectId);
+    configureProject: (state, action) => {
+      // payload: {projectId, ...props to merge...}
+      const project = state.projects.find(
+        (project) => project.projectId === action.payload.projectId
+      );
       if (project) Object.assign(project, action.payload);
     },
 
     // Node Reducers
-    addNode: (state, action) => { // payload: { id, type, data, position, projectId }
+    addNode: (state, action) => {
+      // payload: { id, type, data, position, projectId }
       state.nodes.push(action.payload);
     },
-    deleteNode: (state, action) => { // payload: id
-      state.nodes = state.nodes.filter(node => node.nodeId !== action.payload);
+    deleteNode: (state, action) => {
+      // payload: id
+      state.nodes = state.nodes.filter(
+        (node) => node.nodeId !== action.payload
+      );
     },
     updateNode: (state, action) => {
-      const node = state.nodes.find(node => node.id === action.payload.id);
+      const node = state.nodes.find((node) => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop
         const previousData = { ...node.data };
@@ -218,14 +239,17 @@ export const deckhandSlice = createSlice({
     },
 
     // Edge Reducers
-    addNewEdge: (state, action) => { // payload: { id, ...params, project.id }
+    addNewEdge: (state, action) => {
+      // payload: { id, ...params, project.id }
       state.edges.push(action.payload);
     },
-    deleteEdge: (state, action) => { // payload: id
-      state.edges = state.edges.filter(edge => edge.id !== action.payload);
+    deleteEdge: (state, action) => {
+      // payload: id
+      state.edges = state.edges.filter((edge) => edge.id !== action.payload);
     },
-    updateEdge: (state, action) => { // payload: { id, ...props to merge }
-      const edge = state.edges.find(edge => edge.id === action.payload.id);
+    updateEdge: (state, action) => {
+      // payload: { id, ...props to merge }
+      const edge = state.edges.find((edge) => edge.id === action.payload.id);
       if (edge) Object.assign(edge, action.payload);
     },
   },

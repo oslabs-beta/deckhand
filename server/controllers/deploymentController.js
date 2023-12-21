@@ -7,21 +7,44 @@ const k8 = require('../kubernetes/kubernetesapi.js');
 const deploymentController = {};
 
 deploymentController.addVPC = (req, res, next) => {
-  const { provider, name, vpcRegion } = req.body;
-  const { awsAccessKey, awsSecretKey } = req.body;
+  const {
+    provider,
+    name,
+    vpcRegion,
+    userId,
+    projectId,
+    projectName,
+    awsAccessKey,
+    awsSecretKey,
+  } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
+
+  // create a user and project  directory
+  terraform.initializeUser(userId);
+  terraform.initializeProject(userId, projectId);
 
   // Connect AWS credentials to Terraform state, then provision the VPC
   terraform
-    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
+    .connectToProvider(
+      userId,
+      projectId,
+      provider,
+      vpcRegion,
+      awsAccessKey,
+      awsSecretKey
+    )
     .then(() => {
       console.log('Successfully connected to provider');
-      terraform.addVPC(vpcRegion, cleanName);
-    })
-    .then((externalId) => {
-      console.log('Successfully provisioned VPC with id:', externalId);
-      res.locals.data = { externalId }; // VPC ID
-      return next();
+      terraform
+        .addVPC(userId, projectId, provider, projectName)
+        .then((externalId) => {
+          console.log('Successfully provisioned VPC with id:', externalId);
+          res.locals.data = { externalId }; // VPC ID
+          return next();
+        })
+        .catch(() => {
+          console.log('error with addVPC');
+        });
     })
     .catch((err) => {
       const errObj = {
@@ -72,69 +95,82 @@ deploymentController.deleteVPC = (req, res, next) => {
 };
 
 deploymentController.addCluster = (req, res, next) => {
+  console.log('entered addCluster in deploymentController');
+  console.log('req.body:', req.body);
   const {
-    provider,
-    vpcRegion,
+    userId,
+    projectId,
     externalId,
-    awsAccessKey,
-    awsSecretKey,
     name,
     instanceType,
     minNodes,
     maxNodes,
-    desiredNodes
+    desiredNodes,
   } = req.body;
   const cleanName = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase();
-
+  console.log('cleanName:', cleanName);
   terraform
-    .connectToProvider(provider, vpcRegion, awsAccessKey, awsSecretKey)
+    .addCluster(
+      userId,
+      projectId,
+      cleanName,
+      externalId,
+      minNodes,
+      maxNodes,
+      desiredNodes,
+      instanceType
+    )
     .then(() => {
-      terraform
-        .addCluster(
-          cleanName,
-          externalId,
-          minNodes,
-          maxNodes,
-          desiredNodes,
-          instanceType
-        )
-        .then(() => {
-          res.locals.data = { volumeHandle: terraform.getEFSId(cleanName, externalId) }; // TODO:
-          return next();
-        })
-        .catch((err) => {
-          const errObj = {
-            log: 'Error in deploymentController.addCluster:' + err,
-            message: { err: 'An error occured trying to create a cluster' },
-          };
-          return next(errObj);
-        });
+      console.log('getting efsId');
+      const volumeHandle = terraform.getEFSId(userId, projectId, cleanName);
+      console.log('efsId:', volumeHandle);
+      res.locals.data = { volumeHandle };
+      return next();
+    })
+    .catch((err) => {
+      const errObj = {
+        log: 'Error in deploymentController.addCluster:' + err,
+        message: { err: 'An error occured trying to create a cluster' },
+      };
+      return next(errObj);
     });
 };
 
 deploymentController.deleteCluster = (req, res, next) => {
   // const { provider } = req.body;
   // const { accessKey, secretKey } = req.body.cloudProviders[provider];
-  const { userId, projectId, clusterId } = req.body.ids;
+  const { userId, projectId, clusterName } = req.body.ids;
 
-  terraform.destroyCluster(userId, projectId, clusterId);
+  terraform.destroyCluster(userId, projectId, clusterName);
 
   return next();
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
-  const { provider, awsAccessKey, awsSecretKey, vpcRegion, vpcId, yaml } = req.body;
-  // add command line function: apply yaml to cluster
-  next();
+  const { vpcRegion, awsAccessKey, awsSecretKey, clusterName, yaml } = req.body;
+
+  k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
+  k8.connectKubectltoEKS = (vpcRegion, clusterName);
+  k8.deploy(yaml);
+
+  return next();
 };
 
 // Dockerize github repo and push to AWS ECR
 deploymentController.build = async (req, res, next) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
-  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubuser-repoName"
-  const imageName = repo.split('/').join('-').toLowerCase() + `:${branch}`; // format: "githubUser-repoName-branch"
+  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
+  const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
+
+  console.log(
+    'in build controller. Credentials:',
+    awsAccessKey,
+    awsSecretKey,
+    vpcRegion
+  );
 
   // Sign in to AWS
+
   execSync(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
@@ -152,7 +188,6 @@ deploymentController.build = async (req, res, next) => {
 
   // Create ECR repository
   const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`;
-
   execSync(
     `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`
   );
@@ -163,8 +198,10 @@ deploymentController.build = async (req, res, next) => {
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageUrl = `${ecrUrl}/${awsRepo}`;
-  await execProm(`docker buildx build --platform linux/amd64 -t ${branch} ${cloneUrl} --load`);
-  await execProm(`docker tag ${branch} ${imageUrl}`);
+  await execProm(
+    `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
+  );
+  await execProm(`docker tag ${imageName} ${imageUrl}`);
   await execProm(`docker push ${imageUrl}`);
 
   res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
@@ -172,9 +209,8 @@ deploymentController.build = async (req, res, next) => {
 };
 
 deploymentController.destroyImage = async (req, res, next) => {
-  const { awsAccessKey, awsSecretKey } = req.body;
-  const { vpcRegion } = req.body;
-  const { repo, imageName, imageTag } = req.body;
+  const { awsAccessKey, awsSecretKey, vpcRegion, repo, imageName, imageTag } =
+    req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
@@ -190,16 +226,17 @@ deploymentController.destroyImage = async (req, res, next) => {
   await execProm(
     `aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`
   );
+
+  return next();
 };
 
 // Gets the public address of the ingress
 deploymentController.getURL = (req, res, next) => {
-  const { awsAccessKey, awsSecretKey } = req.body;
-  const { provider, vpcRegion } = req.body;
-  const { clusterId } = req.body.ids;
+  const { awsAccessKey, awsSecretKey, provider, vpcRegion } = req.body;
+  const { clusterName } = req.body.ids;
 
   k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
-  k8.connectKubectltoEKS = (vpcRegion, clusterId);
+  k8.connectKubectltoEKS = (vpcRegion, clusterName);
   const address = k8.getURL();
   res.locals.address = address;
   return next();
