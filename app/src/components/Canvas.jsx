@@ -83,19 +83,18 @@ export default function Canvas() {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
+      const id = Math.floor(Math.random() * 10000).toString(); // fetch from SQL
+      const type = event.dataTransfer.getData("application/reactflow");
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const projectId = state.projectId;
+      const data = {};
 
-      const newNode = {
-        id: Math.floor(Math.random() * 10000).toString(), // fetch from SQL
-        type: event.dataTransfer.getData("application/reactflow"),
-        projectId: state.projectId,
-        position: reactFlowInstance.screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        }),
-        data: [],
-      };
+      if (type === "pod") data.replicas = 1;
 
-      dispatch(addNode(newNode));
+      dispatch(addNode({ id, type, projectId, position, data }));
     },
     [reactFlowInstance]
   );

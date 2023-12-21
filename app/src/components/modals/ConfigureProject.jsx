@@ -26,7 +26,7 @@ export default function () {
         projectId: project.projectId,
         name: formData.get("name"),
         provider: formData.get("provider"),
-        region: formData.get("region"),
+        vpcRegion: formData.get("vpcRegion"),
       })
     );
     closeModal();
@@ -52,7 +52,7 @@ export default function () {
           </label>
           <label>
             Region:
-            <select name="region" defaultValue="us-east-1">
+            <select name="vpcRegion" defaultValue="us-east-1">
               <option value="us-east-1">US East (Virginia)</option>
               <option value="us-east-2">US East (Ohio)</option>
               <option value="us-west-1">US West (N. California)</option>

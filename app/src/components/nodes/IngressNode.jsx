@@ -51,6 +51,16 @@ export default function ({ id, data, isConnectable }) {
           <Icon path={mdiImport} style={{ color: "green" }} size={1} />
         </div>
         <div className="title">Ingress Route</div>
+        {!state.edges.find((edge) => edge.target === id)?.animated ? (
+          <button className="button nodrag disabled">Open Public URL</button>
+        ) : (
+          <button
+            className="button nodrag"
+            onClick={() => window.open(data.url, "_blank")}
+          >
+            Open Public URL
+          </button>
+        )}
       </div>
       <Handle
         type="source"

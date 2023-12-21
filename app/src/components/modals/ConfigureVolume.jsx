@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showModal, configureVolume } from "../../deckhandSlice";
+import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
@@ -10,7 +10,8 @@ export default function () {
     setShow(false);
     setTimeout(() => dispatch(showModal({})), 300);
   };
-  const volume = state.modal.data;
+  const id = state.modal.id;
+  const data = state.modal.data;
 
   const [show, setShow] = useState(false);
 
@@ -21,12 +22,8 @@ export default function () {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    dispatch(
-      configureVolume({
-        volumeId: volume.volumeId,
-        directory: formData.get("directory"),
-      })
-    );
+    const mountPath = formData.get("mountPath");
+    dispatch(updateNode({ id, data: { mountPath } }));
     closeModal();
   };
 
@@ -39,12 +36,8 @@ export default function () {
         <h2>Configure Volume</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Enter volume directory:
-            <input
-              type="text"
-              name="directory"
-              defaultValue={volume.directory}
-            />
+            Enter Mount Path:
+            <input type="text" name="mountPath" defaultValue={data.mountPath} />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
