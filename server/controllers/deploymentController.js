@@ -135,16 +135,16 @@ deploymentController.build = async (req, res, next) => {
   const imageName = repo.split('/').join('-').toLowerCase() + `:${branch}`; // format: "githubUser-repoName-branch"
 
   // Sign in to AWS
-  await execProm(
+  execSync(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
-  await execProm(
+  execSync(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  await execProm(`aws --profile default configure set region ${vpcRegion}`);
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Get AWS Account ID
-  const awsAccountIdRaw = await execProm(`aws sts get-caller-identity`, {
+  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });
   const parsedAwsAccountId = JSON.parse(awsAccountIdRaw.stdout);
@@ -153,7 +153,7 @@ deploymentController.build = async (req, res, next) => {
   // Create ECR repository
   const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`;
 
-  await execProm(
+  execSync(
     `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`
   );
   await execProm(
@@ -178,13 +178,13 @@ deploymentController.destroyImage = async (req, res, next) => {
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
-  await execProm(
+  execSync(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
-  await execProm(
+  execSync(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  await execProm(`aws --profile default configure set region ${vpcRegion}`);
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Delete image
   await execProm(

@@ -8,7 +8,7 @@ describe('Testing the Github Oauth Login Redirect', () => {
   const res = {
     locals: {},
     redirect: jest.fn()
-  }
+  };
   const next = jest.fn();
 
   it('Does it make only one request', () => {
