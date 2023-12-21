@@ -143,7 +143,7 @@ deploymentController.build = async (req, res, next) => {
   );
   await execProm(`aws --profile default configure set region ${vpcRegion}`);
 
-  // Get AWS Account pID
+  // Get AWS Account ID
   const awsAccountIdRaw = await execProm(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });
