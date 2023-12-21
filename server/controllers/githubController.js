@@ -88,7 +88,7 @@ githubController.userData = async (req, res, next) => {
           const createUserQuery = `
             INSERT INTO users (name, email, avatarurl, githubid)
             VALUES ($1, $2, $3, $4)
-            RETURNING _id, name, email, avatarurl, githubid, awsaccesskey, awssecretkey, state
+            RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
           `;
           const newUserResult = await db.query(createUserQuery, [name, email, avatarUrl, githubId]);
 
@@ -100,6 +100,7 @@ githubController.userData = async (req, res, next) => {
             email: newUser.email,
             avatarUrl: newUser.avatarurl,
             githubId: newUser.githubid,
+            theme: newUser.theme,
             awsAccessKey: newUser.awsaccesskey,
             awsSecretKey: newUser.awssecretkey,
             state: newUser.state,
@@ -115,6 +116,7 @@ githubController.userData = async (req, res, next) => {
             email: user.email,
             avatarUrl: user.avatarurl,
             githubId: user.githubid,
+            theme: user.theme,
             awsAccessKey: user.awsaccesskey,
             awsSecretKey: user.awssecretkey,
             state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
