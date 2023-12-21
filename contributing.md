@@ -4,7 +4,7 @@ As an open source product, we welcome contributions!
 
 ### Reporting Bugs
 
-If you've found a bug, please let us know. You do can so from the GitHub repository by clicking the "issues" tab. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. And if you think you can fix the bug yourself, go ahead and submit a pull request with the fix!
+If you've found a bug, please let us know. You can do so from the GitHub repository by clicking the "issues" tab. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. And if you think you can fix the bug yourself, go ahead and submit a pull request with the fix!
 
 ### Pull Requests
 
