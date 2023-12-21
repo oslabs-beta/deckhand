@@ -165,14 +165,18 @@ deploymentController.build = (req, res, next) => {
 
   // Sign in to AWS
   execSync(
+  execSync(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
+  execSync(
   execSync(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
   execSync(`aws --profile default configure set region ${vpcRegion}`);
+  execSync(`aws --profile default configure set region ${vpcRegion}`);
 
   // Get AWS Account ID
+  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
   const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });

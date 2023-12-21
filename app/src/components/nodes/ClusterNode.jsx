@@ -73,7 +73,7 @@ export default function ({ id, data, isConnectable }) {
       },
       body: JSON.stringify({
         externalId: project.vpcId || data.externalId,
-        name: node.data.name,
+        name: id + '-' + node.data.name,
         instanceType: node.data.instanceType,
         minNodes: node.data.minNodes,
         maxNodes: node.data.maxNodes,
