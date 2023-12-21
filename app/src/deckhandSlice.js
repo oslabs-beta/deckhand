@@ -3,16 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
-    user: {},
-    // user: {
-    //   id: 1,
-    //   name: 'John',
-    //   email: 'john@example.com',
-    //   avatarUrl: 'http://example.com',
-    //   githubId: null,
-    //   awsAccessKey: null,
-    //   awsSecretKey: null,
-    // },
+    // user: {},
+    user: {
+      id: 1,
+      name: 'John',
+      email: 'john@example.com',
+      avatarUrl: 'http://example.com',
+      githubId: null,
+      awsAccessKey: null,
+      awsSecretKey: null,
+    },
 
     projectId: null, // selected project id
     modal: {}, // {name, ...}
@@ -21,8 +21,10 @@ export const deckhandSlice = createSlice({
       {
         projectId: '5259',
         name: 'Brainstorm App', // store id+name as tag in AWS to allow renaming
-        createdDate: 'Fri Dec 19 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
-        modifiedDate: 'Fri Dec 19 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
+        createdDate:
+          'Fri Dec 19 2023 11:51:09 GMT-0500 (Eastern Standard Time)',
+        modifiedDate:
+          'Fri Dec 19 2023 19:51:09 GMT-0500 (Eastern Standard Time)',
         provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
         vpcRegion: 'us-east-1', // immutable once VPC provisioned (destroying and recreating will break external connections)
         vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
@@ -66,7 +68,34 @@ export const deckhandSlice = createSlice({
           name: 'postgres',
           imageName: 'postgres',
           imageTag: 'latest',
-          imageTags: ['latest', 'alpine3.19', 'alpine3.18', 'alpine', '16.1-alpine3.19', '16.1-alpine3.18', '16.1-alpine', '16-alpine3.19', '16-alpine3.18', '16-alpine', '15.5-alpine3.19', '15.5-alpine3.18', '15.5-alpine', '15-alpine3.19', '15-alpine3.18', '15-alpine', '14.10-alpine3.19', '14.10-alpine3.18', '14.10-alpine', '14-alpine3.19', '14-alpine3.18', '14-alpine', '13.13-alpine3.19', '13.13-alpine3.18', '13.13-alpine', '13-alpine3.19'],
+          imageTags: [
+            'latest',
+            'alpine3.19',
+            'alpine3.18',
+            'alpine',
+            '16.1-alpine3.19',
+            '16.1-alpine3.18',
+            '16.1-alpine',
+            '16-alpine3.19',
+            '16-alpine3.18',
+            '16-alpine',
+            '15.5-alpine3.19',
+            '15.5-alpine3.18',
+            '15.5-alpine',
+            '15-alpine3.19',
+            '15-alpine3.18',
+            '15-alpine',
+            '14.10-alpine3.19',
+            '14.10-alpine3.18',
+            '14.10-alpine',
+            '14-alpine3.19',
+            '14-alpine3.18',
+            '14-alpine',
+            '13.13-alpine3.19',
+            '13.13-alpine3.18',
+            '13.13-alpine',
+            '13-alpine3.19',
+          ],
           replicas: 1,
           deployed: false,
         },
@@ -88,7 +117,7 @@ export const deckhandSlice = createSlice({
           podId: '1',
           variables: [
             { key: 'user1', value: 'abc123', secret: true },
-            { key: 'PG_URI', value: 'db_address', secret: false }
+            { key: 'PG_URI', value: 'db_address', secret: false },
           ],
         },
       },
@@ -157,24 +186,31 @@ export const deckhandSlice = createSlice({
     ],
   },
   reducers: {
-    setUser: (state, action) => { // payload: user (merge props)
+    setUser: (state, action) => {
+      // payload: user (merge props)
       Object.assign(state.user, action.payload);
     },
-    setState: (state, action) => { // payload: {projects, nodes, edges}
+    setState: (state, action) => {
+      // payload: {projects, nodes, edges}
       Object.assign(state, action.payload);
     },
-    setProjectId: (state, action) => { // payload: projectId
+    setProjectId: (state, action) => {
+      // payload: projectId
       state.projectId = action.payload;
     },
     toggleLayout: (state, action) => {
-      state.layout === 'cards' ? state.layout = 'canvas' : state.layout = 'cards';
+      state.layout === 'cards'
+        ? (state.layout = 'canvas')
+        : (state.layout = 'cards');
     },
-    showModal: (state, action) => { // payload: {name, ...}
+    showModal: (state, action) => {
+      // payload: {name, ...}
       state.modal = action.payload;
     },
 
     // Project Reducers
-    addProject: (state, action) => { // payload: projectId
+    addProject: (state, action) => {
+      // payload: projectId
       state.projects.push({
         projectId: action.payload,
         name: `Default Project`,
@@ -184,26 +220,36 @@ export const deckhandSlice = createSlice({
         vpcRegion: 'us-east-1', // default
       });
     },
-    deleteProject: (state, action) => { // payload: projectId
-      state.projects = state.projects.filter(project => project.projectId !== action.payload);
-      state.clusters.forEach(cluster => {
+    deleteProject: (state, action) => {
+      // payload: projectId
+      state.projects = state.projects.filter(
+        (project) => project.projectId !== action.payload
+      );
+      state.clusters.forEach((cluster) => {
         if (cluster.projectId === action.payload) cluster.projectId = null;
       });
     },
-    configureProject: (state, action) => { // payload: {projectId, ...props to merge...}
-      const project = state.projects.find(project => project.projectId === action.payload.projectId);
+    configureProject: (state, action) => {
+      // payload: {projectId, ...props to merge...}
+      const project = state.projects.find(
+        (project) => project.projectId === action.payload.projectId
+      );
       if (project) Object.assign(project, action.payload);
     },
 
     // Node Reducers
-    addNode: (state, action) => { // payload: { id, type, data, position, projectId }
+    addNode: (state, action) => {
+      // payload: { id, type, data, position, projectId }
       state.nodes.push(action.payload);
     },
-    deleteNode: (state, action) => { // payload: id
-      state.nodes = state.nodes.filter(node => node.nodeId !== action.payload);
+    deleteNode: (state, action) => {
+      // payload: id
+      state.nodes = state.nodes.filter(
+        (node) => node.nodeId !== action.payload
+      );
     },
     updateNode: (state, action) => {
-      const node = state.nodes.find(node => node.id === action.payload.id);
+      const node = state.nodes.find((node) => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop
         const previousData = { ...node.data };
@@ -219,14 +265,17 @@ export const deckhandSlice = createSlice({
     },
 
     // Edge Reducers
-    addNewEdge: (state, action) => { // payload: { id, ...params, project.id }
+    addNewEdge: (state, action) => {
+      // payload: { id, ...params, project.id }
       state.edges.push(action.payload);
     },
-    deleteEdge: (state, action) => { // payload: id
-      state.edges = state.edges.filter(edge => edge.id !== action.payload);
+    deleteEdge: (state, action) => {
+      // payload: id
+      state.edges = state.edges.filter((edge) => edge.id !== action.payload);
     },
-    updateEdge: (state, action) => { // payload: { id, ...props to merge }
-      const edge = state.edges.find(edge => edge.id === action.payload.id);
+    updateEdge: (state, action) => {
+      // payload: { id, ...props to merge }
+      const edge = state.edges.find((edge) => edge.id === action.payload.id);
       if (edge) Object.assign(edge, action.payload);
     },
   },
