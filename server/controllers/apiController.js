@@ -58,7 +58,6 @@ apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
     return 'Wrong type of image architecture';
   }
   const imageInformation = await execProm(`docker image inspect ${repo_name}/${image}:${tag} -f json`);
-  console.log('imageInformation', imageInformation);
   const imageInformationAsJSON = JSON.parse(imageInformation.stdout);
   // this gives us the port in an object
   const imagePortAsAnObject = imageInformationAsJSON[0].Config.ExposedPorts;
