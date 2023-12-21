@@ -2,6 +2,7 @@ const { execSync, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const db = require('../data/model.js');
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -23,11 +24,11 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-      CLIENT_ID +
-      '&client_secret=' +
-      CLIENT_SECRET +
-      '&code=' +
-      auth_code,
+    CLIENT_ID +
+    '&client_secret=' +
+    CLIENT_SECRET +
+    '&code=' +
+    auth_code,
     {
       method: 'POST',
       headers: {
@@ -51,28 +52,79 @@ githubController.logout = (req, res, next) => {
   next();
 };
 
-// get user data
 githubController.userData = async (req, res, next) => {
   if (req.cookies.github_token) {
     const token = req.cookies.github_token;
-    await fetch('https://api.github.com/user', {
+
+    // Fetch user data and emails from GitHub
+    const userDataFetch = fetch('https://api.github.com/user', {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log('data', data)
-        res.locals.data = {
-          name: data.name || data.email || data.login,
-          email: data.email,
-          avatarUrl: data.avatar_url,
-          githubId: data.id,
-        };
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const userEmailFetch = fetch('https://api.github.com/user/emails', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    Promise.all([userDataFetch, userEmailFetch])
+      .then(async responses => {
+        if (!responses[0].ok || !responses[1].ok) {
+          throw new Error('Network response was not ok');
+        }
+        const githubData = await responses[0].json();
+        const githubEmails = await responses[1].json();
+
+        // Map data from Github
+        const email = githubEmails.find(email => email.primary)?.email || githubData.email;
+        const name = githubData.name || githubData.login || email;
+        const avatarUrl = githubData.avatar_url;
+        const githubId = githubData.id;
+
+        // Check if the user exists in the database
+        const userCheckQuery = 'SELECT * FROM users WHERE email = $1';
+        const userExistsResult = await db.query(userCheckQuery, [email]);
+
+        if (userExistsResult.rows.length === 0) {
+          // If user does not exist, insert them into the database
+          const createUserQuery = `
+            INSERT INTO users (name, email, avatarurl, githubid)
+            VALUES ($1, $2, $3, $4)
+            RETURNING _id, name, email, avatarurl, githubid, awsaccesskey, awssecretkey, state
+          `;
+          const newUserResult = await db.query(createUserQuery, [name, email, avatarUrl, githubId]);
+
+          const newUser = newUserResult.rows[0];
+
+          res.locals.data = {
+            id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            avatarUrl: newUser.avatarurl,
+            githubId: newUser.githubid,
+            awsAccessKey: newUser.awsaccesskey,
+            awsSecretKey: newUser.awssecretkey,
+            state: newUser.state,
+          };
+
+        } else {
+          // User exists, return the database values
+          const user = userExistsResult.rows[0];
+
+          res.locals.data = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            avatarUrl: user.avatarurl,
+            githubId: user.githubid,
+            awsAccessKey: user.awsaccesskey,
+            awsSecretKey: user.awssecretkey,
+            state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
+          };
+        }
+
         return next();
       })
-      .catch((err) => console.log(err));
+      .catch(error => next(error));
   } else {
     res.status(401).json('Unauthorized');
   }
@@ -92,7 +144,7 @@ githubController.userRepos = async (req, res, next) => {
       res.locals.data = data;
       return next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => next(err));
 };
 
 // get public repos
@@ -101,8 +153,8 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-      input +
-      '+in:name&sort=stars&order=desc',
+    input +
+    '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -115,7 +167,7 @@ githubController.publicRepos = async (req, res, next) => {
       res.locals.data = data;
       return next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => next(err));
 };
 
 // get user branches
@@ -133,7 +185,7 @@ githubController.branches = async (req, res, next) => {
       res.locals.data = data.map((el) => el.name);
       return next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => next(err));
 };
 
 // (not currently used) dockerize and push repo to Docker Hub
