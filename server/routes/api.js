@@ -14,7 +14,7 @@ router.get('/dockerHubImageTags/*', apiController.getDockerHubImageTags, (req, r
   res.status(200).json(res.locals.data);
 });
 
-router.post('/pushDockerHubImagesToKluster', apiController.pushDockerHubImagesToKluster, (req, res) => {
+router.post('/getDockerHubExposedPort', apiController.getDockerHubExposedPort, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 

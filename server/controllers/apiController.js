@@ -61,36 +61,25 @@ apiController.getDockerHubImageTags = async (req, res, next) => {
     .catch((error) => next(error));
 };
 
-// function to pull docker images from Dockerhub so we can use them in AWS
+apiController.getDockerHubExposedPort = async (req, res, next) => {
+  let { imageName, imageTag } = req.body;
+  if (!imageName.includes('/')) imageName = `library/${image}`
 
-apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
-
-  // what is needed: the name of the github image to pull
-  // for example: deckhandapp/ideastation
-  // the tag at the end (without it assumes latest)
-  // for example: deckhandapp/ideastation:1 (important since this image has no latest)
-
-  const { repo_name } = req.body;
-  const { image } = req.body;
-  const { tag } = req.body;
-
-  //could only get the command to work with execSync as of right now
-
+  // Pull docker image
   try {
-    await execProm(`docker image pull --platform linux/amd64 ${repo_name}/${image}:${tag}`);
+    await execProm(`docker image pull --platform linux/amd64 ${imageName}:${imageTag}`);
   } catch {
     return 'Wrong type of image architecture';
   }
-  const imageInformation = await execProm(`docker image inspect ${repo_name}/${image}:${tag} -f json`);
-  const imageInformationAsJSON = JSON.parse(imageInformation.stdout);
-  // this gives us the port in an object
-  const imagePortAsAnObject = imageInformationAsJSON[0].Config.ExposedPorts;
-  const imagePortAsAKey = Object.keys(imagePortAsAnObject);
-  const imagePortAsString = imagePortAsAKey[0].match(/\d+/g);
 
-  const imagePort = Number(imagePortAsString);
-  // we can switch the name of this if needed. This gives the port number needed for the YAML files for the container port and the target port
-  res.locals.data = { imagePort: imagePort };
+  // Inspect image for exposed port
+  const imageInfoRaw = await execProm(`docker image inspect ${imageName}:${imageTag} -f json`);
+  const imageInfo = JSON.parse(imageInfoRaw.stdout);
+  const exposedPortObj = imageInfo[0].Config.ExposedPorts;
+  const exposedPortKey = Object.keys(exposedPortObj);
+  const exposedPort = Number(exposedPortKey[0].match(/\d+/g));
+
+  res.locals.data = { exposedPort };
   return next();
 };
 
