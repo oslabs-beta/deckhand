@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const util = require('util');
@@ -35,8 +35,8 @@ const connectToProvider = async (
   projectId,
   provider,
   region,
-  accessKey,
-  secretKey
+  awsAccessKey,
+  awsSecretKey
 ) => {
   console.log('entered connectToProvider');
   console.log(
@@ -45,15 +45,15 @@ const connectToProvider = async (
     projectId,
     provider,
     region,
-    accessKey,
-    secretKey
+    awsAccessKey,
+    awsSecretKey
   );
 
   if (provider === 'aws') {
     const variables = {
       region,
-      accessKey,
-      secretKey,
+      accessKey: awsAccessKey,
+      secretKey: awsSecretKey,
     };
 
     // Create a json file with the variables
@@ -105,7 +105,7 @@ const addVPC = async (userId, projectId, provider, vpc_name) => {
   console.log('copied file!');
 
   // applies the terraform files, provisioning a VPC
-  await execProm(
+  execSync(
     `cd ${projectPath} && terraform init && terraform apply --auto-approve`
   );
 
@@ -137,7 +137,6 @@ const destroyVPC = async (userId, projectId) => {
 const addCluster = async (
   userId,
   projectId,
-  clusterId,
   clusterName,
   vpcId,
   min,
@@ -145,12 +144,11 @@ const addCluster = async (
   desired,
   instanceType
 ) => {
-  console.log('entered addCluster');
+  console.log('entered addCluster in api');
   console.log(
     'Params:',
     userId,
     projectId,
-    clusterId,
     clusterName,
     vpcId,
     min,
@@ -168,10 +166,10 @@ const addCluster = async (
 
   console.log('Creating folder for cluster');
 
-  execSync(`cd ${projectPath} && mkdir cluster${clusterId}`);
+  execSync(`cd ${projectPath} && mkdir cluster${clusterName}`);
 
   console.log('copying eks.tf file');
-  execSync(`cp server/templates/eks.tf ${projectPath}/cluster${clusterId}`);
+  execSync(`cp server/templates/eks.tf ${projectPath}/cluster${clusterName}`);
   console.log('copied file!');
 
   // generate a random name from the clusterName and a number
@@ -212,52 +210,40 @@ const addCluster = async (
 
   // write the variables to a tfvars file
   await fs.writeFile(
-    `${projectPath}/cluster${clusterId}/eks.auto.tfvars.json`,
+    `${projectPath}/cluster${clusterName}/eks.auto.tfvars.json`,
     JSON.stringify(variables),
     () => console.log('Wrote eks variable file')
   );
 
   // applies the terraform files, provisioning a cluster
   const output = await execProm(
-    `cd ${projectPath}/cluster${clusterId} && terraform init && terraform apply --auto-approve`
+    `cd ${projectPath}/cluster${clusterName} && terraform init && terraform apply --auto-approve`
   );
 
   return output;
-
-  // this will eventually be written to get whatever necessary ids we need from the cluster
-  //   const output = JSON.parse(
-  //     (await execProm('cd server/terraform && terraform output -json <INSERT NEEDED OUTPUTS HERE>'))
-  //       .stdout
-  //   );
-  //   console.log('OUTPUT', output);
-
-  //   output.then((log) => {
-  //     console.log('FINISHED PROVISIONING CLUSTER');
-  //     console.log(log);
-  //   });
 };
 
 // Tears down the cluster
 // Will this also destroy all the nodes inside including anything that was deployed into those nodes.
-const destroyCluster = async (userId, projectId, clusterId) => {
+const destroyCluster = async (userId, projectId, clusterName) => {
   const status = await execProm(
-    `cd server/terraform/userData/user${userId}/project${projectId}/cluster${clusterId} && terraform destroy --auto-approve`
+    `cd server/terraform/userData/user${userId}/project${projectId}/cluster${clusterName} && terraform destroy --auto-approve`
   );
 
   // remove directory from server
   execSync(
-    `cd server/terraform/userData/user${userId}/project${projectId} && rm -r cluster${clusterId}`
+    `cd server/terraform/userData/user${userId}/project${projectId} && rm -r cluster${clusterName}`
   );
 
   return status;
 };
 
-const getEFSId = (userId, projectId, clusterId) => {
+const getEFSId = (userId, projectId, clusterName) => {
   const clusterPath = path.join(
     'server/terraform/userData',
     `user${userId}`,
     `project${projectId}`,
-    `cluster${clusterId}`
+    `cluster${clusterName}`
   );
 
   const efsId = execSync(`cd ${clusterPath} && terraform output -json efs-id`, {

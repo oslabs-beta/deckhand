@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node ./server/server.js",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development nodemon -r dotenv/config ./server/server.js",
+    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development node -r dotenv/config ./server/server.js",
     "test": "jest"
   },
   "author": "Omar Mirza, Dennis Corsi, Odin Olson, Jeff Gottstein",

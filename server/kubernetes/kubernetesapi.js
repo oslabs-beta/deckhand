@@ -19,14 +19,17 @@ const connectKubectltoEKS = (region, clusterName) => {
   );
 };
 
-// deploys each yaml string in the input array
-const deploy = (yamls) => {
-  yamls.forEach((yaml) => {
-    const output = execSync(`echo "${yaml}" | kubectl apply -f -`, {
-      encoding: 'utf8',
-    });
-    console.log(output);
+// deploys the yaml string
+const deploy = (yaml) => {
+  // first deploy nginx controller
+  execSync(
+    `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml`
+  );
+
+  const output = execSync(`echo "${yaml}" | kubectl apply -f -`, {
+    encoding: 'utf8',
   });
+  console.log(output);
 };
 
 // removes the component from the cluster
@@ -42,7 +45,6 @@ const getUrl = () => {
   );
   return output;
 };
-
 
 module.exports = {
   connectCLtoAWS,

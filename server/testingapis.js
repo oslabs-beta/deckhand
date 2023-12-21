@@ -108,11 +108,13 @@ const destroyTest = () => {
   // try destroying VPC that has a cluster inside. What happens?
 };
 
+const awsLogin = () => {
+  k8.connectCLtoAWS(access_key, secret_key, 'us-east-1');
+};
+
 // buildTest();
-k8deploytest();
+// k8deploytest();
 // undeploytest();
 // destroyTest();
-
+awsLogin();
 // console.log(terraform.getEFSId(2, 1, 1));
-
-// k8.connectCLtoAWS(access_key, secret_key, 'us-east-1');
