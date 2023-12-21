@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setUser } from "./deckhandSlice";
+import { setUser, setState } from "./deckhandSlice";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Canvas from "./components/Canvas";
@@ -16,7 +16,10 @@ export default function App() {
           if (res.status === 401) return null;
           return res.json();
         })
-        .then((data) => dispatch(setUser(data)))
+        .then((data) => {
+          dispatch(setUser(data));
+          if (data.state) dispatch(setState(data.state));
+        })
         .catch((err) => console.log("Error fetching Github user data: ", err));
     };
 
