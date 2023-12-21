@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLayout, showModal } from "../../deckhandSlice";
+import { setUser, showModal } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiChevronDown } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -46,7 +46,7 @@ export default function FloatAccount() {
         <button className="float-account" aria-label="Customise options">
           <img src={state.user.avatarUrl} alt="Account" />
           <span>{state.user.name}</span>
-          <Icon path={mdiChevronDown} size={1} />
+          <Icon className="icon" path={mdiChevronDown} size={1} />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
@@ -54,6 +54,27 @@ export default function FloatAccount() {
           className="dropdown"
           onClick={(e) => e.stopPropagation()}
         >
+          {state.user.theme === "light" || !state.user.theme ? (
+            <DropdownMenu.Item
+              className="dropdown-item"
+              onClick={() => {
+                dispatch(setUser({ theme: "dark" }));
+                document.body.classList.toggle("dark-mode");
+              }}
+            >
+              Switch to Dark Mode
+            </DropdownMenu.Item>
+          ) : (
+            <DropdownMenu.Item
+              className="dropdown-item"
+              onClick={() => {
+                dispatch(setUser({ theme: "light" }));
+                document.body.classList.toggle("dark-mode");
+              }}
+            >
+              Switch to Light Mode
+            </DropdownMenu.Item>
+          )}
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() => {
@@ -61,12 +82,6 @@ export default function FloatAccount() {
             }}
           >
             Link AWS Account
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onClick={() => updateDatabase()}
-          >
-            Save Changes
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="dropdown-separator" />
           <DropdownMenu.Item
