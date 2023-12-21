@@ -45,7 +45,7 @@ export default function () {
                 justifyContent: "space-between",
               }}
             >
-              <span style={{ color: "#333" }}>
+              <span className="primary">
                 <b>{el.name}</b>
               </span>
               <span style={{ fontSize: "12px" }}>
@@ -85,7 +85,7 @@ export default function () {
                 justifyContent: "space-between",
               }}
             >
-              <span style={{ color: "#333" }}>
+              <span className="primary">
                 <b>{el.name}</b> by {el.owner.login}
               </span>
               <span style={{ fontSize: "12px" }}>
@@ -105,7 +105,7 @@ export default function () {
         if (arr.length) setUserRepos(arr);
         else
           setUserRepos(
-            <div style={{ color: "#ccc", marginTop: "10px" }}>
+            <div className="tertiary" style={{ marginTop: "10px" }}>
               No repositories found.
             </div>
           );
