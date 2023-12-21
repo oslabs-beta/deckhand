@@ -50,9 +50,9 @@ apiController.getDockerHubImages = async (req, res, next) => {
 };
 
 apiController.getDockerHubImageTags = async (req, res, next) => {
-  let image = req.params[0];
-  if (!image.includes('/')) image = `library/${image}`
-  await fetch(`https://hub.docker.com/v2/repositories/${image}/tags/`)
+  let imageName = req.params[0];
+  if (!imageName.includes('/')) imageName = `library/${imageName}`
+  await fetch(`https://hub.docker.com/v2/repositories/${imageName}/tags/`)
     .then((res) => res.json())
     .then((data) => {
       res.locals.data = data.results.map((el) => el.name)
@@ -63,7 +63,7 @@ apiController.getDockerHubImageTags = async (req, res, next) => {
 
 apiController.getDockerHubExposedPort = async (req, res, next) => {
   let { imageName, imageTag } = req.body;
-  if (!imageName.includes('/')) imageName = `library/${image}`
+  if (!imageName.includes('/')) imageName = `library/${imageName}`
 
   // Pull docker image
   try {
