@@ -1,62 +1,67 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Handle, Position } from "reactflow";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Handle, Position } from 'reactflow';
 import {
   showModal,
   updateNode,
   deleteNode,
   updateEdge,
   configureProject,
-} from "../../deckhandSlice";
-import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiDotsHexagon } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+} from '../../deckhandSlice';
+import Icon from '@mdi/react';
+import { mdiDotsVertical, mdiDotsHexagon } from '@mdi/js';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: "creating" } }));
+    dispatch(updateNode({ id, data: { status: 'creating' } }));
 
     const project = state.projects.find(
       (project) => project.projectId === state.projectId
     );
 
-    // if (!project.vpcId) {
-    //   await fetch("/api/deployment/addVPC", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       provider: project.provider,
-    //       name: project.name,
-    //       vpcRegion: project.vpcRegion,
-    //       awsAccessKey: state.user.awsAccessKey,
-    //       awsSecretKey: state.user.awsSecretKey,
-    //     }),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       dispatch(
-    //         configureProject({
-    //           projectId: state.projectId,
-    //           vpcId: data.externalId,
-    //         })
-    //       );
-    //     })
-    //     .catch((err) => console.log(err));
-    // }
+    let node = state.nodes.find((node) => node.id === id);
 
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: "running" } }));
-      const edges = state.edges.filter((edge) => edge.source === id);
-      edges.map((edge) =>
-        dispatch(updateEdge({ id: edge.id, animated: true }))
+    let data;
+
+    if (!project.vpcId) {
+      await fetch('/api/deployment/addVPC', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          provider: project.provider,
+          name: project.name,
+          vpcRegion: project.vpcRegion,
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          userId: state.user.id,
+          projectId: project.projectId,
+          projectName: 'placeholder-name',
+        }),
+      });
+      data = await res.json();
+      console.log('VPC Done! ID:', data.externalId);
+      dispatch(
+        configureProject({
+          projectId: project.projectId,
+          vpcId: data.externalId,
+        })
       );
-    }, 1000);
+    }
+
+    // // Add 1 second delay to simulate fetch request
+    // setTimeout(() => {
+    //   dispatch(updateNode({ id, data: { status: "running" } }));
+    //   const edges = state.edges.filter((edge) => edge.source === id);
+    //   edges.map((edge) =>
+    //     dispatch(updateEdge({ id: edge.id, animated: true }))
+    //   );
+    // }, 1000);
 
     // await fetch("/api/deployment/addCluster", {
     //   method: "POST",
@@ -93,7 +98,7 @@ export default function ({ id, data, isConnectable }) {
   };
 
   const handleClickStop = () => {
-    dispatch(updateNode({ id, data: { status: "stopping" } }));
+    dispatch(updateNode({ id, data: { status: 'stopping' } }));
     const edges = state.edges.filter((edge) => edge.source === id);
     edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
@@ -112,39 +117,39 @@ export default function ({ id, data, isConnectable }) {
 
   const countDeployedPods = () => {
     const pods = getConnectedPods();
-    return pods.filter((pod) => pod.data.status === "running").length;
+    return pods.filter((pod) => pod.data.status === 'running').length;
   };
 
   return (
-    <div className={`node ${data.status === "running" ? "running" : ""}`}>
+    <div className={`node ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
-        type="target"
+        type='target'
         position={Position.Top}
         isConnectable={isConnectable}
       />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className="node-menu" aria-label="Customise options">
+            <button className='node-menu' aria-label='Customise options'>
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="dropdown"
+              className='dropdown'
               onClick={(e) => e.stopPropagation()}
             >
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() =>
-                  dispatch(showModal({ name: "ConfigureCluster", id, data }))
+                  dispatch(showModal({ name: 'ConfigureCluster', id, data }))
                 }
               >
                 Configure
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className="dropdown-separator" />
+              <DropdownMenu.Separator className='dropdown-separator' />
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -152,52 +157,52 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className="icon">
-          <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1} />
+        <div className='icon'>
+          <Icon path={mdiDotsHexagon} style={{ color: 'red' }} size={1} />
         </div>
-        <div className="title">{data.name ? data.name : "Cluster"}</div>
+        <div className='title'>{data.name ? data.name : 'Cluster'}</div>
         {!data.instanceType ||
         !data.minNodes ||
         !data.maxNodes ||
         !data.desiredNodes ? (
           <button
-            className="button nodrag"
+            className='button nodrag'
             onClick={() =>
-              dispatch(showModal({ name: "ConfigureCluster", id, data }))
+              dispatch(showModal({ name: 'ConfigureCluster', id, data }))
             }
           >
             Configure
           </button>
         ) : !data.status ? (
-          <button className="button nodrag" onClick={handleClickStart}>
+          <button className='button nodrag' onClick={handleClickStart}>
             Start Instance
           </button>
-        ) : data.status === "creating" ? (
-          <button className="button busy nodrag">Creating instance...</button>
-        ) : data.status === "stopping" ? (
-          <button className="button busy nodrag">Stopping instance...</button>
+        ) : data.status === 'creating' ? (
+          <button className='button busy nodrag'>Creating instance...</button>
+        ) : data.status === 'stopping' ? (
+          <button className='button busy nodrag'>Stopping instance...</button>
         ) : (
           <>
             <div
               style={{
-                fontSize: "14px",
-                paddingBottom: "10px",
+                fontSize: '14px',
+                paddingBottom: '10px',
               }}
             >
-              <b>{countDeployedPods()}</b> of{" "}
-              <b>{state.edges.filter((edge) => edge.source === id).length}</b>{" "}
+              <b>{countDeployedPods()}</b> of{' '}
+              <b>{state.edges.filter((edge) => edge.source === id).length}</b>{' '}
               pods deployed
             </div>
-            <button className="button stop nodrag" onClick={handleClickStop}>
+            <button className='button stop nodrag' onClick={handleClickStop}>
               Stop Instance
             </button>
           </>
         )}
       </div>
       <Handle
-        type="source"
+        type='source'
         position={Position.Bottom}
-        id="b"
+        id='b'
         isConnectable={isConnectable}
       />
     </div>
