@@ -147,7 +147,7 @@ export default function ({ id, data, isConnectable }) {
     //   );
     // }, 1000);
 
-    await fetch('/api/deployment/build', {
+    await fetch('/api/deployment/configureCluster', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
