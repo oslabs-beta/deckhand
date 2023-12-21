@@ -1,22 +1,43 @@
 @import url("https://fonts.googleapis.com/css?family=Lato:300,800");
 
+/* Light theme (default) */
+:root {
+  --page-background: linear-gradient(
+    60deg,
+    rgb(213, 202, 255) 0%,
+    rgb(201, 249, 255) 100%
+  );
+  --component-background: white;
+  --highlight-background: rgb(228, 248, 255);
+  --primary: #333;
+  --secondary: #999;
+  --tertiary: #ddd;
+  --logo: #333;
+}
+
+/* Dark theme */
+body.dark-mode {
+  --page-background: linear-gradient(
+    60deg,
+    rgb(60, 60, 74) 0%,
+    rgb(81, 82, 108) 100%
+  );
+  --component-background: #333;
+  --highlight-background: rgb(41, 47, 50);
+  --primary: white;
+  --secondary: #999;
+  --tertiary: #666;
+  --logo: skyblue;
+}
+
 body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: "Lato", sans-serif;
-  /* background-color: #edf6ff; */
-  background: linear-gradient(
-    60deg,
-    rgb(213, 202, 255) 0%,
-    rgb(201, 249, 255) 100%
-  );
-  /* background: linear-gradient(
-    60deg,
-    rgba(84, 58, 183, 1) 0%,
-    rgba(0, 172, 193, 1) 100%
-  ); */
+  background: var(--page-background);
+  color: var(--primary);
 }
 
 button {
@@ -63,8 +84,16 @@ button:active {
   cursor: pointer;
   z-index: 10;
   height: 40px;
-  color: black;
+  color: var(--primary);
   font-family: "Lato", sans-serif;
+}
+
+.float-logo .stroke {
+  stroke: var(--logo);
+}
+
+.float-logo .fill {
+  fill: var(--logo);
 }
 
 .float-logo span {
@@ -80,7 +109,7 @@ button:active {
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  color: #333;
+  color: var(--primary);
   font-weight: bold;
   font-size: 18px;
   padding: 10px;
@@ -96,7 +125,7 @@ button:active {
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
+  background-color: var(--component-background);
   cursor: pointer;
   z-index: 10;
 }
@@ -109,7 +138,7 @@ button:active {
 
 .float-account span {
   margin-left: 10px;
-  color: #333;
+  color: var(--primary);
   font-weight: bold;
   font-size: 18px;
 }
@@ -117,8 +146,8 @@ button:active {
 .dropdown {
   margin-right: 10px;
   border-radius: 10px;
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
+  border: 1px solid var(--tertiary);
+  background-color: var(--component-background);
   cursor: pointer;
 }
 
@@ -127,12 +156,12 @@ button:active {
 }
 
 .dropdown-item:hover {
-  background-color: #ddd;
+  background-color: var(--tertiary);
 }
 
 .dropdown-separator {
   height: 1px;
-  background-color: #ddd;
+  background-color: var(--tertiary);
   margin: 3px 6px;
 }
 
@@ -220,7 +249,7 @@ button:active {
   height: 200px;
   width: 200px;
   text-align: center;
-  background-color: white;
+  background-color: var(--component-background);
   transition: all 0.1s ease-in-out;
 }
 
@@ -233,12 +262,12 @@ button:active {
 #project-cards .card .new-project {
   font-size: 28px;
   flex-grow: 1;
-  border: 5px dotted #eee;
+  border: 5px dotted var(--tertiary);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ccc;
+  color: var(--primary);
 }
 
 #project-cards .card .name {
@@ -252,7 +281,7 @@ button:active {
 
 #project-cards .card .date-info {
   font-size: 12px;
-  color: #bbb;
+  color: var(--secondary);
   margin-top: auto;
 }
 
@@ -261,106 +290,20 @@ button:active {
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: #999;
-  background-color: white;
+  background-color: var(--component-background);
+  color: var(--secondary);
 }
 
 .card-menu:hover {
-  background-color: white;
-  color: #000;
+  background-color: var(--component-background);
+  color: var(--primary);
 }
 
 .card-menu:active {
   transform: scale(0.98);
 }
 
-/* Projects page (cards) */
-
-#pod-cards {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-#pod-cards select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-#pod-cards select > label {
-  position: absolute;
-  top: -1px;
-  left: 20px;
-  background-color: white;
-}
-
-#pod-cards .card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 10px;
-  height: 300px;
-  width: 200px;
-  text-align: center;
-  background-color: white;
-  transition: all 0.1s ease-in-out;
-}
-
-#pod-cards .card:has(.new-pod):hover {
-  filter: brightness(98%);
-  transform: scale(1.05);
-  cursor: pointer;
-}
-
-#pod-cards .card:active {
-  filter: brightness(100%);
-  transform: scale(1);
-  cursor: pointer;
-}
-
-#pod-cards .card .new-pod {
-  font-size: 28px;
-  flex-grow: 1;
-  border: 5px dotted #eee;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-}
-
-#pod-cards .card .name {
-  font-size: 16px;
-  font-weight: bold;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 5px;
-}
-
-#new-cluster button {
-  border: 0px;
-  border-radius: 5px;
-  background: none;
-  opacity: 0.33;
-  font-weight: bold;
-  font-size: 20px;
-  margin: 20px 0px 40px 0px;
-}
-
-#new-cluster button:hover {
-  opacity: 0.67;
-}
-
-#new-cluster button:active {
-  transform: scale(0.98);
-}
-
-/* Projects page (canvas) */
+/* Canvas page */
 
 .float-toolbar {
   position: absolute;
@@ -372,7 +315,7 @@ button:active {
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
-  background-color: white;
+  background-color: var(--component-background);
   z-index: 10;
   text-align: center;
 }
@@ -391,13 +334,13 @@ button:active {
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: #999;
-  background-color: white;
+  background-color: var(--component-background);
+  color: var(--secondary);
 }
 
 .node-menu:hover {
-  background-color: white;
-  color: #000;
+  background-color: var(--component-background);
+  color: var(--primary);
 }
 
 .node-menu:active {
@@ -414,7 +357,7 @@ button:active {
   padding: 60px 20px 20px 20px;
   width: 200px;
   text-align: center;
-  background-color: white;
+  background-color: var(--component-background);
 }
 
 .node.pod {
@@ -444,6 +387,8 @@ button:active {
   border: 1px solid #ddd;
   border-radius: 10px;
   width: 200px;
+  background-color: var(--component-background);
+  color: var(--primary);
 }
 
 .node select > label {
@@ -461,7 +406,7 @@ button:active {
 }
 
 .node .button.disabled {
-  background-color: #ccc;
+  background-color: var(--tertiary);
   cursor: not-allowed;
 }
 
@@ -481,4 +426,149 @@ button:active {
 
 .arrow:hover {
   color: #000;
+}
+
+/* Modals */
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  color: var(--primary);
+  background-color: var(--component-background);
+  margin: auto;
+  padding: 20px 40px;
+  border: 1px;
+  border-color: var(--secondary);
+  border-radius: 20px;
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal .close-button {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  font-size: 28px;
+  color: var(--secondary);
+}
+
+.modal .close-button:hover,
+.modal .close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal label {
+  margin-top: 10px;
+  display: block;
+  color: var(--secondary);
+}
+
+.modal select,
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.yaml {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 16px;
+  max-height: 500px;
+  overflow: auto;
+  background-color: #333;
+  color: white;
+}
+
+.modal .buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal button {
+  padding: 10px;
+  margin: 0px 5px;
+  cursor: pointer;
+}
+
+.blue {
+  background-color: rgb(0, 128, 255);
+  color: white;
+}
+
+.pod-source {
+  padding: 20px 10px;
+  color: var(--primary);
+  border: 1px solid var(--component-background);
+  border-radius: 5px;
+}
+
+.pod-source:hover {
+  background-color: var(--highlight-background);
+  border: 1px solid var(--secondary);
+}
+
+/* General styles */
+
+.primary {
+  color: var(--primary);
+}
+
+.secondary {
+  color: var(--secondary);
+}
+
+.tertiary {
+  color: var(--tertiary);
 }
