@@ -9,6 +9,37 @@ export default function FloatAccount() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    updateDatabase();
+  }, [state.user, state.projects, state.nodes, state.edges]);
+
+  const updateDatabase = () => {
+    const body = {
+      id: state.user.id,
+      name: state.user.name,
+      email: state.user.email,
+      avatarUrl: state.user.avatarUrl,
+      githubId: state.user.githubId,
+      awsAccessKey: state.user.awsAccessKey,
+      awsSecretKey: state.user.awsSecretKey,
+      state: JSON.stringify(
+        JSON.stringify({
+          projects: state.projects,
+          nodes: state.nodes,
+          edges: state.edges,
+        })
+      ),
+    };
+    console.log(body);
+    fetch("/api/updateDatabase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).catch((err) => console.log(err));
+  };
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -33,11 +64,9 @@ export default function FloatAccount() {
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item"
-            onClick={() => {
-              dispatch(toggleLayout());
-            }}
+            onClick={() => updateDatabase()}
           >
-            Toggle Layout
+            Save Changes
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="dropdown-separator" />
           <DropdownMenu.Item
