@@ -39,11 +39,19 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <label>
             AWS Access Key:
-            <input type="password" name="awsAccessKey" />
+            <input
+              type="password"
+              name="awsAccessKey"
+              defaultValue={state.user.awsAccessKey}
+            />
           </label>
           <label>
             AWS Secret Key:
-            <input type="password" name="awsSecretKey" />
+            <input
+              type="password"
+              name="awsSecretKey"
+              defaultValue={state.user.awsSecretKey}
+            />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

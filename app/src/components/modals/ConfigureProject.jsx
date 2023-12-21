@@ -46,13 +46,16 @@ export default function () {
           </label>
           <label>
             Provider:
-            <select name="provider" defaultValue="aws">
+            <select name="provider" defaultValue={data.provider || "aws"}>
               <option value="aws">Amazon Web Services (AWS)</option>
             </select>
           </label>
           <label>
             Region:
-            <select name="vpcRegion" defaultValue="us-east-1">
+            <select
+              name="vpcRegion"
+              defaultValue={data.vpcRegion || "us-east-1"}
+            >
               <option value="us-east-1">US East (Virginia)</option>
               <option value="us-east-2">US East (Ohio)</option>
               <option value="us-west-1">US West (N. California)</option>

@@ -15,7 +15,7 @@ export default function () {
 
   const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState(
-    data.variables ? data.variables : [{ key: "", value: "", secret: true }]
+    data.variables || [{ key: "", value: "", secret: true }]
   );
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function () {
                 <tr key={index}>
                   <td>
                     <input
-                      type={input.secret ? "password" : "text"}
+                      type={"text"}
                       name="key"
                       value={input.key}
                       onChange={(event) => handleInputChange(index, event)}

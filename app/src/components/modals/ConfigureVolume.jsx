@@ -37,7 +37,11 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <label>
             Enter Mount Path:
-            <input type="text" name="mountPath" defaultValue={data.mountPath} />
+            <input
+              type="text"
+              name="mountPath"
+              defaultValue={data.mountPath || "/var/lib/"}
+            />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>

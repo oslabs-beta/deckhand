@@ -69,7 +69,7 @@ export default function ({ id, data, isConnectable }) {
     //     externalId: project.vpcId,
     //     awsAccessKey: state.user.awsAccessKey,
     //     awsSecretKey: state.user.awsSecretKey,
-    //     name: data.name,
+    //     name: id + "-" + data.name,
     //     instanceType: data.instanceType,
     //     minNodes: data.minNodes,
     //     maxNodes: data.maxNodes,

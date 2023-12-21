@@ -36,7 +36,7 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <label>
             Enter port:
-            <input type="text" name="port" defaultValue="80" />
+            <input type="text" name="port" defaultValue={data.port || "80"} />
           </label>
           <div className="buttons">
             <button type="button" onClick={closeModal}>
