@@ -147,10 +147,7 @@ deploymentController.deleteCluster = (req, res, next) => {
 };
 
 deploymentController.configureCluster = async (req, res, next) => {
-  const { provider, vpcRegion } = req.body;
-  const { awsAccessKey, awsSecretKey } = req.body;
-  const { vpcId, clusterName } = req.body.ids;
-  const { yaml } = req.body;
+  const { vpcRegion, awsAccessKey, awsSecretKey, clusterName, yaml } = req.body;
 
   k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
   k8.connectKubectltoEKS = (vpcRegion, clusterName);
