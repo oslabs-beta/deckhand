@@ -126,7 +126,7 @@ export default function ({ id, data, isConnectable }) {
     return createYaml.all(
       data,
       connectedNodes,
-      data.exposedPort || '(GENERATED DURING DEPLOYMENT)',
+      data.exposedPort || 3000,
       cluster.volumeHandle || '(GENERATED DURING DEPLOYMENT)',
       project.vpcRegion || '(GENERATED DURING DEPLOYMENT)'
     );
@@ -156,13 +156,14 @@ export default function ({ id, data, isConnectable }) {
         provider: project.provider,
         awsAccessKey: state.user.awsAccessKey,
         awsSecretKey: state.user.awsSecretKey,
-        vpcRegion: state.project.vpcRegion,
+        vpcRegion: project.vpcRegion,
         vpcId: cluster.data.vpcId,
+        clusterName: '4197_ideastation' || cluster.data.name,
         yaml: yaml,
       }),
     })
-      .then((res) => res.json())
       .then(() => {
+        console.log('should change status');
         dispatch(updateNode({ id, data: { status: 'running' } }));
         const edges = state.edges.filter((edge) => edge.source === id);
         edges.map((edge) =>
@@ -234,6 +235,18 @@ export default function ({ id, data, isConnectable }) {
                 }
               >
                 Show YAML
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className='dropdown-item'
+                onClick={handleClickBuild}
+              >
+                Rebuild
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className='dropdown-item'
+                onClick={handleClickStart}
+              >
+                Redeploy
               </DropdownMenu.Item>
               <DropdownMenu.Separator className='dropdown-separator' />
               <DropdownMenu.Item

@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Handle, Position } from "reactflow";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Handle, Position } from 'reactflow';
 import {
   showModal,
   updateNode,
   deleteNode,
   updateEdge,
-} from "../../deckhandSlice";
-import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiDocker } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import createYaml from "../../yaml";
+} from '../../deckhandSlice';
+import Icon from '@mdi/react';
+import { mdiDotsVertical, mdiDocker } from '@mdi/js';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import createYaml from '../../yaml';
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
@@ -63,54 +63,56 @@ export default function ({ id, data, isConnectable }) {
     return createYaml.all(
       data,
       connectedNodes,
-      data.exposedPort || "(GENERATED DURING DEPLOYMENT)",
-      cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
-      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
+      data.exposedPort || 3000 || '(GENERATED DURING DEPLOYMENT)',
+      cluster.volumeHandle ||
+        'fs-0ff41d851a1a4f9c7' ||
+        '(GENERATED DURING DEPLOYMENT)',
+      project.vpcRegion || '(GENERATED DURING DEPLOYMENT)'
     );
   };
 
   const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: "deploying" } }));
+    dispatch(updateNode({ id, data: { status: 'deploying' } }));
 
     const yaml = generateYaml();
     console.log(yaml);
 
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: "running" } }));
-      const edges = state.edges.filter((edge) => edge.source === id);
-      edges.map((edge) =>
-        dispatch(updateEdge({ id: edge.id, animated: true }))
-      );
-    }, 1000);
+    // // Add 1 second delay to simulate fetch request
+    // setTimeout(() => {
+    //   dispatch(updateNode({ id, data: { status: "running" } }));
+    //   const edges = state.edges.filter((edge) => edge.source === id);
+    //   edges.map((edge) =>
+    //     dispatch(updateEdge({ id: edge.id, animated: true }))
+    //   );
+    // }, 1000);
 
-    // await fetch("/api/deployment/build", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     provider: project.provider,
-    //     awsAccessKey: state.user.awsAccessKey,
-    //     awsSecretKey: state.user.awsSecretKey,
-    //     vpcRegion: state.project.vpcRegion,
-    //     vpcId: cluster.data.vpcId,
-    //     yaml: yaml,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then(() => {
-    //     dispatch(updateNode({ id, data: { status: "running" } }));
-    //     const edges = state.edges.filter((edge) => edge.source === id);
-    //     edges.map((edge) =>
-    //       dispatch(updateEdge({ id: edge.id, animated: true }))
-    //     );
-    //   })
-    //   .catch((err) => console.log(err));
+    await fetch('/api/deployment/configureCluster', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        provider: project.provider,
+        awsAccessKey: state.user.awsAccessKey,
+        awsSecretKey: state.user.awsSecretKey,
+        vpcRegion: project.vpcRegion,
+        vpcId: cluster.data.vpcId,
+        clusterName: '4197_ideastation' || cluster.data.name,
+        yaml: yaml,
+      }),
+    })
+      .then(() => {
+        dispatch(updateNode({ id, data: { status: 'running' } }));
+        const edges = state.edges.filter((edge) => edge.source === id);
+        edges.map((edge) =>
+          dispatch(updateEdge({ id: edge.id, animated: true }))
+        );
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleClickStop = () => {
-    dispatch(updateNode({ id, data: { status: "stopping" } }));
+    dispatch(updateNode({ id, data: { status: 'stopping' } }));
     const edges = state.edges.filter((edge) => edge.source === id);
     edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
@@ -134,72 +136,72 @@ export default function ({ id, data, isConnectable }) {
   };
 
   return (
-    <div className={`node pod ${data.status === "running" ? "running" : ""}`}>
+    <div className={`node pod ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
-        type="target"
+        type='target'
         position={Position.Top}
         isConnectable={isConnectable}
       />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className="node-menu" aria-label="Customise options">
+            <button className='node-menu' aria-label='Customise options'>
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="dropdown"
+              className='dropdown'
               onClick={(e) => e.stopPropagation()}
             >
-              {data.imageName.split("/").length === 1 ? (
+              {data.imageName.split('/').length === 1 ? (
                 <DropdownMenu.Item
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() =>
                     window.open(
-                      "https://hub.docker.com/_/" + data.imageName,
-                      "_blank"
+                      'https://hub.docker.com/_/' + data.imageName,
+                      '_blank'
                     )
                   }
                 >
                   Show Documentation
                 </DropdownMenu.Item>
-              ) : data.imageName.split("/").length > 1 ? (
+              ) : data.imageName.split('/').length > 1 ? (
                 <DropdownMenu.Item
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() =>
                     window.open(
-                      "https://hub.docker.com/r/" + data.imageName,
-                      "_blank"
+                      'https://hub.docker.com/r/' + data.imageName,
+                      '_blank'
                     )
                   }
                 >
                   Show Documentation
                 </DropdownMenu.Item>
               ) : (
-                ""
+                ''
               )}
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() =>
-                  dispatch(showModal({ name: "PodSource", id, data }))
+                  dispatch(showModal({ name: 'PodSource', id, data }))
                 }
               >
                 Change Source
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() =>
                   dispatch(
-                    showModal({ name: "PodYaml", id, data, project, cluster })
+                    showModal({ name: 'PodYaml', id, data, project, cluster })
                   )
                 }
               >
                 Show YAML
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className="dropdown-separator" />
+              <DropdownMenu.Separator className='dropdown-separator' />
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -207,35 +209,35 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className="icon">
-          <Icon path={mdiDocker} style={{ color: "#0db7ed" }} size={1} />
+        <div className='icon'>
+          <Icon path={mdiDocker} style={{ color: '#0db7ed' }} size={1} />
         </div>
-        <div className="title">{data.name}</div>
-        <div style={{ display: "flex" }}>
+        <div className='title'>{data.name}</div>
+        <div style={{ display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "20px",
-                fontWeight: "bold",
+                display: 'flex',
+                flexDirection: 'column',
+                width: '20px',
+                fontWeight: 'bold',
               }}
             >
               <div
                 onClick={() => handleClickIncrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
-                <span className="arrow nodrag">▲</span>
+                <span className='arrow nodrag'>▲</span>
               </div>
               <div
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
                 {data.replicas}
@@ -244,18 +246,18 @@ export default function ({ id, data, isConnectable }) {
                 onClick={() => handleClickDecrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
-                <span className="arrow nodrag">▼</span>
+                <span className='arrow nodrag'>▼</span>
               </div>
             </div>
           </div>
           <div style={{ flex: 1 }}>
             <select
-              name="imageTag"
-              className="select nodrag"
+              name='imageTag'
+              className='select nodrag'
               onChange={(e) => setImageTag(e.target.value)}
               value={data.imageTag}
             >
@@ -265,30 +267,30 @@ export default function ({ id, data, isConnectable }) {
                       {el}
                     </option>
                   ))
-                : ""}
+                : ''}
             </select>
             {!state.edges.find((edge) => edge.target === id)?.animated ? (
-              <button className="button nodrag disabled">Deploy</button>
+              <button className='button nodrag disabled'>Deploy</button>
             ) : !data.status ? (
-              <button className="button nodrag" onClick={handleClickStart}>
+              <button className='button nodrag' onClick={handleClickStart}>
                 Deploy
               </button>
-            ) : data.status === "deploying" ? (
-              <button className="button busy nodrag">Deploying...</button>
-            ) : data.status === "running" ? (
-              <button className="button stop nodrag" onClick={handleClickStop}>
+            ) : data.status === 'deploying' ? (
+              <button className='button busy nodrag'>Deploying...</button>
+            ) : data.status === 'running' ? (
+              <button className='button stop nodrag' onClick={handleClickStop}>
                 Stop Deployment
               </button>
             ) : (
-              <button className="button busy nodrag">Stopping...</button>
+              <button className='button busy nodrag'>Stopping...</button>
             )}
           </div>
         </div>
       </div>
       <Handle
-        type="source"
+        type='source'
         position={Position.Bottom}
-        id="b"
+        id='b'
         isConnectable={isConnectable}
       />
     </div>
