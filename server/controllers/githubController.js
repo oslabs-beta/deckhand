@@ -15,7 +15,7 @@ const githubController = {};
 githubController.login = (req, res) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
-  );
+  )
 };
 
 // set github_token and redirect home

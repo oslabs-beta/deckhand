@@ -2,28 +2,19 @@ const request = require('supertest');
 const githubController = require('../../../server/controllers/githubController.js');
 
 describe('Testing the Github Oauth Login Redirect', () => {
-
-  it('Does the link properly redirect', () => {
-    
-  });
-
-});
-
-describe('Testing Github callback component', () => {
-
   const req = {
     body: {},
-    query: {code: 'ur5j49dk2or5z34hg4p9'}
   };
   const res = {
-    locals: {}
+    locals: {},
+    redirect: jest.fn()
   }
   const next = jest.fn();
 
-  it('check if query code token is in the request', () => {
-    githubController.callback(req, res, next);
-    expect(req.query.code).toHaveLength(20);
-    expect(req.query.code).not.toBeUndefined();
+  it('Does it make only one request', () => {
+    githubController.login(req, res, next);
+    expect(res.redirect.mock.calls.length).toBe(1);
+    expect(res.redirect.mock.calls.length).not.toBe(0);
   });
 
 });

@@ -1,5 +1,7 @@
 const terraform = require('../terraform/terraformapi.js');
 const { execSync, exec } = require('child_process');
+const util = require('util');
+const execProm = util.promisify(exec);
 const k8 = require('../kubernetes/kubernetesapi.js');
 
 const deploymentController = {};
@@ -127,66 +129,65 @@ deploymentController.configureCluster = async (req, res, next) => {
 };
 
 // Dockerize github repo and push to AWS ECR
-deploymentController.build = (req, res, next) => {
+deploymentController.build = async (req, res, next) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
-  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
-  const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
+  const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubuser-repoName"
+  const imageName = repo.split('/').join('-').toLowerCase() + `:${branch}`; // format: "githubUser-repoName-branch"
 
   // Sign in to AWS
-  execSync(
+  await execProm(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
-  execSync(
+  await execProm(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  execSync(`aws --profile default configure set region ${vpcRegion}`);
+  await execProm(`aws --profile default configure set region ${vpcRegion}`);
 
   // Get AWS Account ID
-  const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
+  const awsAccountIdRaw = await execProm(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });
-  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw);
+  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw.stdout);
   const awsAccountId = parsedAwsAccountId.Account;
 
   // Create ECR repository
   const ecrUrl = `${awsAccountId}.dkr.ecr.${vpcRegion}.amazonaws.com`;
-  execSync(
+
+  await execProm(
     `aws ecr get-login-password --region ${vpcRegion} | docker login --username AWS --password-stdin ${ecrUrl}`
   );
-  execSync(
+  await execProm(
     `aws ecr create-repository --repository-name ${awsRepo} --region ${vpcRegion} || true`
   );
 
   // Dockerize and push image to ECR repository
   const cloneUrl = `https://github.com/${repo}.git#${branch}`;
   const imageUrl = `${ecrUrl}/${awsRepo}`;
-  execSync(
-    `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
-  );
-  execSync(`docker tag ${imageName} ${imageUrl}`);
-  execSync(`docker push ${imageUrl}`);
+  await execProm(`docker buildx build --platform linux/amd64 -t ${branch} ${cloneUrl} --load`);
+  await execProm(`docker tag ${branch} ${imageUrl}`);
+  await execProm(`docker push ${imageUrl}`);
 
   res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
   return next();
 };
 
-deploymentController.destroyImage = (req, res, next) => {
+deploymentController.destroyImage = async (req, res, next) => {
   const { awsAccessKey, awsSecretKey } = req.body;
   const { vpcRegion } = req.body;
   const { repo, imageName, imageTag } = req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
 
   // Sign in to AWS
-  execSync(
+  await execProm(
     `aws --profile default configure set aws_access_key_id ${awsAccessKey}`
   );
-  execSync(
+  await execProm(
     `aws --profile default configure set aws_secret_access_key ${awsSecretKey}`
   );
-  execSync(`aws --profile default configure set region ${vpcRegion}`);
+  await execProm(`aws --profile default configure set region ${vpcRegion}`);
 
   // Delete image
-  execSync(
+  await execProm(
     `aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`
   );
 };

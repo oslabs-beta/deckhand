@@ -1,3 +1,7 @@
+const { execSync, exec } = require('child_process');
+const util = require('util');
+const execProm = util.promisify(exec);
+
 const apiController = {};
 
 apiController.getProjects = (req, res, next) => {
@@ -31,6 +35,39 @@ apiController.getDockerHubImageTags = async (req, res, next) => {
       next();
     })
     .catch((error) => next(error));
+};
+
+// function to pull docker images from Dockerhub so we can use them in AWS
+
+apiController.pushDockerHubImagesToKluster = async (req, res, next) => {
+
+  // what is needed: the name of the github image to pull
+    // for example: deckhandapp/ideastation
+  // the tag at the end (without it assumes latest)
+    // for example: deckhandapp/ideastation:1 (important since this image has no latest)
+
+  const { repo_name } = req.body;
+  const { image } = req.body;
+  const { tag } = req.body;
+
+  //could only get the command to work with execSync as of right now
+
+  try {
+    await execProm(`docker image pull --platform linux/amd64 ${repo_name}/${image}:${tag}`);
+  } catch {
+    return 'Wrong type of image architecture';
+  }
+  const imageInformation = await execProm(`docker image inspect ${repo_name}/${image}:${tag} -f json`);
+  const imageInformationAsJSON = JSON.parse(imageInformation.stdout);
+  // this gives us the port in an object
+  const imagePortAsAnObject = imageInformationAsJSON[0].Config.ExposedPorts;
+  const imagePortAsAKey = Object.keys(imagePortAsAnObject);
+  const imagePortAsString = imagePortAsAKey[0].match(/\d+/g);
+
+  const imagePort = Number(imagePortAsString);
+  // we can switch the name of this if needed. This gives the port number needed for the YAML files for the container port and the target port
+  res.locals.data = {imagePort: imagePort};
+  return next();
 };
 
 module.exports = apiController;
