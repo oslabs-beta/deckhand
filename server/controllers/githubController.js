@@ -6,9 +6,8 @@ const db = require('../data/model.js');
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-// keep these in case we add DockerHub pushing back into the application
-// const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
-// const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
+const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
+const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
 const githubController = {};
 
