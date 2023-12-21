@@ -41,7 +41,7 @@ export default function ({ id, data, isConnectable }) {
           awsSecretKey: state.user.awsSecretKey,
           userId: state.user.id,
           projectId: project.projectId,
-          projectName: 'placeholder-name',
+          projectName: project.name,
         }),
       });
       data = await res.json();

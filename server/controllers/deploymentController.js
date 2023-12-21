@@ -113,8 +113,9 @@ deploymentController.addCluster = (req, res, next) => {
     )
     .then(() => {
       console.log('getting efsId');
-      const efsId = terraform.getEFSId(userId, projectId, cleanName);
-      res.locals.data = { efsId };
+      const volumeHandle = terraform.getEFSId(userId, projectId, cleanName);
+      console.log('efsId:', volumeHandle);
+      res.locals.data = { volumeHandle };
       return next();
     })
     .catch((err) => {
@@ -154,6 +155,13 @@ deploymentController.build = (req, res, next) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
+
+  console.log(
+    'in build controller. Credentials:',
+    awsAccessKey,
+    awsSecretKey,
+    vpcRegion
+  );
 
   // Sign in to AWS
   execSync(
