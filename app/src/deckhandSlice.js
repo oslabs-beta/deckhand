@@ -9,6 +9,7 @@ export const deckhandSlice = createSlice({
     //   name: 'John',
     //   email: 'john@example.com',
     //   avatarUrl: 'http://example.com',
+    //   theme: 'light',
     //   githubId: null,
     //   awsAccessKey: null,
     //   awsSecretKey: null,
