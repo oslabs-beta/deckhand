@@ -148,7 +148,14 @@ deploymentController.deleteCluster = (req, res, next) => {
 
 deploymentController.configureCluster = async (req, res, next) => {
   const { vpcRegion, awsAccessKey, awsSecretKey, clusterName, yaml } = req.body;
-
+  console.log(
+    'Configuring cluster...',
+    vpcRegion,
+    awsAccessKey,
+    awsSecretKey,
+    clusterName,
+    yaml
+  );
   k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
   k8.connectKubectltoEKS = (vpcRegion, clusterName);
   k8.deploy(yaml);
@@ -183,7 +190,7 @@ deploymentController.build = async (req, res, next) => {
   const awsAccountIdRaw = execSync(`aws sts get-caller-identity`, {
     encoding: 'utf8',
   });
-  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw.stdout);
+  const parsedAwsAccountId = JSON.parse(awsAccountIdRaw);
   const awsAccountId = parsedAwsAccountId.Account;
 
   // Create ECR repository

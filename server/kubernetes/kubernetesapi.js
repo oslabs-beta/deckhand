@@ -30,6 +30,7 @@ const deploy = (yaml) => {
     encoding: 'utf8',
   });
   console.log(output);
+  return;
 };
 
 // removes the component from the cluster
