@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { showModal, updateNode } from '../../deckhandSlice';
-import './modal.css';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { showModal, updateNode } from "../../deckhandSlice";
+import "./modal.css";
 
 export default function () {
   const state = useSelector((state) => state.deckhand);
@@ -27,11 +27,11 @@ export default function () {
         id,
         data: {
           ...data,
-          name: formData.get('name'),
-          instanceType: formData.get('instanceType'),
-          minNodes: formData.get('minNodes'),
-          maxNodes: formData.get('maxNodes'),
-          desiredNodes: formData.get('desiredNodes'),
+          name: formData.get("name"),
+          instanceType: formData.get("instanceType"),
+          minNodes: formData.get("minNodes"),
+          maxNodes: formData.get("maxNodes"),
+          desiredNodes: formData.get("desiredNodes"),
         },
       })
     );
@@ -39,9 +39,9 @@ export default function () {
   };
 
   return (
-    <div className={`modal ${show ? 'show' : ''}`}>
-      <div className='modal-content' onClick={(e) => e.stopPropagation()}>
-        <span className='close-button' onClick={closeModal}>
+    <div className={`modal ${show ? "show" : ""}`}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <span className="close-button" onClick={closeModal}>
           &times;
         </span>
         <h2>Configure Cluster</h2>
@@ -852,14 +852,6 @@ export default function () {
             />
           </label>
           <label>
-            Max Nodes:
-            <input
-              type="text"
-              name="maxNodes"
-              defaultValue={data.maxNodes || "3"}
-            />
-          </label>
-          <label>
             Desired Nodes:
             <input
               type="text"
@@ -867,11 +859,19 @@ export default function () {
               defaultValue={data.desiredNodes || "2"}
             />
           </label>
-          <div className='buttons'>
-            <button type='button' onClick={closeModal}>
+          <label>
+            Max Nodes:
+            <input
+              type="text"
+              name="maxNodes"
+              defaultValue={data.maxNodes || "3"}
+            />
+          </label>
+          <div className="buttons">
+            <button type="button" onClick={closeModal}>
               Cancel
             </button>
-            <button type='submit' className='blue'>
+            <button type="submit" className="blue">
               Submit
             </button>
           </div>
