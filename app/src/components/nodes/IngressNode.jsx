@@ -55,7 +55,7 @@ export default function ({ id, data, isConnectable }) {
           <button className="button nodrag disabled">Open Public URL</button>
         ) : (
           <button
-            className="button nodrag"
+            className="button green nodrag"
             onClick={() => window.open(data.url, "_blank")}
           >
             Open Public URL
