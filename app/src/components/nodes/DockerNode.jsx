@@ -63,9 +63,9 @@ export default function ({ id, data, isConnectable }) {
     return createYaml.all(
       data,
       connectedNodes,
-      data.exposedPort || "(GENERATED DURING DEPLOYMENT)",
+      data.exposedPort || 3000,
       cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
-      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
+      project.vpcRegion || "us-east-1"
     );
   };
 
