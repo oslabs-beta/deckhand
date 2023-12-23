@@ -63,9 +63,11 @@ export default function ({ id, data, isConnectable }) {
     return createYaml.all(
       data,
       connectedNodes,
-      data.exposedPort || 3000,
-      cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
-      project.vpcRegion || "us-east-1"
+      data.exposedPort || 3000 || "(GENERATED DURING DEPLOYMENT)",
+      cluster.volumeHandle ||
+        "fs-0ff41d851a1a4f9c7" ||
+        "(GENERATED DURING DEPLOYMENT)",
+      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
     );
   };
 
@@ -75,38 +77,38 @@ export default function ({ id, data, isConnectable }) {
     const yaml = generateYaml();
     console.log(yaml);
 
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: "running" } }));
-      const edges = state.edges.filter((edge) => edge.source === id);
-      edges.map((edge) =>
-        dispatch(updateEdge({ id: edge.id, animated: true }))
-      );
-    }, 1000);
+    // // Add 1 second delay to simulate fetch request
+    // setTimeout(() => {
+    //   dispatch(updateNode({ id, data: { status: "running" } }));
+    //   const edges = state.edges.filter((edge) => edge.source === id);
+    //   edges.map((edge) =>
+    //     dispatch(updateEdge({ id: edge.id, animated: true }))
+    //   );
+    // }, 1000);
 
-    // await fetch("/api/deployment/build", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     provider: project.provider,
-    //     awsAccessKey: state.user.awsAccessKey,
-    //     awsSecretKey: state.user.awsSecretKey,
-    //     vpcRegion: state.project.vpcRegion,
-    //     vpcId: cluster.data.vpcId,
-    //     yaml: yaml,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then(() => {
-    //     dispatch(updateNode({ id, data: { status: "running" } }));
-    //     const edges = state.edges.filter((edge) => edge.source === id);
-    //     edges.map((edge) =>
-    //       dispatch(updateEdge({ id: edge.id, animated: true }))
-    //     );
-    //   })
-    //   .catch((err) => console.log(err));
+    await fetch("/api/deployment/configureCluster", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        provider: project.provider,
+        awsAccessKey: state.user.awsAccessKey,
+        awsSecretKey: state.user.awsSecretKey,
+        vpcRegion: project.vpcRegion,
+        vpcId: cluster.data.vpcId,
+        clusterName: "4197_ideastation" || cluster.data.name,
+        yaml: yaml,
+      }),
+    })
+      .then(() => {
+        dispatch(updateNode({ id, data: { status: "running" } }));
+        const edges = state.edges.filter((edge) => edge.source === id);
+        edges.map((edge) =>
+          dispatch(updateEdge({ id: edge.id, animated: true }))
+        );
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleClickStop = () => {
