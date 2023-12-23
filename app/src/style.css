@@ -23,11 +23,35 @@ body.dark-mode {
     rgb(81, 82, 108) 100%
   );
   --component-background: #333;
-  --highlight-background: rgb(41, 47, 50);
+  --highlight-background: rgb(81, 97, 126);
   --primary: white;
   --secondary: #999;
   --tertiary: #666;
   --logo: skyblue;
+}
+
+/* General styles */
+
+.primary {
+  color: var(--primary);
+}
+
+.secondary {
+  color: var(--secondary);
+}
+
+.tertiary {
+  color: var(--tertiary);
+}
+
+.blue {
+  background-color: rgb(0, 128, 255);
+  color: white;
+}
+
+.delete {
+  background-color: darkred;
+  color: white;
 }
 
 body,
@@ -75,6 +99,21 @@ button:active {
   height: 100vh;
 }
 
+.content-container {
+  padding-top: 100px;
+}
+
+.content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.edit {
+  font-weight: bold;
+}
+
+/* Logo Float */
+
 .float-logo {
   position: absolute;
   display: flex;
@@ -102,6 +141,8 @@ button:active {
   font-weight: bold;
 }
 
+/* Active Project */
+
 .active-project {
   position: absolute;
   display: flex;
@@ -115,6 +156,8 @@ button:active {
   padding: 10px;
   z-index: 10;
 }
+
+/* Account Float */
 
 .float-account {
   position: absolute;
@@ -143,6 +186,8 @@ button:active {
   font-size: 18px;
 }
 
+/* Dropdown */
+
 .dropdown {
   margin-right: 10px;
   border-radius: 10px;
@@ -163,24 +208,6 @@ button:active {
   height: 1px;
   background-color: var(--tertiary);
   margin: 3px 6px;
-}
-
-.content-container {
-  padding-top: 100px;
-}
-
-.content {
-  max-width: 1200px;
-  margin: auto;
-}
-
-.edit {
-  font-weight: bold;
-}
-
-.delete {
-  background-color: darkred;
-  color: white;
 }
 
 /* Login page */
@@ -303,7 +330,7 @@ button:active {
   transform: scale(0.98);
 }
 
-/* Canvas page */
+/* Canvas */
 
 .float-toolbar {
   position: absolute;
@@ -413,6 +440,10 @@ button:active {
 .node .button.busy {
   background-color: rgb(160, 114, 28);
   cursor: wait;
+}
+
+.node .button.green {
+  background-color: darkgreen;
 }
 
 .node .button.stop {
@@ -542,11 +573,6 @@ button:active {
   cursor: pointer;
 }
 
-.blue {
-  background-color: rgb(0, 128, 255);
-  color: white;
-}
-
 .pod-source {
   padding: 20px 10px;
   color: var(--primary);
@@ -557,18 +583,4 @@ button:active {
 .pod-source:hover {
   background-color: var(--highlight-background);
   border: 1px solid var(--secondary);
-}
-
-/* General styles */
-
-.primary {
-  color: var(--primary);
-}
-
-.secondary {
-  color: var(--secondary);
-}
-
-.tertiary {
-  color: var(--tertiary);
 }
