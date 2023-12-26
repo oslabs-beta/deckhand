@@ -14,18 +14,22 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
-// handle requests for static files
-app.use('/build', express.static(path.join(__dirname, '../app/build')));
-
 // define route handlers
 app.use('/api/github', githubRouter);
 app.use('/api/deployment', deploymentRouter);
 app.use('/api', apiRouter);
 
-// route handler to respond with main app
-app.get('/', (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, '../app/public/index.html'));
-});
+// handle requests for static files
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
+}
 
 // catch-all route handler for any requests to an unknown route
 app.use('*', (req, res) => {
