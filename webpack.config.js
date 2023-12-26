@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
@@ -41,7 +42,12 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './public/index.html'),
-    })
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'public/icons', to: 'icons' }
+      ],
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
