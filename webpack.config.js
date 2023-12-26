@@ -12,13 +12,12 @@ module.exports = {
   target: 'web',
   devServer: {
     host: '0.0.0.0',
-    // port: 8080 by default
+    port: 8080,
     static: {
       directory: path.join(__dirname, 'public'),
     },
     hot: true,
     proxy: {
-      // list every endpoint
       '/api': 'http://localhost:3000'
     },
   },
@@ -31,7 +30,6 @@ module.exports = {
       },
       {
         test: /.(css|scss)$/,
-        // exclude: /node_modules/,
         use: ['style-loader', 'css-loader', 'sass-loader'], // order reads right to left (turns sass files to css to style string)
       },
       {
@@ -42,13 +40,10 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, './app/public/index.html'),
+      template: path.join(__dirname, './public/index.html'),
     })
   ],
   resolve: {
     extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
   },
-  // watchOptions: {
-  //   ignored: [path.resolve(__dirname, './server/toDocker')]
-  // }
 };
