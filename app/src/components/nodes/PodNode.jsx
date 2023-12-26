@@ -50,7 +50,7 @@ export default function ({ id, data, isConnectable }) {
         <div className="icon">
           <Icon path={mdiCircle} style={{ color: "#0db7ed" }} size={1} />
         </div>
-        <div className="title">New Pod</div>
+        <div className="title">Pod</div>
         <button
           className="button nodrag"
           onClick={() => dispatch(showModal({ name: "PodSource", id, data }))}
