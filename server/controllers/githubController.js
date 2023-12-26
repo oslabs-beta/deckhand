@@ -4,8 +4,16 @@ const path = require('path');
 require('dotenv').config();
 const db = require('../data/model.js');
 
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+let GITHUB_CLIENT_ID;
+let GITHUB_CLIENT_SECRET;
+if (process.env.NODE_ENV === 'production') {
+  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID_PROD;
+  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET_PROD;
+} else {
+  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+}
+
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
@@ -14,7 +22,7 @@ const githubController = {};
 // redirect to github login
 githubController.login = (req, res) => {
   res.redirect(
-    `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
+    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
   );
 };
 
@@ -23,9 +31,9 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    CLIENT_ID +
+    GITHUB_CLIENT_ID +
     '&client_secret=' +
-    CLIENT_SECRET +
+    GITHUB_CLIENT_SECRET +
     '&code=' +
     auth_code,
     {
