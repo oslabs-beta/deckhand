@@ -1,3 +1,16 @@
+# Additional exclusions for Docker
+/__tests__
+/.github
+/website
+.gitignore
+fly.toml
+Dockerfile
+*.md
+
+################
+#  .gitignore  #
+################
+
 # Logs
 logs
 *.log
