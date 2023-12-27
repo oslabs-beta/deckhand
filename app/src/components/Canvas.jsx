@@ -67,12 +67,10 @@ export default function Canvas() {
 
   const onConnect = useCallback((params) => {
     // setEdges((eds) => addEdge(params, eds)), [];
-    const newEdge = {
-      id: `${params.source}-${params.target}`,
-      ...params,
-      projectId: state.projectId,
-    };
-    dispatch(addNewEdge(newEdge));
+    const id = `${params.source}-${params.target}`;
+    const deletable = false;
+    const projectId = state.projectId;
+    dispatch(addNewEdge({ id, deletable, ...params, projectId }));
   });
 
   const onDragOver = useCallback((event) => {
@@ -85,16 +83,17 @@ export default function Canvas() {
       event.preventDefault();
       const id = Math.floor(Math.random() * 10000).toString(); // fetch from SQL
       const type = event.dataTransfer.getData("application/reactflow");
+      const projectId = state.projectId;
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
-      const projectId = state.projectId;
+      const deletable = false;
       const data = {};
 
       if (type === "pod") data.replicas = 1;
 
-      dispatch(addNode({ id, type, projectId, position, data }));
+      dispatch(addNode({ id, type, projectId, position, deletable, data }));
     },
     [reactFlowInstance]
   );
@@ -126,7 +125,6 @@ export default function Canvas() {
               proOptions={{ hideAttribution: true }}
             >
               <Controls position="bottom-right" />
-              {/* <MiniMap /> */}
             </ReactFlow>
           </div>
           <FloatToolbar />
