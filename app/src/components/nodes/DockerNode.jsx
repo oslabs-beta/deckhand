@@ -6,6 +6,7 @@ import {
   updateNode,
   deleteNode,
   updateEdge,
+  deleteEdge,
 } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDocker } from "@mdi/js";
@@ -16,6 +17,18 @@ export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const edges = state.edges.filter((edge) => edge.source === id);
+    edges.map((edge) =>
+      dispatch(
+        updateEdge({
+          id: edge.id,
+          animated: data.status === "running",
+        })
+      )
+    );
+  }, [state.edges, data]);
+
   // Find parent project
   const project = state.projects.find(
     (project) => project.projectId === state.projectId
@@ -23,7 +36,7 @@ export default function ({ id, data, isConnectable }) {
 
   // Find parent cluster
   const clusterEdge = state.edges.find((edge) => edge.target === id);
-  const cluster = state.nodes.find((node) => node.id === clusterEdge.source);
+  const cluster = state.nodes.find((node) => node.id === clusterEdge?.source);
 
   useEffect(() => {
     (async () => {
@@ -80,10 +93,6 @@ export default function ({ id, data, isConnectable }) {
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: "running" } }));
-      const edges = state.edges.filter((edge) => edge.source === id);
-      edges.map((edge) =>
-        dispatch(updateEdge({ id: edge.id, animated: true }))
-      );
     }, 1000);
 
     // await fetch("/api/deployment/configureCluster", {
@@ -103,18 +112,12 @@ export default function ({ id, data, isConnectable }) {
     // })
     //   .then(() => {
     //     dispatch(updateNode({ id, data: { status: "running" } }));
-    //     const edges = state.edges.filter((edge) => edge.source === id);
-    //     edges.map((edge) =>
-    //       dispatch(updateEdge({ id: edge.id, animated: true }))
-    //     );
     //   })
     //   .catch((err) => console.log(err));
   };
 
   const handleClickStop = () => {
     dispatch(updateNode({ id, data: { status: "stopping" } }));
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
@@ -140,6 +143,7 @@ export default function ({ id, data, isConnectable }) {
       <Handle
         type="target"
         position={Position.Top}
+        id="a"
         isConnectable={isConnectable}
       />
       <div>

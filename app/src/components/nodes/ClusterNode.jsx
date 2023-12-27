@@ -6,6 +6,7 @@ import {
   updateNode,
   deleteNode,
   updateEdge,
+  deleteEdge,
   configureProject,
 } from "../../deckhandSlice";
 import Icon from "@mdi/react";
@@ -16,8 +17,20 @@ export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const edges = state.edges.filter((edge) => edge.source === id);
+    edges.map((edge) =>
+      dispatch(
+        updateEdge({
+          id: edge.id,
+          animated: data.status === "running",
+        })
+      )
+    );
+  }, [state.edges, data]);
+
   const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: "creating" } }));
+    dispatch(updateNode({ id, data: { status: "starting" } }));
 
     let project = state.projects.find(
       (project) => project.projectId === state.projectId
@@ -57,10 +70,6 @@ export default function ({ id, data, isConnectable }) {
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
       dispatch(updateNode({ id, data: { status: "running" } }));
-      const edges = state.edges.filter((edge) => edge.source === id);
-      edges.map((edge) =>
-        dispatch(updateEdge({ id: edge.id, animated: true }))
-      );
     }, 1000);
 
     // console.log("All project data:", project);
@@ -91,14 +100,10 @@ export default function ({ id, data, isConnectable }) {
     //     data: { volumeHandle: data.volumeHandle, status: "running" },
     //   })
     // );
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: true })));
   };
 
   const handleClickStop = () => {
     dispatch(updateNode({ id, data: { status: "stopping" } }));
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
 
     // Add 1 second delay to simulate fetch request
     setTimeout(() => {
@@ -114,17 +119,12 @@ export default function ({ id, data, isConnectable }) {
   };
 
   const countDeployedPods = () => {
-    const pods = getConnectedPods();
-    return pods.filter((pod) => pod.data.status === "running").length;
+    const childNodes = getConnectedPods();
+    return childNodes.filter((node) => node.data.status === "running").length;
   };
 
   return (
     <div className={`node ${data.status === "running" ? "running" : ""}`}>
-      <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={isConnectable}
-      />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -183,8 +183,8 @@ export default function ({ id, data, isConnectable }) {
           <button className="button nodrag" onClick={handleClickStart}>
             Start Instance
           </button>
-        ) : data.status === "creating" ? (
-          <button className="button busy nodrag">Creating instance...</button>
+        ) : data.status === "starting" ? (
+          <button className="button busy nodrag">Starting instance...</button>
         ) : data.status === "stopping" ? (
           <button className="button busy nodrag">Stopping instance...</button>
         ) : (
