@@ -80,7 +80,11 @@ p {
 }
 
 .content {
-  position: relative;
+  /* position: relative; */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5px;
   height: 5vh;
   text-align: center;
   background-color: white;
