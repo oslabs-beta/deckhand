@@ -78,10 +78,18 @@ export default function Canvas() {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
+  function generateUniqueId() {
+    let uniqueId;
+    do {
+      uniqueId = Math.floor(Math.random() * 1000000).toString();
+    } while (state.nodes.some((node) => node.id === uniqueId));
+    return uniqueId;
+  }
+
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      const id = Math.floor(Math.random() * 10000).toString(); // fetch from SQL
+      const id = generateUniqueId();
       const type = event.dataTransfer.getData("application/reactflow");
       const projectId = state.projectId;
       const position = reactFlowInstance.screenToFlowPosition({
