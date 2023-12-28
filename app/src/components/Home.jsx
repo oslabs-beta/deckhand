@@ -17,8 +17,16 @@ export default function Home() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  function generateUniqueProjectId() {
+    let uniqueId;
+    do {
+      uniqueId = Math.floor(Math.random() * 1000000).toString();
+    } while (state.projects.some((project) => project.projectId === uniqueId));
+    return uniqueId;
+  }
+
   const handleClickAddProject = (event) => {
-    const projectId = Math.floor(Math.random() * 10000); // fetch new project ID from SQL
+    const projectId = generateUniqueProjectId();
     dispatch(addProject(projectId));
     dispatch(setProjectId(projectId));
   };
