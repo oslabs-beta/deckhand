@@ -19,7 +19,7 @@ export default function ({ id, data, isConnectable }) {
 
   useEffect(() => {
     const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) =>
+    edges.forEach((edge) =>
       dispatch(
         updateEdge({
           id: edge.id,
