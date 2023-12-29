@@ -2,7 +2,7 @@ const { execSync, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const db = require('../data/model.js');
+const db = require('../database/model.js');
 
 let GITHUB_CLIENT_ID;
 let GITHUB_CLIENT_SECRET;

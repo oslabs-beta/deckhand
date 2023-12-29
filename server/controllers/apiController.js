@@ -1,4 +1,4 @@
-const db = require('../data/model.js');
+const db = require('../database/model.js');
 const { execSync, exec } = require('child_process');
 const util = require('util');
 const execProm = util.promisify(exec);
