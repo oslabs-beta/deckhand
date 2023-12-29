@@ -96,16 +96,6 @@ export default function ({ id, data, isConnectable }) {
   };
 
   const addCluster = async () => {
-    console.log({
-      userId: state.user.id,
-      projectId: project.projectId,
-      clusterId: id,
-      clusterName: data.name,
-      instanceType: data.instanceType,
-      minNodes: data.minNodes,
-      maxNodes: data.maxNodes,
-      desiredNodes: data.desiredNodes,
-    });
     // Add cluster and return volumeHandle
     try {
       const res = await fetch("/api/deployment/addCluster", {
@@ -115,6 +105,9 @@ export default function ({ id, data, isConnectable }) {
         },
         body: JSON.stringify({
           userId: state.user.id,
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
           projectId: project.projectId,
           clusterId: id,
           clusterName: data.name,
