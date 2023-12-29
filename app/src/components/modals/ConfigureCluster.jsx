@@ -58,7 +58,7 @@ export default function () {
             Instance Type:
             <select
               name="instanceType"
-              defaultValue={data.instanceType || "t2.micro"}
+              defaultValue={data.instanceType || "t3.micro"}
             >
               {[
                 "a1.medium",
@@ -843,7 +843,9 @@ export default function () {
                 "r7i.metal-24xl",
                 "r7i.metal-48xl",
               ].map((el) => (
-                <option value={el}>{el}</option>
+                <option key={el} value={el}>
+                  {el}
+                </option>
               ))}
             </select>
           </label>
