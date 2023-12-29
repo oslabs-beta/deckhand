@@ -244,9 +244,22 @@ deploymentController.getURL = (req, res, next) => {
 
   k8.connectCLtoAWS(awsAccessKey, awsSecretKey, vpcRegion);
   k8.connectKubectltoEKS = (vpcRegion, clusterName);
-  const address = k8.getURL();
-  res.locals.address = address;
-  return next();
+
+  // This function will keep calling itself until the address exists.
+  // Once it does, it will put it on res.locals and call next();
+  const checkURL = () => {
+    console.log('Checking...');
+    const address = k8.getUrl();
+    console.log('Address:', address);
+    if (address) {
+      res.locals.address = address;
+      return next();
+    } else {
+      setTimeout(checkURL, 100);
+    }
+  };
+
+  checkURL();
 };
 
 module.exports = deploymentController;
