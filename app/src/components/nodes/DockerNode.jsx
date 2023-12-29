@@ -101,7 +101,9 @@ export default function ({ id, data, isConnectable }) {
         yaml: yaml,
       }),
     })
-      .then(() => {
+      .then((res) => res.json())
+      .then((ingressUrl) => {
+        // TODO: put this ingressUrl into the state
         dispatch(updateNode({ id, data: { status: 'running' } }));
         const edges = state.edges.filter((edge) => edge.source === id);
         edges.map((edge) =>
