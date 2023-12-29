@@ -141,7 +141,7 @@ export default function ({ id, data, isConnectable }) {
 
   const deleteCluster = async () => {
     try {
-      const res = await fetch("/api/deployment/deleteVPC", {
+      const res = await fetch("/api/deployment/deleteCluster", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
