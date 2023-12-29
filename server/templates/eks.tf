@@ -35,7 +35,6 @@ variable "vpc_cidr_block" {
   type = string
 }
 
-
 module "eks" {
   // next two lines are a copy and paste from terraform docs. This tells terraform what the module is
   # source  = "terraform-aws-modules/eks/aws"
@@ -203,7 +202,6 @@ resource "aws_security_group" "efs" {
   }
 }
 
-
 resource "aws_iam_policy" "node_efs_policy" {
   name        = "eks_node_efs-${var.clusterName}"
   path        = "/"
@@ -239,7 +237,6 @@ resource "aws_efs_mount_target" "mount" {
     subnet_id = each.key
     for_each = toset(var.private_subnets)
     security_groups = [aws_security_group.efs.id]
-    
 }
 
 output "efs-id" {
