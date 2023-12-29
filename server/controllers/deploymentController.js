@@ -105,6 +105,9 @@ deploymentController.deleteVPC = async (req, res, next) => {
 deploymentController.addCluster = async (req, res, next) => {
   const {
     userId,
+    awsAccessKey,
+    awsSecretKey,
+    vpcRegion,
     projectId,
     clusterName,
     clusterId,
@@ -114,18 +117,18 @@ deploymentController.addCluster = async (req, res, next) => {
     desiredNodes,
   } = req.body;
   const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
-  const clusterPath = path.join(projectPath, `cluster${clusterId}`);
-  const awsClusterName = clusterName.replace(/[^A-Z0-9]/gi, '-') + Math.floor(Math.random() * 100000);
-  const nodeGroupName = awsClusterName + Math.floor(Math.random() * 100000);
+  // const clusterPath = path.join(projectPath, `cluster${clusterId}`);
+  const awsClusterName = clusterName.replace(/[^A-Z0-9]/gi, '-') + clusterId;
+  const nodeGroupName = 'node-group-' + awsClusterName;
 
   try {
     // Create cluster directory
-    console.log(`Creating cluster directory`);
-    await execAsync(`mkdir -p ${clusterPath}`);
+    // console.log(`Creating cluster directory`);
+    // await execAsync(`mkdir -p ${clusterPath}`);
 
-    // Copy EKS terraform config to cluster directory
-    console.log('Copying eks.tf file to cluster directory');
-    await execAsync(`cp server/templates/eks.tf ${clusterPath}`);
+    // Copy EKS terraform config to project directory
+    console.log('Copying eks.tf file to project directory');
+    await execAsync(`cp server/templates/eks.tf ${projectPath}/eks-${awsClusterName}.tf`);
 
     // Get VPC outputs
     console.log('Getting VPC outputs');
@@ -136,7 +139,7 @@ deploymentController.addCluster = async (req, res, next) => {
     // Create variables file for EKS
     console.log('Creating eks.auto.tfvars.json');
     await fs.writeFile(
-      `${clusterPath}/eks.auto.tfvars.json`,
+      `${projectPath}/eks.auto.tfvars.json`,
       JSON.stringify({
         clusterName: awsClusterName,
         vpcId,
@@ -150,15 +153,20 @@ deploymentController.addCluster = async (req, res, next) => {
       })
     );
 
+    // Connect to AWS
+    console.log('Connecting to aws')
+    await execAsync(`aws --profile default configure set aws_access_key_id ${awsAccessKey}`);
+    await execAsync(`aws --profile default configure set aws_secret_access_key ${awsSecretKey}`);
+    await execAsync(`aws --profile default configure set region ${vpcRegion}`);
+
     // Apply the Terraform files to provision a cluster
     console.log('Applying terraform configuration...');
-    const output = await execAsync(
-      `cd ${clusterPath} && terraform init && terraform apply --auto-approve`
-    );
+    const output = await execAsync(`cd ${projectPath} && terraform init && terraform apply --auto-approve`);
+    console.log('output:', output)
 
     // Get volume handle (EFS ID)
     console.log('Getting volume handle (EFS ID)');
-    const volumeHandle = await execAsync(`cd ${clusterPath} && terraform output -json efs-id`, { encoding: 'utf8', });
+    const volumeHandle = await execAsync(`cd ${projectPath} && terraform output -json efs-id`, { encoding: 'utf8', });
     res.locals.data = { awsClusterName, volumeHandle };
 
     // Log success and continue
@@ -267,7 +275,7 @@ deploymentController.deleteImage = async (req, res, next) => {
 };
 
 deploymentController.deployPod = async (req, res, next) => {
-  const { vpcRegion, awsAccessKey, awsSecretKey, clusterName, yaml } = req.body;
+  const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, yaml } = req.body;
 
   try {
     // Connect to aws via command line
@@ -278,7 +286,7 @@ deploymentController.deployPod = async (req, res, next) => {
 
     // Connect kubectl to EKS cluster via aws
     console.log('Connecting kubectl')
-    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${clusterName}`);
+    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${awsClusterName}`);
 
     // Deploy nginx controller
     console.log('Deploying nginx controller')
@@ -300,7 +308,7 @@ deploymentController.deployPod = async (req, res, next) => {
 };
 
 deploymentController.deletePod = async (req, res, next) => {
-  const { vpcRegion, awsAccessKey, awsSecretKey, clusterName, podName } = req.body;
+  const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } = req.body;
 
   try {
     // Connect to AWS
@@ -311,7 +319,7 @@ deploymentController.deletePod = async (req, res, next) => {
 
     // Connect kubectl to EKS cluster via aws
     console.log('Connecting kubectl')
-    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${clusterName}`);
+    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${awsClusterName}`);
 
     // Delete deployment
     await execAsync(`kubectl delete 'deployment' ${podName}`);
@@ -328,7 +336,7 @@ deploymentController.deletePod = async (req, res, next) => {
 };
 
 deploymentController.getURL = async (req, res, next) => {
-  const { awsAccessKey, awsSecretKey, vpcRegion, clusterName } = req.body;
+  const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
   try {
     // Connect to AWS
@@ -339,7 +347,7 @@ deploymentController.getURL = async (req, res, next) => {
 
     // Connect kubectl to EKS cluster via aws
     console.log('Connecting kubectl')
-    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${clusterName}`);
+    await execAsync(`aws eks update-kubeconfig --region ${vpcRegion} --name ${awsClusterName}`);
 
     // Get public ingress URL
     console.log('Getting public ingress URL')
