@@ -60,6 +60,8 @@ deploymentController.addVPC = async (req, res, next) => {
     console.log('Applying terraform configuration');
     await execAsync(`cd ${projectPath} && terraform init && terraform apply --auto-approve`);
 
+    // Log success and continue
+    console.log('VPC added successfully')
     return next();
   } catch (err) {
     return next({
@@ -89,6 +91,8 @@ deploymentController.deleteVPC = async (req, res, next) => {
     console.log('Removing project directory')
     await fs.rm(projectPath, { recursive: true });
 
+    // Log success and continue
+    console.log('VPC deleted successfully')
     return next();
   } catch (err) {
     return next({
@@ -111,9 +115,14 @@ deploymentController.addCluster = async (req, res, next) => {
   } = req.body;
   const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
   const clusterPath = path.join(projectPath, `cluster${clusterId}`);
-  const nodeGroupName = clusterName + Math.floor(Math.random() * 100000);
+  const awsClusterName = clusterName.replace(/[^A-Z0-9]/gi, '-') + Math.floor(Math.random() * 100000);
+  const nodeGroupName = awsClusterName + Math.floor(Math.random() * 100000);
 
   try {
+    // Create cluster directory
+    console.log(`Creating cluster directory`);
+    await execAsync(`mkdir -p ${clusterPath}`);
+
     // Copy EKS terraform config to cluster directory
     console.log('Copying eks.tf file to cluster directory');
     await execAsync(`cp server/templates/eks.tf ${clusterPath}`);
@@ -129,7 +138,7 @@ deploymentController.addCluster = async (req, res, next) => {
     await fs.writeFile(
       `${clusterPath}/eks.auto.tfvars.json`,
       JSON.stringify({
-        clusterName: clusterName.replace(/[^A-Z0-9]/gi, '_').toLowerCase(),
+        clusterName: awsClusterName,
         vpcId,
         private_subnets,
         vpc_cidr_block,
@@ -150,8 +159,10 @@ deploymentController.addCluster = async (req, res, next) => {
     // Get volume handle (EFS ID)
     console.log('Getting volume handle (EFS ID)');
     const volumeHandle = await execAsync(`cd ${clusterPath} && terraform output -json efs-id`, { encoding: 'utf8', });
-    res.locals.data = { volumeHandle };
+    res.locals.data = { awsClusterName, volumeHandle };
 
+    // Log success and continue
+    console.log('Cluster created successfully')
     return next();
   } catch (err) {
     return next({
@@ -174,6 +185,8 @@ deploymentController.deleteCluster = async (req, res, next) => {
     console.log('Removing cluster directory')
     await fs.rm(clusterPath, { recursive: true });
 
+    // Log success and continue
+    console.log('Cluster deleted successfully')
     return next();
   } catch (err) {
     return next({
@@ -214,6 +227,8 @@ deploymentController.buildImage = async (req, res, next) => {
     await execAsync(`docker tag ${imageName} ${imageUrl}`);
     await execAsync(`docker push ${imageUrl}`);
 
+    // Log success and continue
+    console.log('Image built successfully')
     res.locals.data = { imageName: imageUrl, imageTag: 'latest' };
     return next();
   } catch (err) {
@@ -240,6 +255,8 @@ deploymentController.deleteImage = async (req, res, next) => {
     console.log('Deleting image')
     await execAsync(`aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`);
 
+    // Log success and continue
+    console.log('Image deleted successfully')
     return next();
   } catch (err) {
     return next({
@@ -271,6 +288,8 @@ deploymentController.deployPod = async (req, res, next) => {
     const output = await execAsync(`echo "${yaml}" | kubectl apply -f -`, { encoding: 'utf8', });
     console.log(output)
 
+    // Log success and continue
+    console.log('Pod deployed successfully')
     return next();
   } catch (err) {
     return next({
@@ -297,6 +316,8 @@ deploymentController.deletePod = async (req, res, next) => {
     // Delete deployment
     await execAsync(`kubectl delete 'deployment' ${podName}`);
 
+    // Log success and continue
+    console.log('Pod deleted successfully')
     return next();
   } catch (err) {
     return next({
@@ -326,7 +347,7 @@ deploymentController.getURL = async (req, res, next) => {
     const checkURL = async () => {
       const url = await execAsync(`kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`, { encoding: 'utf8' });
       if (url) {
-        console.log('URL:', url)
+        console.log('URL fetched successfully:', url)
         res.locals.data = { url };
         return next();
       } else {
