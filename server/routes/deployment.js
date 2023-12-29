@@ -34,4 +34,8 @@ router.post('/deletePod', deploymentController.deletePod, (req, res) => {
   res.sendStatus(200);
 });
 
+router.post('/getURL', deploymentController.getURL, (req, res) => {
+  res.sendStatus(200);
+});
+
 module.exports = router;
