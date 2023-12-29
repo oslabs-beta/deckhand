@@ -306,7 +306,6 @@ deploymentController.deletePod = async (req, res, next) => {
   }
 };
 
-// Gets the public url of the ingress
 deploymentController.getURL = async (req, res, next) => {
   const { awsAccessKey, awsSecretKey, vpcRegion, clusterName } = req.body;
 
@@ -323,10 +322,20 @@ deploymentController.getURL = async (req, res, next) => {
 
     // Get public ingress URL
     console.log('Getting public ingress URL')
-    const url = await execAsync(`kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`, { encoding: 'utf8' });
+    let attempts = 0;
+    const checkURL = async () => {
+      const url = await execAsync(`kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`, { encoding: 'utf8' });
+      if (url) {
+        console.log('URL:', url)
+        res.locals.data = { url };
+        return next();
+      } else {
+        if (attempts++ < 100) setTimeout(checkURL, 100)
+        else console.log('Exceeded 100 attempts to get URL')
+      }
+    };
+    checkURL();
 
-    res.locals.url = url;
-    return next();
   } catch (err) {
     return next({
       log: `Error in getUrl: ${err}`,

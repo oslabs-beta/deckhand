@@ -39,12 +39,18 @@ const remove = (kind, name) => {
 };
 
 // get the public ingress url
+// This will return an empty string if there is an ingress but the url is not ready yet
+// This will return 'no ingress attached' if this cluster doesn't have an ingress
 const getUrl = () => {
-  const output = execSync(
-    `kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`,
-    { encoding: 'utf8' }
-  );
-  return output;
+  try {
+    const output = execSync(
+      `kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`,
+      { encoding: 'utf8' }
+    );
+    return output;
+  } catch (err) {
+    return 'no ingress attached';
+  }
 };
 
 module.exports = {
