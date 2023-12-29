@@ -95,7 +95,7 @@ export default function ({ id, data, isConnectable }) {
       dispatch(updateNode({ id, data: { status: "running" } }));
     }, 1000);
 
-    // await fetch("/api/deployment/configureCluster", {
+    // await fetch("/api/deployment/deployPod", {
     //   method: "POST",
     //   headers: {
     //     "Content-Type": "application/json",

@@ -17,109 +17,193 @@ export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  let project = state.projects.find(
+    (project) => project.projectId === state.projectId
+  );
+
   useEffect(() => {
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) =>
-      dispatch(
-        updateEdge({
-          id: edge.id,
-          animated: data.status === "running",
-        })
-      )
-    );
+    state.edges
+      // Get child edges
+      .filter((edge) => edge.source === id)
+      // Animate edges if node is running
+      .forEach((edge) =>
+        dispatch(
+          updateEdge({
+            id: edge.id,
+            animated: data.status === "running",
+          })
+        )
+      );
   }, [state.edges, data]);
 
+  const addVPC = async () => {
+    // Add VPC (if no clusters are running)
+    if (
+      state.nodes.filter(
+        (node) => node.type === "cluster" && node.data.status !== null
+      ).length
+    ) {
+      try {
+        const res = await fetch("/api/deployment/addVPC", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: state.user.id,
+            awsAccessKey: state.user.awsAccessKey,
+            awsSecretKey: state.user.awsSecretKey,
+            projectId: project.projectId,
+            projectName: project.name,
+            vpcRegion: project.vpcRegion,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+      } catch (error) {
+        console.error("Error in addVPC:", error);
+        throw error; // Re-throw the error to be handled in parent function
+      }
+    } else {
+      return;
+    }
+  };
+
+  const deleteVPC = async () => {
+    try {
+      const res = await fetch("/api/deployment/deleteVPC", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.user.id,
+          projectId: project.projectId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Error in deleteVPC:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const addCluster = async () => {
+    console.log({
+      userId: state.user.id,
+      projectId: project.projectId,
+      clusterId: id,
+      clusterName: data.name,
+      instanceType: data.instanceType,
+      minNodes: data.minNodes,
+      maxNodes: data.maxNodes,
+      desiredNodes: data.desiredNodes,
+    });
+    // Add cluster and return volumeHandle
+    try {
+      const res = await fetch("/api/deployment/addCluster", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.user.id,
+          projectId: project.projectId,
+          clusterId: id,
+          clusterName: data.name,
+          instanceType: data.instanceType,
+          minNodes: data.minNodes,
+          maxNodes: data.maxNodes,
+          desiredNodes: data.desiredNodes,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      return data.volumeHandle;
+    } catch (error) {
+      console.error("Error in addCluster:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const deleteCluster = async () => {
+    try {
+      const res = await fetch("/api/deployment/deleteVPC", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.user.id,
+          projectId: project.projectId,
+          clusterId: id,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Error in deleteCluster:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
   const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: "starting" } }));
-
-    let project = state.projects.find(
-      (project) => project.projectId === state.projectId
-    );
-
-    let node = state.nodes.find((node) => node.id === id);
-
-    let data;
-
-    // if (!project.vpcId) {
-    //   let res = await fetch("/api/deployment/addVPC", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       provider: project.provider,
-    //       name: project.name,
-    //       vpcRegion: project.vpcRegion,
-    //       awsAccessKey: state.user.awsAccessKey,
-    //       awsSecretKey: state.user.awsSecretKey,
-    //       userId: state.user.id,
-    //       projectId: project.projectId,
-    //       projectName: project.name,
-    //     }),
-    //   });
-    //   data = await res.json();
-    //   console.log("VPC Done! ID:", data.externalId);
-    //   dispatch(
-    //     configureProject({
-    //       projectId: project.projectId,
-    //       vpcId: data.externalId,
-    //     })
-    //   );
-    // }
-
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: "running" } }));
-    }, 1000);
-
-    // console.log("All project data:", project);
-    // console.log("About to fetch addCluster, ", data.externalId);
-
-    // let res = await fetch("/api/deployment/addCluster", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     externalId: project.vpcId || data.externalId,
-    //     name: id + "-" + node.data.name,
-    //     instanceType: node.data.instanceType,
-    //     minNodes: node.data.minNodes,
-    //     maxNodes: node.data.maxNodes,
-    //     desiredNodes: node.data.desiredNodes,
-    //     userId: state.user.id,
-    //     projectId: project.projectId,
-    //   }),
-    // });
-    // data = await res.json();
-    // console.log("cluster made! Volume handle: ", data.volumeHandle);
-
-    // dispatch(
-    //   updateNode({
-    //     id,
-    //     data: { volumeHandle: data.volumeHandle, status: "running" },
-    //   })
-    // );
-  };
-
-  const handleClickStop = () => {
-    dispatch(updateNode({ id, data: { status: "stopping" } }));
-
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
+    try {
+      dispatch(updateNode({ id, data: { status: "starting" } }));
+      await addVPC();
+      const volumeHandle = await addCluster();
+      dispatch(updateNode({ id, data: { volumeHandle, status: "running" } }));
+    } catch (error) {
+      console.error("Error in handleClickStart:", error);
       dispatch(updateNode({ id, data: { status: null } }));
-    }, 1000);
+    }
+
+    // Add 1 second delay to simulate fetch request
+    // setTimeout(() => {
+    //   dispatch(updateNode({ id, data: { status: "running" } }));
+    // }, 1000);
   };
 
-  const getConnectedPods = () => {
-    const edges = state.edges.filter((edge) => edge.source === id);
-    return state.edges
-      .filter((edge) => edge.source === id)
-      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+  const handleClickStop = async () => {
+    // Set status to "stopping"
+    dispatch(updateNode({ id, data: { status: "stopping" } }));
+    // Delete cluster
+    await deleteCluster();
+    // Delete VPC if there are no other running clusters in project
+    const nodes = state.nodes.filter(
+      (node) => node.type === "cluster" && node.projectId === state.projectId
+    );
+    if (!nodes) await deleteVPC();
+    // Set status to null
+    dispatch(updateNode({ id, data: { status: null } }));
+
+    // Add 1 second delay to simulate fetch request
+    // setTimeout(() => {
+    //   dispatch(updateNode({ id, data: { status: null } }));
+    // }, 1000);
   };
 
   const countDeployedPods = () => {
-    const childNodes = getConnectedPods();
+    const childNodes = state.edges
+      // Get child edges
+      .filter((edge) => edge.source === id)
+      // Get child nodes
+      .map((edge) => state.nodes.find((node) => node.id === edge.target));
     return childNodes.filter((node) => node.data.status === "running").length;
   };
 
@@ -147,11 +231,9 @@ export default function ({ id, data, isConnectable }) {
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() =>
-                  dispatch(updateNode({ id, data: { status: "running" } }))
-                }
+                onClick={() => deleteVPC()}
               >
-                Reset Status
+                Delete VPC
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
@@ -184,9 +266,11 @@ export default function ({ id, data, isConnectable }) {
             Start Instance
           </button>
         ) : data.status === "starting" ? (
-          <button className="button busy nodrag">Starting instance...</button>
+          <button className="button busy nodrag">
+            Starting... (will take time)
+          </button>
         ) : data.status === "stopping" ? (
-          <button className="button busy nodrag">Stopping instance...</button>
+          <button className="button busy nodrag">Stopping...</button>
         ) : (
           <>
             <div
