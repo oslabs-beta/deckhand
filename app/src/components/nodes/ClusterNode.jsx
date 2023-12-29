@@ -129,8 +129,10 @@ export default function ({ id, data, isConnectable }) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
 
-      const data = await res.json();
-      return data.volumeHandle;
+      const fetchData = await res.json();
+      const awsClusterName = fetchData.awsClusterName;
+      const volumeHandle = fetchData.volumeHandle;
+      return { awsClusterName, volumeHandle };
     } catch (error) {
       console.error("Error in addCluster:", error);
       throw error; // Re-throw the error to be handled in parent function
@@ -166,8 +168,13 @@ export default function ({ id, data, isConnectable }) {
     try {
       dispatch(updateNode({ id, data: { status: "starting" } }));
       await addVPC();
-      const volumeHandle = await addCluster();
-      dispatch(updateNode({ id, data: { volumeHandle, status: "running" } }));
+      const { awsClusterName, volumeHandle } = await addCluster();
+      dispatch(
+        updateNode({
+          id,
+          data: { awsClusterName, volumeHandle, status: "running" },
+        })
+      );
     } catch (error) {
       console.error("Error in handleClickStart:", error);
       dispatch(updateNode({ id, data: { status: null } }));
@@ -231,9 +238,27 @@ export default function ({ id, data, isConnectable }) {
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="dropdown-item"
+                onClick={() => addVPC()}
+              >
+                Add VPC
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
                 onClick={() => deleteVPC()}
               >
                 Delete VPC
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => addCluster()}
+              >
+                Add Cluster
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => deleteCluster()}
+              >
+                Delete Cluster
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
