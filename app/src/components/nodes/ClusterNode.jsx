@@ -6,8 +6,6 @@ import {
   updateNode,
   deleteNode,
   updateEdge,
-  deleteEdge,
-  configureProject,
 } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDotsHexagon } from "@mdi/js";
@@ -158,44 +156,57 @@ export default function ({ id, data, isConnectable }) {
   };
 
   const handleClickStart = async () => {
-    try {
+    if (state.user.demoMode) {
       dispatch(updateNode({ id, data: { status: "starting" } }));
-      await addVPC();
-      const { awsClusterName, volumeHandle } = await addCluster();
-      dispatch(
-        updateNode({
-          id,
-          data: { awsClusterName, volumeHandle, status: "running" },
-        })
-      );
-    } catch (error) {
-      console.error("Error in handleClickStart:", error);
-      dispatch(updateNode({ id, data: { status: null } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: "running" } }));
+      }, 1000);
+    } else {
+      try {
+        dispatch(updateNode({ id, data: { status: "starting" } }));
+        await addVPC();
+        const { awsClusterName, volumeHandle } = await addCluster();
+        dispatch(
+          updateNode({
+            id,
+            data: { awsClusterName, volumeHandle, status: "running" },
+          })
+        );
+      } catch (error) {
+        console.error("Error in handleClickStart:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
     }
-
-    // Add 1 second delay to simulate fetch request
-    // setTimeout(() => {
-    //   dispatch(updateNode({ id, data: { status: "running" } }));
-    // }, 1000);
   };
 
   const handleClickStop = async () => {
-    // Set status to "stopping"
-    dispatch(updateNode({ id, data: { status: "stopping" } }));
-    // Delete cluster
-    await deleteCluster();
-    // Delete VPC if there are no other running clusters in project
-    const nodes = state.nodes.filter(
-      (node) => node.type === "cluster" && node.projectId === state.projectId
-    );
-    if (!nodes) await deleteVPC();
-    // Set status to null
-    dispatch(updateNode({ id, data: { status: null } }));
+    if (state.user.demoMode) {
+      dispatch(updateNode({ id, data: { status: "stopping" } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: null } }));
+      }, 1000);
+    } else {
+      try {
+        // Set status to "stopping"
+        dispatch(updateNode({ id, data: { status: "stopping" } }));
 
-    // Add 1 second delay to simulate fetch request
-    // setTimeout(() => {
-    //   dispatch(updateNode({ id, data: { status: null } }));
-    // }, 1000);
+        // Delete cluster
+        await deleteCluster();
+
+        // Delete VPC if there are no other running clusters in project
+        const nodes = state.nodes.filter(
+          (node) =>
+            node.type === "cluster" && node.projectId === state.projectId
+        );
+        if (!nodes) await deleteVPC();
+
+        // Set status to null
+        dispatch(updateNode({ id, data: { status: null } }));
+      } catch (error) {
+        console.error("Error in handleClickStop:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
   };
 
   const countDeployedPods = () => {
