@@ -325,22 +325,22 @@ githubController.findExposedPort = (req, res, next) => {
   execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
   const repoPath = path.join(tempsPath, repoName);
 
-  let port = undefined;
+  let exposedPort;
   try {
     const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
     const regex = /expose\s+(\d+)/i;
-    port = Number(regex.exec(dockerfile)[1]);
+    exposedPort = Number(regex.exec(dockerfile)[1]);
   } catch {
     console.log('failed to find dockerfile');
-    res.locals.port = undefined;
+    exposedPort = undefined;
   }
 
   // Delete cloned repo
   execSync(`cd ${tempsPath} && rm -r ${repoName}`);
 
-  console.log('Scanned for exposed port and found:', port);
+  console.log('Scanned for exposed port and found:', exposedPort);
 
-  res.locals.port = port;
+  res.locals.data = { exposedPort };
   return next();
 };
 
