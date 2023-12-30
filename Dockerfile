@@ -41,6 +41,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
+RUN npm run tf-init
 
 # Bundle app source
 COPY . .
