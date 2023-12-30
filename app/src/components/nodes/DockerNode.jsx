@@ -99,7 +99,7 @@ export default function ({ id, data, isConnectable }) {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const fetchData = await res.json();
-      return fetchData.exposedPort;
+      return fetchData.exposedPort || "8080";
     } catch (error) {
       console.log("Error in getDockerHubExposedPort", error);
       throw error; // Re-throw the error to be handled in parent function
@@ -203,7 +203,7 @@ export default function ({ id, data, isConnectable }) {
         // Set status to "stopping"
         dispatch(updateNode({ id, data: { status: "stopping" } }));
 
-        // Delete cluster
+        // Delete pod
         await deletePod();
 
         // Set status to null
@@ -279,6 +279,18 @@ export default function ({ id, data, isConnectable }) {
                 }
               >
                 Show YAML
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={handleClickStart}
+              >
+                Redeploy
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={handleClickStop}
+              >
+                Force Stop
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
