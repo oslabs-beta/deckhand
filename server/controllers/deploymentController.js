@@ -123,6 +123,10 @@ deploymentController.addCluster = async (req, res, next) => {
   const nodeGroupName = 'ng-' + clusterId; // must be 1-38 characters
 
   try {
+    // Create cluster directory
+    console.log(`Creating cluster directory`);
+    await execAsync(`mkdir -p ${clusterPath}`);
+
     // Copy EKS terraform config to cluster directory
     console.log('Copying eks.tf file to cluster directory');
     await execAsync(`cp ${path.join('server', 'templates', 'eks.tf')} ${path.join(clusterPath, `eks.tf`)}`);

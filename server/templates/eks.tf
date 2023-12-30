@@ -39,7 +39,7 @@ module "eks" {
   # next two lines are a copy and paste from terraform docs. This tells terraform what the module is
   # source  = "terraform-aws-modules/eks/aws"
   # version = "19.20.0"
-  source = "../../../.terraform/modules/eks"
+  source = "../../../../.terraform/modules/eks"
 
   cluster_name   = var.clusterName
   cluster_version = "1.28"
