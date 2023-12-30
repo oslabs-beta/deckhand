@@ -43,6 +43,9 @@ export default function ({ id, data, isConnectable }) {
     .filter((edge) => edge.source === id)
     .map((edge) => state.nodes.find((node) => node.id === edge.target));
 
+  // Find connected nodes
+  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+
   useEffect(() => {
     (async () => {
       await fetch("/api/github/branches", {
@@ -109,7 +112,10 @@ export default function ({ id, data, isConnectable }) {
 
       const fetchData = await res.json();
       dispatch(
-        updateNode({ id, data: { exposedPort: fetchData.exposedPort } })
+        updateNode({
+          id,
+          data: { exposedPort: fetchData.exposedPort || "3000" },
+        })
       );
       return;
     } catch (error) {
@@ -140,6 +146,7 @@ export default function ({ id, data, isConnectable }) {
         updateNode({
           id,
           data: {
+            awsRepo: fetchData.awsRepo,
             imageName: fetchData.imageName,
             imageTag: fetchData.imageTag,
           },
@@ -152,12 +159,53 @@ export default function ({ id, data, isConnectable }) {
     }
   };
 
+  const deleteImage = async () => {
+    try {
+      const res = await fetch("/api/deployment/deleteImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          awsRepo: data.awsRepo,
+          imageName: data.imageName,
+          imageTag: data.imageTag,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      const fetchData = await res.json();
+      dispatch(
+        updateNode({
+          id,
+          data: {
+            awsRepo: null,
+            imageName: null,
+            imageTag: null,
+          },
+        })
+      );
+      return;
+    } catch (error) {
+      console.log("Error in deleteImage", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
   const handleClickBuild = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
       dispatch(updateNode({ id, data: { status: "building" } }));
       setTimeout(() => {
-        dispatch(updateNode({ id, data: { status: null } }));
+        dispatch(
+          updateNode({
+            id,
+            data: { imageName: "demo", imageTag: "demo", status: null },
+          })
+        );
       }, 1000);
     } else {
       try {
@@ -174,8 +222,40 @@ export default function ({ id, data, isConnectable }) {
         dispatch(updateNode({ id, data: { status: null } }));
       } catch (error) {
         console.error("Error in handleClickBuild:", error);
-        dispatch(updateNode({ id, data: { status: null } }));
+        dispatch(
+          updateNode({
+            id,
+            data: { imageName: null, imageTag: null, status: null },
+          })
+        );
       }
+    }
+  };
+
+  const getURL = async () => {
+    try {
+      const res = await fetch("/api/deployment/getURL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          clusterName: cluster.awsClusterName,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const fetchData = await res.json();
+      const url = fetchData.url;
+      dispatch(updateNode({ id, data: { url } }));
+    } catch (error) {
+      console.error("Error in handleClickStart:", error);
     }
   };
 
@@ -185,6 +265,8 @@ export default function ({ id, data, isConnectable }) {
       dispatch(updateNode({ id, data: { status: "deploying" } }));
       setTimeout(() => {
         dispatch(updateNode({ id, data: { status: "running" } }));
+        if (ingress)
+          dispatch(updateNode({ id, data: { url: "http://example.com" } }));
       }, 1000);
     } else {
       try {
@@ -205,6 +287,9 @@ export default function ({ id, data, isConnectable }) {
 
         // Deploy pod
         await deployPod();
+
+        // Get URL if ingress connected
+        if (ingress) await getURL();
 
         // Update status
         dispatch(updateNode({ id, data: { status: "running" } }));
@@ -235,6 +320,9 @@ export default function ({ id, data, isConnectable }) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
 
+      // Set URL to null
+      dispatch(updateNode({ id, data: { url: null } }));
+
       return;
     } catch (error) {
       console.error("Error in deletePod:", error);
@@ -246,14 +334,17 @@ export default function ({ id, data, isConnectable }) {
     if (state.user.demoMode) {
       dispatch(updateNode({ id, data: { status: "stopping" } }));
       setTimeout(() => {
-        dispatch(updateNode({ id, data: { status: null } }));
+        dispatch(updateNode({ id, data: { url: null, status: null } }));
       }, 1000);
     } else {
       try {
         // Set status to "stopping"
         dispatch(updateNode({ id, data: { status: "stopping" } }));
 
-        // Delete cluster
+        // Delete image
+        await deleteImage();
+
+        // Delete pod
         await deletePod();
 
         // Set status to null
@@ -330,6 +421,12 @@ export default function ({ id, data, isConnectable }) {
               >
                 Redeploy
               </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={handleClickStop}
+              >
+                Force Stop
+              </DropdownMenu.Item>
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
@@ -402,7 +499,7 @@ export default function ({ id, data, isConnectable }) {
             </select>
             {data.status === "building" ? (
               <button className="button busy nodrag">Building...</button>
-            ) : !data.build ? (
+            ) : !data.imageName || !data.imageTag ? (
               <button className="button nodrag" onClick={handleClickBuild}>
                 Build
               </button>
