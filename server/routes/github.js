@@ -39,7 +39,7 @@ router.post('/scan', githubController.scanRepo, (req, res) => {
   res.status(200).json(res.locals.envs);
 });
 
-router.post('/scanPort', githubController.findExposedPort, (req, res) => {
+router.post('/findExposedPort', githubController.findExposedPort, (req, res) => {
   res.status(200).json(res.locals.port);
 });
 
