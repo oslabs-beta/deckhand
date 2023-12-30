@@ -6,6 +6,10 @@ As an open source product, we welcome contributions!
 
 If you've found a bug, please let us know. You can do so from the GitHub repository by clicking the "issues" tab. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. And if you think you can fix the bug yourself, go ahead and submit a pull request with the fix!
 
+### Initialization
+
+If you are cloning this repo you must run ```npm install``` and ```npm run tf-init``` to download all the necessary dependencies. 
+
 ### Pull Requests
 
 All code changes happen through GitHub Pull Requests and we actively welcome them. To submit your pull request, follow the steps below:
