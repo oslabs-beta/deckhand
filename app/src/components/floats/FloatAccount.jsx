@@ -53,6 +53,14 @@ export default function FloatAccount() {
           className="dropdown"
           onClick={(e) => e.stopPropagation()}
         >
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              dispatch(showModal({ name: "LinkedCloudProviders" }));
+            }}
+          >
+            Link AWS Account
+          </DropdownMenu.Item>
           {state.user.theme === "light" || !state.user.theme ? (
             <DropdownMenu.Item
               className="dropdown-item"
@@ -74,14 +82,25 @@ export default function FloatAccount() {
               Switch to Light Mode
             </DropdownMenu.Item>
           )}
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onClick={() => {
-              dispatch(showModal({ name: "LinkedCloudProviders" }));
-            }}
-          >
-            Link AWS Account
-          </DropdownMenu.Item>
+          {!state.user.demoMode ? (
+            <DropdownMenu.Item
+              className="dropdown-item"
+              onClick={() => {
+                dispatch(setUser({ demoMode: true }));
+              }}
+            >
+              Enable Demo Mode
+            </DropdownMenu.Item>
+          ) : (
+            <DropdownMenu.Item
+              className="dropdown-item"
+              onClick={() => {
+                dispatch(setUser({ demoMode: false }));
+              }}
+            >
+              Disable Demo Mode
+            </DropdownMenu.Item>
+          )}
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() => {
