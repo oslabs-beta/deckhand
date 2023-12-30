@@ -3,7 +3,7 @@ variable "clusterName" {
   type = string
 }
 
-variable "nodeGroupName" { // this can be made by us, as clustername plus a number
+variable "nodeGroupName" { 
   type = string
 }
 
@@ -49,8 +49,6 @@ module "eks" {
 
   vpc_id                   = var.vpcId 
   subnet_ids               = var.private_subnets
-  # subnet_ids               = module.vpc.private_subnets  // need to find these ids 
-  # control_plane_subnet_ids = ["10.123.5.0/24", "10.123.6.0/24"] // these are the intra subnets
 
   enable_irsa = true
 
@@ -64,35 +62,9 @@ module "eks" {
     vpc-cni = {
       most_recent = true
     }
-    # efs-csi = {
-    #   most_recent = true
-    # }
+
   }
-
-
-
-
-  # ##### EVERYTHING HERE ADDED TO TEST IF ADDS CSI DRIVER #####
-  # # Enable the EFS CSI Driver add-on
-  # manage_aws_auth = true
-  # map_roles = [
-  #   {
-  #     rolearn  = "${module.eks_cluster.worker_iam_role_arn}"
-  #     username = "system:node:{{EC2PrivateDNSName}}"
-  #     groups   = ["system:bootstrappers", "system:nodes"]
-  #   }
-  # ]
-  
-  # additional_tags = {
-  #   Terraform = "true"
-  #   Environment = "production"
-  # }
-
-  # # Enable EFS CSI Driver add-on
-  # efs_csi_provider = {
-  #   enabled = true
-  # }
-  # ################## END #################  
+ 
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
@@ -107,7 +79,6 @@ module "eks" {
       desired_size = var.desired
 
       instance_types = [var.instanceType]
-      // capacity_type  = "SPOT" // options are spot or on-demand ... I don't yet understand the difference
      
       
     }
@@ -126,10 +97,6 @@ provider "helm" {
     }
   }
 }
-
-########################
-#  EKS DRIVER FOR EFS  #
-########################
 
 resource "helm_release" "aws_efs_csi_driver" {
   chart      = "aws-efs-csi-driver"
@@ -172,22 +139,7 @@ module "attach_efs_csi_role" {
   }
 }
 
-##########################
-#############################
 
-# module "efs_csi_driver" {
-#   source = "git::https://github.com/DNXLabs/terraform-aws-eks-efs-csi-driver.git"
-
-#   # cluster_name                     = module.eks_cluster.cluster_id
-#   # cluster_identity_oidc_issuer     = module.eks_cluster.cluster_oidc_issuer_url
-#   # cluster_identity_oidc_issuer_arn = module.eks_cluster.oidc_provider_arn
-
-#   cluster_name                     = module.eks.cluster_id
-#   cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
-#   cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
-# }
-
-// Provisioning one EFS per cluster. Can be called upon by mutiple Persistent Volume Claims
 resource "aws_security_group" "efs" {
   name        = "${var.clusterName}-efs"
   description = "Allow traffic"

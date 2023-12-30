@@ -12,7 +12,7 @@ variable "secretKey" {
 
 provider "aws" {
   region = var.region
-  access_key = var.accessKey # access in AWS profile under "my securty credentials" Then create new access key 
+  access_key = var.accessKey 
   secret_key = var.secretKey
 }
 
