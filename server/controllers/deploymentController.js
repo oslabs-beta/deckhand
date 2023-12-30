@@ -45,8 +45,7 @@ deploymentController.addVPC = async (req, res, next) => {
 
     // Create variables file for VPC
     console.log('Creating vpc.auto.tfvars.json');
-    await fs.writeFile(
-      `${projectPath}/vpc.auto.tfvars.json`,
+    await fs.writeFile(path.join(projectPath, 'vpc.auto.tfvars.json'),
       JSON.stringify({
         vpc_name: vpcName
       })
@@ -117,18 +116,13 @@ deploymentController.addCluster = async (req, res, next) => {
     desiredNodes,
   } = req.body;
   const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
-  // const clusterPath = path.join(projectPath, `cluster${clusterId}`);
-  const awsClusterName = clusterName.replace(/[^A-Z0-9]/gi, '-') + clusterId;
-  const nodeGroupName = 'node-group-' + awsClusterName;
+  const awsClusterName = clusterName.replace(/[^A-Z0-9]/gi, '').slice(0, 20) + clusterId;
+  const nodeGroupName = 'ng-' + clusterId; // must be 1-38 characters
 
   try {
-    // Create cluster directory
-    // console.log(`Creating cluster directory`);
-    // await execAsync(`mkdir -p ${clusterPath}`);
-
     // Copy EKS terraform config to project directory
     console.log('Copying eks.tf file to project directory');
-    await execAsync(`cp server/templates/eks.tf ${projectPath}/eks-${awsClusterName}.tf`);
+    await execAsync(`cp ${path.join('server', 'templates', 'eks.tf')} ${path.join(projectPath, `eks-${awsClusterName}.tf`)}`);
 
     // Get VPC outputs
     console.log('Getting VPC outputs');
@@ -138,8 +132,7 @@ deploymentController.addCluster = async (req, res, next) => {
 
     // Create variables file for EKS
     console.log('Creating eks.auto.tfvars.json');
-    await fs.writeFile(
-      `${projectPath}/eks.auto.tfvars.json`,
+    await fs.writeFile(path.join(projectPath, 'eks.auto.tfvars.json'),
       JSON.stringify({
         clusterName: awsClusterName,
         vpcId,
@@ -182,16 +175,16 @@ deploymentController.addCluster = async (req, res, next) => {
 
 deploymentController.deleteCluster = async (req, res, next) => {
   const { userId, projectId, clusterId } = req.body;
-  const clusterPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`, `cluster${clusterId}`);
+  const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
 
   try {
     // Destroy the cluster
     console.log('Destroying cluster');
-    await execAsync(`cd ${clusterPath} && terraform destroy --auto-approve`);
+    await execAsync(`cd ${projectPath} && terraform destroy --auto-approve`);
 
     // Remove cluster directory
     console.log('Removing cluster directory')
-    await fs.rm(clusterPath, { recursive: true });
+    await fs.rm(projectPath, { recursive: true });
 
     // Log success and continue
     console.log('Cluster deleted successfully')
