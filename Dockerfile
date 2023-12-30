@@ -41,10 +41,12 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
-RUN npm run tf-init
 
 # Bundle app source
 COPY . .
+
+# Install terraform modules
+RUN npm run tf-init
 
 # Build the React app
 RUN npm run build
