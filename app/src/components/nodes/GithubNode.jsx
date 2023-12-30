@@ -38,6 +38,11 @@ export default function ({ id, data, isConnectable }) {
   const clusterEdge = state.edges.find((edge) => edge.target === id);
   const cluster = state.nodes.find((node) => node.id === clusterEdge?.source);
 
+  // Find connected nodes
+  const connectedNodes = state.edges
+    .filter((edge) => edge.source === id)
+    .map((edge) => state.nodes.find((node) => node.id === edge.target));
+
   useEffect(() => {
     (async () => {
       await fetch("/api/github/branches", {
@@ -88,109 +93,176 @@ export default function ({ id, data, isConnectable }) {
     );
   };
 
-  const handleClickBuild = async () => {
-    dispatch(updateNode({ id, data: { status: "building" } }));
+  const findExposedPort = async () => {
+    try {
+      const res = await fetch("/api/github/findExposedPort", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          repo: data.githubRepo,
+          branch: data.githubBranch,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-    setTimeout(() => {
+      const fetchData = await res.json();
+      dispatch(
+        updateNode({ id, data: { exposedPort: fetchData.exposedPort } })
+      );
+      return;
+    } catch (error) {
+      console.log("Error in findExposedPort", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const buildImage = async () => {
+    try {
+      const res = await fetch("/api/deployment/buildImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          repo: data.githubRepo,
+          branch: data.githubBranch,
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      const fetchData = await res.json();
       dispatch(
         updateNode({
           id,
-          data: { status: null, build: true },
+          data: {
+            imageName: fetchData.imageName,
+            imageTag: fetchData.imageTag,
+          },
         })
       );
-    }, 1000);
-
-    // await fetch("/api/deployment/build", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     repo: data.githubRepo,
-    //     branch: data.githubBranch,
-    //     awsAccessKey: state.user.awsAccessKey,
-    //     awsSecretKey: state.user.awsSecretKey,
-    //     vpcRegion: project.vpcRegion,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     dispatch(
-    //       updateNode({
-    //         id,
-    //         data: {
-    //           status: null,
-    //           build: true,
-    //           imageName: data.imageName,
-    //           imageTag: data.imageTag,
-    //         },
-    //       })
-    //     );
-    //   })
-    //   .catch((err) => console.log(err));
+      return;
+    } catch (error) {
+      console.log("Error in buildImage", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
   };
 
-  const generateYaml = () => {
-    // Find connected nodes
-    const connectedNodes = state.edges
-      .filter((edge) => edge.source === id)
-      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+  const handleClickBuild = async () => {
+    if (state.user.demoMode) {
+      // Simulate activity if demo mode enabled
+      dispatch(updateNode({ id, data: { status: "building" } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: null } }));
+      }, 1000);
+    } else {
+      try {
+        // Update status
+        dispatch(updateNode({ id, data: { status: "building" } }));
 
-    return createYaml.all(
-      data,
-      connectedNodes,
-      data.exposedPort || 3000,
-      cluster.volumeHandle || "(GENERATED DURING DEPLOYMENT)",
-      project.vpcRegion || "(GENERATED DURING DEPLOYMENT)"
-    );
+        // Build image
+        await buildImage();
+
+        // Find exposed port
+        await findExposedPort();
+
+        // Update status
+        dispatch(updateNode({ id, data: { status: null } }));
+      } catch (error) {
+        console.error("Error in handleClickBuild:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
   };
 
   const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: "deploying" } }));
-
-    const yaml = generateYaml();
-    // console.log(yaml);
-
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: "running" } }));
-    }, 1000);
-
-    await fetch("/api/deployment/configureCluster", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        provider: project.provider,
-        awsAccessKey: state.user.awsAccessKey,
-        awsSecretKey: state.user.awsSecretKey,
-        vpcRegion: project.vpcRegion,
-        vpcId: cluster.data.vpcId,
-        clusterName: "4197_ideastation" || cluster.data.name,
-        yaml: yaml,
-      }),
-    })
-      .then((res) => res.json())
-      .then((ingressUrl) => {
-        // TODO: put this ingressUrl into the state
-        console.log("should change status");
+    if (state.user.demoMode) {
+      // Simulate activity if demo mode enabled
+      dispatch(updateNode({ id, data: { status: "deploying" } }));
+      setTimeout(() => {
         dispatch(updateNode({ id, data: { status: "running" } }));
-        const edges = state.edges.filter((edge) => edge.source === id);
-        edges.map((edge) =>
-          dispatch(updateEdge({ id: edge.id, animated: true }))
+      }, 1000);
+    } else {
+      try {
+        // Update status
+        dispatch(updateNode({ id, data: { status: "deploying" } }));
+
+        // Get exposed port
+        const exposedPort = await getDockerHubExposedPort();
+
+        // Create YAML
+        const yaml = createYaml.all(
+          data,
+          connectedNodes,
+          exposedPort,
+          cluster.volumeHandle,
+          project.vpcRegion
         );
-      })
-      .catch((err) => console.log(err));
+
+        // Deploy pod
+        await deployPod();
+
+        // Update status
+        dispatch(updateNode({ id, data: { status: "running" } }));
+      } catch (error) {
+        console.error("Error in handleClickStart:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
   };
 
-  const handleClickStop = () => {
-    dispatch(updateNode({ id, data: { status: "stopping" } }));
+  const deletePod = async () => {
+    try {
+      const res = await fetch("/api/deployment/deletePod", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          awsClusterName: cluster.awsClusterName,
+          podName: data.name,
+        }),
+      });
 
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: null } }));
-    }, 1000);
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Error in deletePod:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const handleClickStop = async () => {
+    if (state.user.demoMode) {
+      dispatch(updateNode({ id, data: { status: "stopping" } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: null } }));
+      }, 1000);
+    } else {
+      try {
+        // Set status to "stopping"
+        dispatch(updateNode({ id, data: { status: "stopping" } }));
+
+        // Delete cluster
+        await deletePod();
+
+        // Set status to null
+        dispatch(updateNode({ id, data: { status: null } }));
+      } catch (error) {
+        console.error("Error in handleClickStop:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
   };
 
   return (
