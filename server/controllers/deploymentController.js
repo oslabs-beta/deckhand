@@ -7,6 +7,7 @@ const execAsync = util.promisify(exec);
 const deploymentController = {};
 
 deploymentController.addVPC = async (req, res, next) => {
+  console.log('\n/api/deployment/addVPC:')
   const {
     userId,
     awsAccessKey,
@@ -71,6 +72,7 @@ deploymentController.addVPC = async (req, res, next) => {
 };
 
 deploymentController.deleteVPC = async (req, res, next) => {
+  console.log('\n/api/deployment/deleteVPC:')
   const { userId, projectId } = req.body;
   const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
 
@@ -102,6 +104,7 @@ deploymentController.deleteVPC = async (req, res, next) => {
 };
 
 deploymentController.addCluster = async (req, res, next) => {
+  console.log('\n/api/deployment/addCluster:')
   const {
     userId,
     awsAccessKey,
@@ -174,6 +177,7 @@ deploymentController.addCluster = async (req, res, next) => {
 };
 
 deploymentController.deleteCluster = async (req, res, next) => {
+  console.log('\n/api/deployment/deleteCluster:')
   const { userId, projectId, clusterId } = req.body;
   const projectPath = path.join('server', 'terraform', 'userData', `user${userId}`, `project${projectId}`);
 
@@ -199,6 +203,7 @@ deploymentController.deleteCluster = async (req, res, next) => {
 
 // Dockerize github repo and push to AWS ECR
 deploymentController.buildImage = async (req, res, next) => {
+  console.log('\n/api/deployment/buildImage:')
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
@@ -241,6 +246,7 @@ deploymentController.buildImage = async (req, res, next) => {
 };
 
 deploymentController.deleteImage = async (req, res, next) => {
+  console.log('\n/api/deployment/deleteImage:')
   const { awsAccessKey, awsSecretKey, vpcRegion, repo, imageName, imageTag } =
     req.body;
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
@@ -268,6 +274,7 @@ deploymentController.deleteImage = async (req, res, next) => {
 };
 
 deploymentController.deployPod = async (req, res, next) => {
+  console.log('\n/api/deployment/deployPod:')
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, yaml } = req.body;
 
   try {
@@ -301,6 +308,7 @@ deploymentController.deployPod = async (req, res, next) => {
 };
 
 deploymentController.deletePod = async (req, res, next) => {
+  console.log('\n/api/deployment/deletePod:')
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } = req.body;
 
   try {
@@ -329,6 +337,7 @@ deploymentController.deletePod = async (req, res, next) => {
 };
 
 deploymentController.getURL = async (req, res, next) => {
+  console.log('\n/api/deployment/getURL:')
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
   try {
