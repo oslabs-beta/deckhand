@@ -2,18 +2,10 @@ const { execSync, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const db = require('../database/model.js');
+const db = require('../database/dbConnect.js');
 
-let GITHUB_CLIENT_ID;
-let GITHUB_CLIENT_SECRET;
-if (process.env.NODE_ENV === 'production') {
-  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID_PROD;
-  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET_PROD;
-} else {
-  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-}
-
+const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_SECRET_PROD : process.env.GITHUB_CLIENT_SECRET;
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 

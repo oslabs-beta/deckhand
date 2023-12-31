@@ -1,7 +1,7 @@
-const db = require('../database/model.js');
-const { execSync, exec } = require('child_process');
+const db = require('../database/dbConnect.js');
+const { exec } = require('child_process');
 const util = require('util');
-const execProm = util.promisify(exec);
+const execAsync = util.promisify(exec);
 
 const apiController = {};
 
@@ -67,13 +67,13 @@ apiController.getDockerHubExposedPort = async (req, res, next) => {
 
   // Pull docker image
   try {
-    await execProm(`docker image pull --platform linux/amd64 ${imageName}:${imageTag}`);
+    await execAsync(`docker image pull --platform linux/amd64 ${imageName}:${imageTag}`);
   } catch {
     return 'Wrong type of image architecture';
   }
 
   // Inspect image for exposed port
-  const imageInfoRaw = await execProm(`docker image inspect ${imageName}:${imageTag} -f json`);
+  const imageInfoRaw = await execAsync(`docker image inspect ${imageName}:${imageTag} -f json`);
   const imageInfo = JSON.parse(imageInfoRaw.stdout);
   const exposedPortObj = imageInfo[0].Config.ExposedPorts;
   const exposedPortKey = Object.keys(exposedPortObj);
