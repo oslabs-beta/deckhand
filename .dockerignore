@@ -2,6 +2,7 @@
 /__tests__
 /.github
 /website
+/site
 .gitignore
 fly.toml
 Dockerfile

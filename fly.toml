@@ -15,3 +15,7 @@ primary_region = "ewr"
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 1024
+
+[[mounts]]
+  source = "userdata_volume"
+  destination = "/usr/src/app/server/terraform/userData"
