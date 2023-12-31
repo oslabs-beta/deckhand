@@ -4,9 +4,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: './app/src/index.js',
+  entry: path.join(__dirname, 'app', 'src', 'index.js'),
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.join(__dirname, 'build'),
     filename: 'index_bundle.js',
   },
   target: 'web',
@@ -14,7 +14,7 @@ module.exports = {
     host: '0.0.0.0',
     port: 8080,
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, 'app', 'public'),
     },
     hot: true,
     proxy: {
@@ -40,11 +40,11 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, './public/index.html'),
+      template: path.join(__dirname, 'app', 'public', 'index.html'),
     }),
     new CopyPlugin({
       patterns: [
-        { from: 'public/icons', to: 'icons' }
+        { from: path.join('app', 'public', 'icons'), to: 'icons' }
       ],
     }),
   ],
