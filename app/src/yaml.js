@@ -313,8 +313,8 @@ createYaml.all = (
   );
   yamlArr.push(createYaml.service(name, exposedPort, port));
   if (ingress) yamlArr.push(createYaml.ingress(name, port));
-  if (configMapData.length) yamlArr.push(createYaml.configMap(name, variables));
-  if (secretData.length) yamlArr.push(createYaml.secret(name, variables));
+  if (configMapData?.length) yamlArr.push(createYaml.configMap(name, variables));
+  if (secretData?.length) yamlArr.push(createYaml.secret(name, variables));
   if (volume) yamlArr.push(createYaml.persistentVolume(name, volumeHandle));
   if (volume) yamlArr.push(createYaml.persistentVolumeClaim(name));
   if (volume)

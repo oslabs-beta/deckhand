@@ -1,24 +1,23 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: './app/src/index.js',
+  entry: path.join(__dirname, 'app', 'src', 'index.js'),
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.join(__dirname, 'build'),
     filename: 'index_bundle.js',
   },
   target: 'web',
   devServer: {
     host: '0.0.0.0',
-    // port: 8080 by default
+    port: 8080,
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, 'app', 'public'),
     },
     hot: true,
     proxy: {
-      // list every endpoint
       '/api': 'http://localhost:3000'
     },
   },
@@ -31,7 +30,6 @@ module.exports = {
       },
       {
         test: /.(css|scss)$/,
-        // exclude: /node_modules/,
         use: ['style-loader', 'css-loader', 'sass-loader'], // order reads right to left (turns sass files to css to style string)
       },
       {
@@ -42,13 +40,15 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, './app/public/index.html'),
-    })
+      template: path.join(__dirname, 'app', 'public', 'index.html'),
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: path.join('app', 'public', 'icons'), to: 'icons' }
+      ],
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
   },
-  // watchOptions: {
-  //   ignored: [path.resolve(__dirname, './server/toDocker')]
-  // }
 };

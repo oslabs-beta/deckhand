@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import { showModal, deleteNode } from "../../deckhandSlice";
+import { showModal, deleteNode, deleteEdge } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDatabase } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -15,6 +15,7 @@ export default function ({ id, data, isConnectable }) {
       <Handle
         type="target"
         position={Position.Top}
+        id="a"
         isConnectable={isConnectable}
       />
       <div>
@@ -40,7 +41,9 @@ export default function ({ id, data, isConnectable }) {
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(deleteNode(id))}
+                onClick={() => {
+                  dispatch(deleteNode(id));
+                }}
               >
                 Delete
               </DropdownMenu.Item>
@@ -60,12 +63,6 @@ export default function ({ id, data, isConnectable }) {
           Configure
         </button>
       </div>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="b"
-        isConnectable={isConnectable}
-      />
     </div>
   );
 }

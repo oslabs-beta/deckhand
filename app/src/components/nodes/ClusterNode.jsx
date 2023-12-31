@@ -1,153 +1,272 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position } from 'reactflow';
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Handle, Position } from "reactflow";
 import {
   showModal,
   updateNode,
   deleteNode,
   updateEdge,
-  configureProject,
-} from '../../deckhandSlice';
-import Icon from '@mdi/react';
-import { mdiDotsVertical, mdiDotsHexagon } from '@mdi/js';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+} from "../../deckhandSlice";
+import Icon from "@mdi/react";
+import { mdiDotsVertical, mdiDotsHexagon } from "@mdi/js";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
-  const handleClickStart = async () => {
-    dispatch(updateNode({ id, data: { status: 'creating' } }));
+  let project = state.projects.find(
+    (project) => project.projectId === state.projectId
+  );
 
-    let project = state.projects.find(
-      (project) => project.projectId === state.projectId
-    );
+  useEffect(() => {
+    state.edges
+      // Get child edges
+      .filter((edge) => edge.source === id)
+      // Animate edges if node is running
+      .forEach((edge) =>
+        dispatch(
+          updateEdge({
+            id: edge.id,
+            animated: data.status === "running",
+          })
+        )
+      );
+  }, [state.edges, data]);
 
-    let node = state.nodes.find((node) => node.id === id);
+  const addVPC = async () => {
+    // Add VPC (if no clusters are running)
+    if (
+      state.nodes.filter(
+        (node) => node.type === "cluster" && node.data.status !== null
+      ).length
+    ) {
+      try {
+        const res = await fetch("/api/deployment/addVPC", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: state.user.id,
+            awsAccessKey: state.user.awsAccessKey,
+            awsSecretKey: state.user.awsSecretKey,
+            projectId: project.projectId,
+            projectName: project.name,
+            vpcRegion: project.vpcRegion,
+          }),
+        });
 
-    let data;
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+      } catch (error) {
+        console.error("Error in addVPC:", error);
+        throw error; // Re-throw the error to be handled in parent function
+      }
+    } else {
+      return;
+    }
+  };
 
-    if (!project.vpcId) {
-      let res = await fetch('/api/deployment/addVPC', {
-        method: 'POST',
+  const deleteVPC = async () => {
+    try {
+      const res = await fetch("/api/deployment/deleteVPC", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          provider: project.provider,
-          name: project.name,
-          vpcRegion: project.vpcRegion,
-          awsAccessKey: state.user.awsAccessKey,
-          awsSecretKey: state.user.awsSecretKey,
           userId: state.user.id,
           projectId: project.projectId,
-          projectName: project.name,
         }),
       });
-      data = await res.json();
-      console.log('VPC Done! ID:', data.externalId);
-      dispatch(
-        configureProject({
-          projectId: project.projectId,
-          vpcId: data.externalId,
-        })
-      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Error in deleteVPC:", error);
+      throw error; // Re-throw the error to be handled in parent function
     }
-
-    // // Add 1 second delay to simulate fetch request
-    // setTimeout(() => {
-    //   dispatch(updateNode({ id, data: { status: "running" } }));
-    //   const edges = state.edges.filter((edge) => edge.source === id);
-    //   edges.map((edge) =>
-    //     dispatch(updateEdge({ id: edge.id, animated: true }))
-    //   );
-    // }, 1000);
-
-    console.log('All project data:', project);
-    console.log('About to fetch addCluster, ', data.externalId);
-
-    let res = await fetch('/api/deployment/addCluster', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        externalId: project.vpcId || data.externalId,
-        name: id + '-' + node.data.name,
-        instanceType: node.data.instanceType,
-        minNodes: node.data.minNodes,
-        maxNodes: node.data.maxNodes,
-        desiredNodes: node.data.desiredNodes,
-        userId: state.user.id,
-        projectId: project.projectId,
-      }),
-    });
-    data = await res.json();
-    console.log('cluster made! Volume handle: ', data.volumeHandle);
-
-    dispatch(
-      updateNode({
-        id,
-        data: { volumeHandle: data.volumeHandle, status: 'running' },
-      })
-    );
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: true })));
   };
 
-  const handleClickStop = () => {
-    dispatch(updateNode({ id, data: { status: 'stopping' } }));
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.map((edge) => dispatch(updateEdge({ id: edge.id, animated: false })));
+  const addCluster = async () => {
+    // Add cluster and return volumeHandle
+    try {
+      const res = await fetch("/api/deployment/addCluster", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.user.id,
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          projectId: project.projectId,
+          clusterId: id,
+          clusterName: data.name,
+          instanceType: data.instanceType,
+          minNodes: data.minNodes,
+          maxNodes: data.maxNodes,
+          desiredNodes: data.desiredNodes,
+        }),
+      });
 
-    // Add 1 second delay to simulate fetch request
-    setTimeout(() => {
-      dispatch(updateNode({ id, data: { status: null } }));
-    }, 1000);
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const fetchData = await res.json();
+      const awsClusterName = fetchData.awsClusterName;
+      const volumeHandle = fetchData.volumeHandle;
+      return { awsClusterName, volumeHandle };
+    } catch (error) {
+      console.error("Error in addCluster:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
   };
 
-  const getConnectedPods = () => {
-    const edges = state.edges.filter((edge) => edge.source === id);
-    return state.edges
-      .filter((edge) => edge.source === id)
-      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+  const deleteCluster = async () => {
+    try {
+      const res = await fetch("/api/deployment/deleteCluster", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.user.id,
+          projectId: project.projectId,
+          clusterId: id,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Error in deleteCluster:", error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const handleClickStart = async () => {
+    if (state.user.demoMode) {
+      dispatch(updateNode({ id, data: { status: "starting" } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: "running" } }));
+      }, 1000);
+    } else {
+      try {
+        dispatch(updateNode({ id, data: { status: "starting" } }));
+        await addVPC();
+        const { awsClusterName, volumeHandle } = await addCluster();
+        dispatch(
+          updateNode({
+            id,
+            data: { awsClusterName, volumeHandle, status: "running" },
+          })
+        );
+      } catch (error) {
+        console.error("Error in handleClickStart:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
+  };
+
+  const handleClickStop = async () => {
+    if (state.user.demoMode) {
+      dispatch(updateNode({ id, data: { status: "stopping" } }));
+      setTimeout(() => {
+        dispatch(updateNode({ id, data: { status: null } }));
+      }, 1000);
+    } else {
+      try {
+        // Set status to "stopping"
+        dispatch(updateNode({ id, data: { status: "stopping" } }));
+
+        // Delete cluster
+        await deleteCluster();
+
+        // Delete VPC if there are no other running clusters in project
+        const nodes = state.nodes.filter(
+          (node) =>
+            node.type === "cluster" && node.projectId === state.projectId
+        );
+        if (!nodes) await deleteVPC();
+
+        // Set status to null
+        dispatch(updateNode({ id, data: { status: null } }));
+      } catch (error) {
+        console.error("Error in handleClickStop:", error);
+        dispatch(updateNode({ id, data: { status: null } }));
+      }
+    }
   };
 
   const countDeployedPods = () => {
-    const pods = getConnectedPods();
-    return pods.filter((pod) => pod.data.status === 'running').length;
+    const childNodes = state.edges
+      // Get child edges
+      .filter((edge) => edge.source === id)
+      // Get child nodes
+      .map((edge) => state.nodes.find((node) => node.id === edge.target));
+    return childNodes.filter((node) => node.data.status === "running").length;
   };
 
   return (
-    <div className={`node ${data.status === 'running' ? 'running' : ''}`}>
-      <Handle
-        type='target'
-        position={Position.Top}
-        isConnectable={isConnectable}
-      />
+    <div className={`node ${data.status === "running" ? "running" : ""}`}>
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className='node-menu' aria-label='Customise options'>
+            <button className="node-menu" aria-label="Customise options">
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className='dropdown'
+              className="dropdown"
               onClick={(e) => e.stopPropagation()}
             >
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() =>
-                  dispatch(showModal({ name: 'ConfigureCluster', id, data }))
+                  dispatch(showModal({ name: "ConfigureCluster", id, data }))
                 }
               >
                 Configure
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className='dropdown-separator' />
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
+                onClick={() => addVPC()}
+              >
+                Add VPC
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => deleteVPC()}
+              >
+                Delete VPC
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => addCluster()}
+              >
+                Add Cluster
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="dropdown-item"
+                onClick={() => deleteCluster()}
+              >
+                Delete Cluster
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator className="dropdown-separator" />
+              <DropdownMenu.Item
+                className="dropdown-item"
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -155,52 +274,54 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className='icon'>
-          <Icon path={mdiDotsHexagon} style={{ color: 'red' }} size={1} />
+        <div className="icon">
+          <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1} />
         </div>
-        <div className='title'>{data.name ? data.name : 'Cluster'}</div>
+        <div className="title">{data.name ? data.name : "Cluster"}</div>
         {!data.instanceType ||
         !data.minNodes ||
         !data.maxNodes ||
         !data.desiredNodes ? (
           <button
-            className='button nodrag'
+            className="button nodrag"
             onClick={() =>
-              dispatch(showModal({ name: 'ConfigureCluster', id, data }))
+              dispatch(showModal({ name: "ConfigureCluster", id, data }))
             }
           >
             Configure
           </button>
         ) : !data.status ? (
-          <button className='button nodrag' onClick={handleClickStart}>
+          <button className="button nodrag" onClick={handleClickStart}>
             Start Instance
           </button>
-        ) : data.status === 'creating' ? (
-          <button className='button busy nodrag'>Creating instance...</button>
-        ) : data.status === 'stopping' ? (
-          <button className='button busy nodrag'>Stopping instance...</button>
+        ) : data.status === "starting" ? (
+          <button className="button busy nodrag">
+            Starting... (will take time)
+          </button>
+        ) : data.status === "stopping" ? (
+          <button className="button busy nodrag">Stopping...</button>
         ) : (
           <>
             <div
               style={{
-                fontSize: '14px',
-                paddingBottom: '10px',
+                fontSize: "14px",
+                paddingBottom: "10px",
               }}
             >
-              <b>{countDeployedPods()}</b> of{' '}
-              <b>{state.edges.filter((edge) => edge.source === id).length}</b>{' '}
+              <b>{countDeployedPods()}</b> of{" "}
+              <b>{state.edges.filter((edge) => edge.source === id).length}</b>{" "}
               pods deployed
             </div>
-            <button className='button stop nodrag' onClick={handleClickStop}>
+            <button className="button stop nodrag" onClick={handleClickStop}>
               Stop Instance
             </button>
           </>
         )}
       </div>
       <Handle
-        type='source'
+        type="source"
         position={Position.Bottom}
-        id='b'
+        id="b"
         isConnectable={isConnectable}
       />
     </div>

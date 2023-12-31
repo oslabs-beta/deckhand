@@ -9,6 +9,7 @@ export const deckhandSlice = createSlice({
     //   name: 'John',
     //   email: 'john@example.com',
     //   avatarUrl: 'http://example.com',
+    //   theme: 'light',
     //   githubId: null,
     //   awsAccessKey: null,
     //   awsSecretKey: null,
@@ -218,11 +219,12 @@ export const deckhandSlice = createSlice({
     },
     deleteNode: (state, action) => {
       // payload: id
-      state.nodes = state.nodes.filter(
-        (node) => node.nodeId !== action.payload
-      );
+      const id = action.payload;
+      state.nodes = state.nodes.filter((node) => node.id !== id);
+      state.edges = state.edges.filter(edge => edge.source !== id && edge.target !== id);
     },
     updateNode: (state, action) => {
+      // payload: { id, ...props to merge }
       const node = state.nodes.find((node) => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop

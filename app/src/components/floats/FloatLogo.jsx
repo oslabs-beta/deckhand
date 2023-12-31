@@ -25,7 +25,7 @@ export default function FloatLogo() {
           cy="250"
           r="200"
           fill="none"
-          stroke="#333"
+          className="stroke"
           strokeWidth="40"
         />
 
@@ -33,7 +33,7 @@ export default function FloatLogo() {
           cx="250"
           cy="250"
           r="60"
-          fill="#333"
+          className="fill"
           stroke="none"
           strokeWidth="40"
         />
@@ -43,7 +43,7 @@ export default function FloatLogo() {
           y1="0"
           x2="250"
           y2="500"
-          stroke="#333"
+          className="stroke"
           strokeWidth="40"
         />
         <line
@@ -51,7 +51,7 @@ export default function FloatLogo() {
           y1="250"
           x2="500"
           y2="250"
-          stroke="#333"
+          className="stroke"
           strokeWidth="20"
         />
         <line
@@ -59,7 +59,7 @@ export default function FloatLogo() {
           y1="35.36"
           x2="464.64"
           y2="464.64"
-          stroke="#333"
+          className="stroke"
           strokeWidth="20"
         />
         <line
@@ -67,7 +67,7 @@ export default function FloatLogo() {
           y1="35.36"
           x2="35.36"
           y2="464.64"
-          stroke="#333"
+          className="stroke"
           strokeWidth="20"
         />
       </svg>

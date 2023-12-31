@@ -4,11 +4,11 @@
   "description": "A fully automated, drag-and-drop tool for Kubernetes deployment.",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./server/server.js",
+    "start": "NODE_ENV=production node -r dotenv/config ./server/server.js",
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development node -r dotenv/config ./server/server.js",
     "test": "jest",
-    "tf-init": "cd server/terraform && terraform init"
+    "tf-init": "cd ./server/terraform && terraform init"
   },
   "author": "Omar Mirza, Dennis Corsi, Odin Olson, Jeff Gottstein",
   "license": "MIT",
@@ -48,6 +48,7 @@
     "@babel/runtime": "^7.23.2",
     "babel-loader": "^9.1.3",
     "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
     "eslint": "^8.53.0",
     "eslint-config-airbnb-base": "^15.0.0",

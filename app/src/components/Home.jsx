@@ -17,8 +17,16 @@ export default function Home() {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  function generateUniqueProjectId() {
+    let uniqueId;
+    do {
+      uniqueId = Math.floor(Math.random() * 1000000).toString();
+    } while (state.projects.some((project) => project.projectId === uniqueId));
+    return uniqueId;
+  }
+
   const handleClickAddProject = (event) => {
-    const projectId = Math.floor(Math.random() * 10000); // fetch new project ID from SQL
+    const projectId = generateUniqueProjectId();
     dispatch(addProject(projectId));
     dispatch(setProjectId(projectId));
   };
@@ -35,29 +43,18 @@ export default function Home() {
     else return Math.round(days) + " days ago";
   };
 
-  const handleAction = async (key, project) => {
-    console.log(key);
-    console.log(project);
-    if (key === "configure-project") {
-      dispatch(showModal({ name: "ConfigureProject", data: project }));
-    }
-    if (key === "delete-project") {
-      dispatch(deleteProject(project.projectId));
-    }
-  };
-
   const projectBundle = [];
   const sortedProjects = [...state.projects].sort((a, b) => {
     const dateA = new Date(a.modifiedDate);
     const dateB = new Date(b.modifiedDate);
     return dateB - dateA;
   });
-  for (const el of sortedProjects) {
+  for (const project of sortedProjects) {
     projectBundle.push(
       <div
-        key={el.projectId}
+        key={project.projectId}
         className="card"
-        onClick={() => dispatch(setProjectId(el.projectId))}
+        onClick={() => dispatch(setProjectId(project.projectId))}
       >
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -73,7 +70,9 @@ export default function Home() {
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() => {
-                  dispatch(showModal({ name: "ConfigureProject", data: el }));
+                  dispatch(
+                    showModal({ name: "ConfigureProject", data: project })
+                  );
                 }}
               >
                 Configure
@@ -81,25 +80,25 @@ export default function Home() {
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(deleteProject(el.projectId))}
+                onClick={() => dispatch(deleteProject(project.projectId))}
               >
                 Delete
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className="name">{el.name}</div>
+        <div className="name">{project.name}</div>
         <div
           className="date-info"
-          title={"Created: " + new Date(el.createdDate).toString()}
+          title={"Created: " + new Date(project.createdDate).toString()}
         >
-          Created: {timeAgo(el.createdDate)}
+          Created: {timeAgo(project.createdDate)}
         </div>
         <div
           className="date-info"
-          title={"Last Modified: " + new Date(el.modifiedDate).toString()}
+          title={"Last Modified: " + new Date(project.modifiedDate).toString()}
         >
-          Last Modified: {timeAgo(el.modifiedDate)}
+          Last Modified: {timeAgo(project.modifiedDate)}
         </div>
       </div>
     );

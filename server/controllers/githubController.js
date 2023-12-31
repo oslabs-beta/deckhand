@@ -2,10 +2,18 @@ const { execSync, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const db = require('../data/model.js');
+const db = require('../database/model.js');
 
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+let GITHUB_CLIENT_ID;
+let GITHUB_CLIENT_SECRET;
+if (process.env.NODE_ENV === 'production') {
+  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID_PROD;
+  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET_PROD;
+} else {
+  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+}
+
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
@@ -14,7 +22,7 @@ const githubController = {};
 // redirect to github login
 githubController.login = (req, res) => {
   res.redirect(
-    `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
+    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
   );
 };
 
@@ -23,9 +31,9 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    CLIENT_ID +
+    GITHUB_CLIENT_ID +
     '&client_secret=' +
-    CLIENT_SECRET +
+    GITHUB_CLIENT_SECRET +
     '&code=' +
     auth_code,
     {
@@ -88,7 +96,7 @@ githubController.userData = async (req, res, next) => {
           const createUserQuery = `
             INSERT INTO users (name, email, avatarurl, githubid)
             VALUES ($1, $2, $3, $4)
-            RETURNING _id, name, email, avatarurl, githubid, awsaccesskey, awssecretkey, state
+            RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
           `;
           const newUserResult = await db.query(createUserQuery, [name, email, avatarUrl, githubId]);
 
@@ -100,6 +108,7 @@ githubController.userData = async (req, res, next) => {
             email: newUser.email,
             avatarUrl: newUser.avatarurl,
             githubId: newUser.githubid,
+            theme: newUser.theme,
             awsAccessKey: newUser.awsaccesskey,
             awsSecretKey: newUser.awssecretkey,
             state: newUser.state,
@@ -115,6 +124,7 @@ githubController.userData = async (req, res, next) => {
             email: user.email,
             avatarUrl: user.avatarurl,
             githubId: user.githubid,
+            theme: user.theme,
             awsAccessKey: user.awsaccesskey,
             awsSecretKey: user.awssecretkey,
             state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
@@ -315,22 +325,22 @@ githubController.findExposedPort = (req, res, next) => {
   execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
   const repoPath = path.join(tempsPath, repoName);
 
-  let port = undefined;
+  let exposedPort;
   try {
     const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
     const regex = /expose\s+(\d+)/i;
-    port = Number(regex.exec(dockerfile)[1]);
+    exposedPort = Number(regex.exec(dockerfile)[1]);
   } catch {
     console.log('failed to find dockerfile');
-    res.locals.port = undefined;
+    exposedPort = undefined;
   }
 
   // Delete cloned repo
   execSync(`cd ${tempsPath} && rm -r ${repoName}`);
 
-  console.log('Scanned for exposed port and found:', port);
+  console.log('Scanned for exposed port and found:', exposedPort);
 
-  res.locals.port = port;
+  res.locals.data = { exposedPort };
   return next();
 };
 

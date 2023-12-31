@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import { showModal, deleteNode } from "../../deckhandSlice";
+import { showModal, deleteNode, updateNode } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiImport } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -10,11 +10,17 @@ export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
+  // Get url from parent node
+  const parentEdge = state.edges.find((edge) => edge.target === id);
+  const parentNode = state.nodes.find((node) => node.id === parentEdge?.source);
+  const url = parentNode?.data.url;
+
   return (
     <div className="node">
       <Handle
         type="target"
         position={Position.Top}
+        id="a"
         isConnectable={isConnectable}
       />
       <div>
@@ -40,7 +46,9 @@ export default function ({ id, data, isConnectable }) {
               <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
                 className="dropdown-item"
-                onClick={() => dispatch(deleteNode(id))}
+                onClick={() => {
+                  dispatch(deleteNode(id));
+                }}
               >
                 Delete
               </DropdownMenu.Item>
@@ -51,23 +59,17 @@ export default function ({ id, data, isConnectable }) {
           <Icon path={mdiImport} style={{ color: "green" }} size={1} />
         </div>
         <div className="title">Ingress Route</div>
-        {!state.edges.find((edge) => edge.target === id)?.animated ? (
+        {!url ? (
           <button className="button nodrag disabled">Open Public URL</button>
         ) : (
           <button
-            className="button nodrag"
+            className="button nodrag green"
             onClick={() => window.open(data.url, "_blank")}
           >
             Open Public URL
           </button>
         )}
       </div>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="b"
-        isConnectable={isConnectable}
-      />
     </div>
   );
 }
