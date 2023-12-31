@@ -19,6 +19,8 @@ export default function App() {
         .then((data) => {
           dispatch(setUser(data));
           if (data.state) dispatch(setState(data.state));
+          if (data.theme === "dark")
+            document.body.classList.toggle("dark-mode");
         })
         .catch((err) => console.log("Error fetching Github user data: ", err));
     };
