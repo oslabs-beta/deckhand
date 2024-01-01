@@ -42,6 +42,9 @@ export default function ({ id, data, isConnectable }) {
     .filter((edge) => edge.source === id)
     .map((edge) => state.nodes.find((node) => node.id === edge.target));
 
+  // Find connected nodes
+  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+
   useEffect(() => {
     (async () => {
       await fetch(`/api/dockerHubImageTags/${data.imageName}`)
@@ -135,6 +138,8 @@ export default function ({ id, data, isConnectable }) {
       dispatch(updateNode({ id, data: { status: "deploying" } }));
       setTimeout(() => {
         dispatch(updateNode({ id, data: { status: "running" } }));
+        if (ingress)
+          dispatch(updateNode({ id, data: { url: "http://example.com" } }));
       }, 1000);
     } else {
       try {
@@ -155,6 +160,9 @@ export default function ({ id, data, isConnectable }) {
 
         // Deploy pod
         await deployPod();
+
+        // Get URL if ingress connected
+        if (ingress) await getURL();
 
         // Update status
         dispatch(updateNode({ id, data: { status: "running" } }));
