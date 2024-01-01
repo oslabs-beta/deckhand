@@ -132,6 +132,33 @@ export default function ({ id, data, isConnectable }) {
     }
   };
 
+  const getURL = async () => {
+    try {
+      const res = await fetch("/api/deployment/getURL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          clusterName: cluster.awsClusterName,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const fetchData = await res.json();
+      const url = fetchData.url;
+      dispatch(updateNode({ id, data: { url } }));
+    } catch (error) {
+      console.error("Error in handleClickStart:", error);
+    }
+  };
+
   const handleClickStart = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
