@@ -115,62 +115,62 @@ module "eks" {
 
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = module.eks.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-      command     = "aws"
-    }
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     host                   = module.eks.cluster_endpoint
+#     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+#     exec {
+#       api_version = "client.authentication.k8s.io/v1beta1"
+#       args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+#       command     = "aws"
+#     }
+#   }
+# }
 
 ########################
 #  EKS DRIVER FOR EFS  #
 ########################
 
-resource "helm_release" "aws_efs_csi_driver" {
-  chart      = "aws-efs-csi-driver"
-  name       = "aws-efs-csi-driver"
-  namespace  = "kube-system"
-  repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
+# resource "helm_release" "aws_efs_csi_driver" {
+#   chart      = "aws-efs-csi-driver"
+#   name       = "aws-efs-csi-driver"
+#   namespace  = "kube-system"
+#   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
 
-  set {
-    name  = "image.repository"
-    value = "602401143452.dkr.ecr.eu-west-3.amazonaws.com/eks/aws-efs-csi-driver"
-  }
+#   set {
+#     name  = "image.repository"
+#     value = "602401143452.dkr.ecr.eu-west-3.amazonaws.com/eks/aws-efs-csi-driver"
+#   }
 
-  set {
-    name  = "controller.serviceAccount.create"
-    value = true
-  }
+#   set {
+#     name  = "controller.serviceAccount.create"
+#     value = true
+#   }
 
-  set {
-    name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.attach_efs_csi_role.iam_role_arn
-  }
+#   set {
+#     name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = module.attach_efs_csi_role.iam_role_arn
+#   }
 
-  set {
-    name  = "controller.serviceAccount.name"
-    value = "efs-csi-controller-sa"
-  }
-}
+#   set {
+#     name  = "controller.serviceAccount.name"
+#     value = "efs-csi-controller-sa"
+#   }
+# }
 
-module "attach_efs_csi_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+# module "attach_efs_csi_role" {
+#   source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
-  role_name             = "efs-csi"
-  attach_efs_csi_policy = true
+#   role_name             = "efs-csi"
+#   attach_efs_csi_policy = true
 
-  oidc_providers = {
-    ex = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:efs-csi-controller-sa"]
-    }
-  }
-}
+#   oidc_providers = {
+#     ex = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["kube-system:efs-csi-controller-sa"]
+#     }
+#   }
+# }
 
 ##########################
 #############################
