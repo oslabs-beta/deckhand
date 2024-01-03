@@ -290,6 +290,9 @@ deploymentController.deleteCluster = async (req, res, next) => {
 deploymentController.buildImage = async (req, res, next) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
+  //TODO: delete this console log
+  console.log(awsAccessKey, awsSecretKey, vpcRegion);
+
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
   const imageName = repo.split('/').join('-').toLowerCase() + `-${branch}`; // format: "githubUser-repoName-branch"
 
