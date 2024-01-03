@@ -78,6 +78,8 @@ export default function ({ id, data, isConnectable }) {
         data: {
           ...data,
           githubBranch,
+          imageName: null,
+          imageTag: null,
         },
       })
     );
@@ -178,16 +180,7 @@ export default function ({ id, data, isConnectable }) {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const fetchData = await res.json();
-      dispatch(
-        updateNode({
-          id,
-          data: {
-            awsRepo: null,
-            imageName: null,
-            imageTag: null,
-          },
-        })
-      );
+      dispatch(updateNode({ id, data: { imageName: null, imageTag: null } }));
       return;
     } catch (error) {
       console.log("Error in deleteImage", error);

@@ -1,0 +1,53 @@
+<svg
+  viewBox="0 0 500 500"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <circle
+    cx="250"
+    cy="250"
+    r="200"
+    fill="none"
+    stroke="#3970e4"
+    stroke-width="40"
+  />
+
+  <circle
+    cx="250"
+    cy="250"
+    r="60"
+    fill="#3970e4"
+  />
+
+  <line
+    x1="250"
+    y1="0"
+    x2="250"
+    y2="500"
+    stroke="#3970e4"
+    stroke-width="40"
+  />
+  <line
+    x1="0"
+    y1="250"
+    x2="500"
+    y2="250"
+    stroke="#3970e4"
+    stroke-width="20"
+  />
+  <line
+    x1="35.36"
+    y1="35.36"
+    x2="464.64"
+    y2="464.64"
+    stroke="#3970e4"
+    stroke-width="20"
+  />
+  <line
+    x1="464.64"
+    y1="35.36"
+    x2="35.36"
+    y2="464.64"
+    stroke="#3970e4"
+    stroke-width="20"
+  />
+</svg>
