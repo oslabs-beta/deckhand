@@ -46,6 +46,8 @@ export default function ({ id, data, isConnectable }) {
   // Find connected nodes
   const ingress = connectedNodes?.find((node) => node.type === 'ingress');
 
+  let yaml;
+
   useEffect(() => {
     (async () => {
       await fetch('/api/github/branches', {
@@ -267,10 +269,10 @@ export default function ({ id, data, isConnectable }) {
         dispatch(updateNode({ id, data: { status: 'deploying' } }));
 
         // Get exposed port
-        const exposedPort = await getDockerHubExposedPort();
+        const exposedPort = await findExposedPort();
 
         // Create YAML
-        const yaml = createYaml.all(
+        yaml = createYaml.all(
           data,
           connectedNodes,
           exposedPort,
@@ -290,6 +292,29 @@ export default function ({ id, data, isConnectable }) {
         console.error('Error in handleClickStart:', error);
         dispatch(updateNode({ id, data: { status: null } }));
       }
+    }
+  };
+
+  const deployPod = async () => {
+    try {
+      const res = await fetch('/api/deployment/deployPod', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: project.vpcRegion,
+          clusterName: cluster.data.awsClusterName,
+          yaml: yaml,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      return fetchData.exposedPort;
+    } catch (error) {
+      console.log('Error in deployPod', error);
+      throw error; // Re-throw the error to be handled in parent function
     }
   };
 
