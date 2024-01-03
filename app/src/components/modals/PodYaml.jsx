@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 import createYaml from "../../yaml";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function () {
   const state = useSelector((state) => state.deckhand);
@@ -48,11 +50,13 @@ export default function () {
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>YAML File for {data.name}</h2>
+        <h2>YAML configuration for {data.name}</h2>
         <form onSubmit={handleSubmit}>
           <label>
             <pre className="yaml" name="yaml">
-              {generateYaml()}
+              <SyntaxHighlighter language="yaml" style={materialDark}>
+                {generateYaml()}
+              </SyntaxHighlighter>
             </pre>
           </label>
         </form>

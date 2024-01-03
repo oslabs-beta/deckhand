@@ -1,14 +1,15 @@
-const db = require('./model.js');
+const db = require('./dbConnect.js');
 
-const reset = async () => {
-  await db.query(`
+module.exports = {
+  dbInit: async () => {
+    await db.query(`
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
   --Drop existing tables if they exist
-  DROP TABLE IF EXISTS users CASCADE;
+  --DROP TABLE IF EXISTS users CASCADE;
 
   -- Create tables
-  CREATE TABLE users (
+  CREATE TABLE IF NOT EXISTS users (
     _id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -20,6 +21,5 @@ const reset = async () => {
     state JSONB DEFAULT NULL
   );
 `);
+  }
 }
-
-reset();

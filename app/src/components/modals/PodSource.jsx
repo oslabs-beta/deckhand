@@ -208,6 +208,8 @@ export default function () {
                 ? "main"
                 : githubBranches[0],
               githubBranches,
+              imageName: null,
+              imageTag: null,
             },
           })
         );

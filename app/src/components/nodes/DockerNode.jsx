@@ -42,6 +42,9 @@ export default function ({ id, data, isConnectable }) {
     .filter((edge) => edge.source === id)
     .map((edge) => state.nodes.find((node) => node.id === edge.target));
 
+  // Find connected nodes
+  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+
   useEffect(() => {
     (async () => {
       await fetch(`/api/dockerHubImageTags/${data.imageName}`)
@@ -129,12 +132,41 @@ export default function ({ id, data, isConnectable }) {
     }
   };
 
+  const getURL = async () => {
+    try {
+      const res = await fetch("/api/deployment/getURL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: state.user.vpcRegion,
+          clusterName: cluster.awsClusterName,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const fetchData = await res.json();
+      const url = fetchData.url;
+      dispatch(updateNode({ id, data: { url } }));
+    } catch (error) {
+      console.error("Error in handleClickStart:", error);
+    }
+  };
+
   const handleClickStart = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
       dispatch(updateNode({ id, data: { status: "deploying" } }));
       setTimeout(() => {
         dispatch(updateNode({ id, data: { status: "running" } }));
+        if (ingress)
+          dispatch(updateNode({ id, data: { url: "http://example.com" } }));
       }, 1000);
     } else {
       try {
@@ -155,6 +187,9 @@ export default function ({ id, data, isConnectable }) {
 
         // Deploy pod
         await deployPod();
+
+        // Get URL if ingress connected
+        if (ingress) await getURL();
 
         // Update status
         dispatch(updateNode({ id, data: { status: "running" } }));
