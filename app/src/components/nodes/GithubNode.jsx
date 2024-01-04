@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Handle, Position } from "reactflow";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Handle, Position } from 'reactflow';
 import {
   showModal,
   updateNode,
   deleteNode,
   updateEdge,
   deleteEdge,
-} from "../../deckhandSlice";
-import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiGithub } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import createYaml from "../../yaml";
+} from '../../deckhandSlice';
+import Icon from '@mdi/react';
+import { mdiDotsVertical, mdiGithub } from '@mdi/js';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import createYaml from '../../yaml';
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
@@ -23,7 +23,7 @@ export default function ({ id, data, isConnectable }) {
       dispatch(
         updateEdge({
           id: edge.id,
-          animated: data.status === "running",
+          animated: data.status === 'running',
         })
       )
     );
@@ -44,14 +44,16 @@ export default function ({ id, data, isConnectable }) {
     .map((edge) => state.nodes.find((node) => node.id === edge.target));
 
   // Find connected nodes
-  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+  const ingress = connectedNodes?.find((node) => node.type === 'ingress');
+
+  let yaml;
 
   useEffect(() => {
     (async () => {
-      await fetch("/api/github/branches", {
-        method: "POST",
+      await fetch('/api/github/branches', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ repo: data.githubRepo }),
       })
@@ -100,10 +102,10 @@ export default function ({ id, data, isConnectable }) {
 
   const findExposedPort = async () => {
     try {
-      const res = await fetch("/api/github/findExposedPort", {
-        method: "POST",
+      const res = await fetch('/api/github/findExposedPort', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           repo: data.githubRepo,
@@ -116,29 +118,29 @@ export default function ({ id, data, isConnectable }) {
       dispatch(
         updateNode({
           id,
-          data: { exposedPort: fetchData.exposedPort || "3000" },
+          data: { exposedPort: fetchData.exposedPort || '3000' },
         })
       );
-      return;
+      return data.exposedPort;
     } catch (error) {
-      console.log("Error in findExposedPort", error);
+      console.log('Error in findExposedPort', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const buildImage = async () => {
     try {
-      const res = await fetch("/api/deployment/buildImage", {
-        method: "POST",
+      const res = await fetch('/api/deployment/buildImage', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           repo: data.githubRepo,
           branch: data.githubBranch,
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
+          vpcRegion: project.vpcRegion,
         }),
       });
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -156,22 +158,22 @@ export default function ({ id, data, isConnectable }) {
       );
       return;
     } catch (error) {
-      console.log("Error in buildImage", error);
+      console.log('Error in buildImage', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const deleteImage = async () => {
     try {
-      const res = await fetch("/api/deployment/deleteImage", {
-        method: "POST",
+      const res = await fetch('/api/deployment/deleteImage', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
+          vpcRegion: project.vpcRegion,
           awsRepo: data.awsRepo,
           imageName: data.imageName,
           imageTag: data.imageTag,
@@ -183,7 +185,7 @@ export default function ({ id, data, isConnectable }) {
       dispatch(updateNode({ id, data: { imageName: null, imageTag: null } }));
       return;
     } catch (error) {
-      console.log("Error in deleteImage", error);
+      console.log('Error in deleteImage', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
@@ -191,19 +193,19 @@ export default function ({ id, data, isConnectable }) {
   const handleClickBuild = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
-      dispatch(updateNode({ id, data: { status: "building" } }));
+      dispatch(updateNode({ id, data: { status: 'building' } }));
       setTimeout(() => {
         dispatch(
           updateNode({
             id,
-            data: { imageName: "demo", imageTag: "demo", status: null },
+            data: { imageName: 'demo', imageTag: 'demo', status: null },
           })
         );
       }, 1000);
     } else {
       try {
         // Update status
-        dispatch(updateNode({ id, data: { status: "building" } }));
+        dispatch(updateNode({ id, data: { status: 'building' } }));
 
         // Build image
         await buildImage();
@@ -214,7 +216,7 @@ export default function ({ id, data, isConnectable }) {
         // Update status
         dispatch(updateNode({ id, data: { status: null } }));
       } catch (error) {
-        console.error("Error in handleClickBuild:", error);
+        console.error('Error in handleClickBuild:', error);
         dispatch(
           updateNode({
             id,
@@ -227,16 +229,16 @@ export default function ({ id, data, isConnectable }) {
 
   const getURL = async () => {
     try {
-      const res = await fetch("/api/deployment/getURL", {
-        method: "POST",
+      const res = await fetch('/api/deployment/getURL', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
-          clusterName: cluster.awsClusterName,
+          vpcRegion: project.vpcRegion,
+          awsClusterName: cluster.data.awsClusterName,
         }),
       });
 
@@ -248,29 +250,29 @@ export default function ({ id, data, isConnectable }) {
       const url = fetchData.url;
       dispatch(updateNode({ id, data: { url } }));
     } catch (error) {
-      console.error("Error in handleClickStart:", error);
+      console.error('Error in handleClickStart:', error);
     }
   };
 
   const handleClickStart = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
-      dispatch(updateNode({ id, data: { status: "deploying" } }));
+      dispatch(updateNode({ id, data: { status: 'deploying' } }));
       setTimeout(() => {
-        dispatch(updateNode({ id, data: { status: "running" } }));
+        dispatch(updateNode({ id, data: { status: 'running' } }));
         if (ingress)
-          dispatch(updateNode({ id, data: { url: "http://example.com" } }));
+          dispatch(updateNode({ id, data: { url: 'http://example.com' } }));
       }, 1000);
     } else {
       try {
         // Update status
-        dispatch(updateNode({ id, data: { status: "deploying" } }));
+        dispatch(updateNode({ id, data: { status: 'deploying' } }));
 
         // Get exposed port
-        const exposedPort = await getDockerHubExposedPort();
+        const exposedPort = await findExposedPort();
 
         // Create YAML
-        const yaml = createYaml.all(
+        yaml = createYaml.all(
           data,
           connectedNodes,
           exposedPort,
@@ -285,26 +287,50 @@ export default function ({ id, data, isConnectable }) {
         if (ingress) await getURL();
 
         // Update status
-        dispatch(updateNode({ id, data: { status: "running" } }));
+        dispatch(updateNode({ id, data: { status: 'running' } }));
       } catch (error) {
-        console.error("Error in handleClickStart:", error);
+        console.error('Error in handleClickStart:', error);
         dispatch(updateNode({ id, data: { status: null } }));
       }
     }
   };
 
-  const deletePod = async () => {
+  const deployPod = async () => {
     try {
-      const res = await fetch("/api/deployment/deletePod", {
-        method: "POST",
+      const res = await fetch('/api/deployment/deployPod', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
-          awsClusterName: cluster.awsClusterName,
+          vpcRegion: project.vpcRegion,
+          awsClusterName: cluster.data.awsClusterName,
+          yaml: yaml,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      // return data.exposedPort;
+      return;
+    } catch (error) {
+      console.log('Error in deployPod', error);
+      throw error; // Re-throw the error to be handled in parent function
+    }
+  };
+
+  const deletePod = async () => {
+    try {
+      const res = await fetch('/api/deployment/deletePod', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          awsAccessKey: state.user.awsAccessKey,
+          awsSecretKey: state.user.awsSecretKey,
+          vpcRegion: project.vpcRegion,
+          awsClusterName: cluster.data.awsClusterName,
           podName: data.name,
         }),
       });
@@ -318,21 +344,21 @@ export default function ({ id, data, isConnectable }) {
 
       return;
     } catch (error) {
-      console.error("Error in deletePod:", error);
+      console.error('Error in deletePod:', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const handleClickStop = async () => {
     if (state.user.demoMode) {
-      dispatch(updateNode({ id, data: { status: "stopping" } }));
+      dispatch(updateNode({ id, data: { status: 'stopping' } }));
       setTimeout(() => {
         dispatch(updateNode({ id, data: { url: null, status: null } }));
       }, 1000);
     } else {
       try {
         // Set status to "stopping"
-        dispatch(updateNode({ id, data: { status: "stopping" } }));
+        dispatch(updateNode({ id, data: { status: 'stopping' } }));
 
         // Delete image
         await deleteImage();
@@ -343,14 +369,14 @@ export default function ({ id, data, isConnectable }) {
         // Set status to null
         dispatch(updateNode({ id, data: { status: null } }));
       } catch (error) {
-        console.error("Error in handleClickStop:", error);
+        console.error('Error in handleClickStop:', error);
         dispatch(updateNode({ id, data: { status: null } }));
       }
     }
   };
 
   return (
-    <div className={`node pod ${data.status === "running" ? "running" : ""}`}>
+    <div className={`node pod ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
         type="target"
         position={Position.Top}
@@ -375,19 +401,19 @@ export default function ({ id, data, isConnectable }) {
                   onClick={() =>
                     window.open(
                       `https://github.com/${data.githubRepo}.git#${data.githubBranch}`,
-                      "_blank"
+                      '_blank'
                     )
                   }
                 >
                   Show GitHub
                 </DropdownMenu.Item>
               ) : (
-                ""
+                ''
               )}
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() =>
-                  dispatch(showModal({ name: "PodSource", id, data }))
+                  dispatch(showModal({ name: 'PodSource', id, data }))
                 }
               >
                 Change Source
@@ -396,7 +422,7 @@ export default function ({ id, data, isConnectable }) {
                 className="dropdown-item"
                 onClick={() =>
                   dispatch(
-                    showModal({ name: "PodYaml", id, data, project, cluster })
+                    showModal({ name: 'PodYaml', id, data, project, cluster })
                   )
                 }
               >
@@ -431,25 +457,25 @@ export default function ({ id, data, isConnectable }) {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
         <div className="icon">
-          <Icon path={mdiGithub} style={{ color: "black" }} size={1} />
+          <Icon path={mdiGithub} style={{ color: 'black' }} size={1} />
         </div>
         <div className="title">{data.name}</div>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "20px",
-                fontWeight: "bold",
+                display: 'flex',
+                flexDirection: 'column',
+                width: '20px',
+                fontWeight: 'bold',
               }}
             >
               <div
                 onClick={() => handleClickIncrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
                 <span className="arrow nodrag">▲</span>
@@ -457,8 +483,8 @@ export default function ({ id, data, isConnectable }) {
               <div
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
                 {data.replicas}
@@ -467,8 +493,8 @@ export default function ({ id, data, isConnectable }) {
                 onClick={() => handleClickDecrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
                 <span className="arrow nodrag">▼</span>
@@ -488,9 +514,9 @@ export default function ({ id, data, isConnectable }) {
                       {el}
                     </option>
                   ))
-                : ""}
+                : ''}
             </select>
-            {data.status === "building" ? (
+            {data.status === 'building' ? (
               <button className="button busy nodrag">Building...</button>
             ) : !data.imageName || !data.imageTag ? (
               <button className="button nodrag" onClick={handleClickBuild}>
@@ -502,9 +528,9 @@ export default function ({ id, data, isConnectable }) {
               <button className="button nodrag" onClick={handleClickStart}>
                 Deploy
               </button>
-            ) : data.status === "deploying" ? (
+            ) : data.status === 'deploying' ? (
               <button className="button busy nodrag">Deploying...</button>
-            ) : data.status === "running" ? (
+            ) : data.status === 'running' ? (
               <button className="button stop nodrag" onClick={handleClickStop}>
                 Stop Deployment
               </button>
