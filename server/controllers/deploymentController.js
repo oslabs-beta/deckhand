@@ -492,10 +492,12 @@ deploymentController.getURL = async (req, res, next) => {
     console.log('Getting public ingress URL');
     let attempts = 0;
     const checkURL = async () => {
-      const url = await execAsync(
-        `kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`,
-        { encoding: 'utf8' }
-      );
+      const url = (
+        await execAsync(
+          `kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'`,
+          { encoding: 'utf8' }
+        )
+      ).stdout;
       if (url) {
         console.log('URL:', url);
         res.locals.data = { url };
