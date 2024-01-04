@@ -144,7 +144,7 @@ export default function ({ id, data, isConnectable }) {
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
+          vpcRegion: project.vpcRegion,
           clusterName: cluster.awsClusterName,
         }),
       });
@@ -212,7 +212,7 @@ export default function ({ id, data, isConnectable }) {
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
+          vpcRegion: project.vpcRegion,
           awsClusterName: cluster.awsClusterName,
           podName: data.name,
         }),
