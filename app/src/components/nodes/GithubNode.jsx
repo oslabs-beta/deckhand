@@ -378,26 +378,26 @@ export default function ({ id, data, isConnectable }) {
   return (
     <div className={`node pod ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
-        type='target'
+        type="target"
         position={Position.Top}
-        id='a'
+        id="a"
         isConnectable={isConnectable}
       />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className='node-menu' aria-label='Customise options'>
+            <button className="node-menu" aria-label="Customise options">
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className='dropdown'
+              className="dropdown"
               onClick={(e) => e.stopPropagation()}
             >
               {data.githubRepo && data.githubBranch ? (
                 <DropdownMenu.Item
-                  className='dropdown-item'
+                  className="dropdown-item"
                   onClick={() =>
                     window.open(
                       `https://github.com/${data.githubRepo}.git#${data.githubBranch}`,
@@ -411,7 +411,7 @@ export default function ({ id, data, isConnectable }) {
                 ''
               )}
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() =>
                   dispatch(showModal({ name: 'PodSource', id, data }))
                 }
@@ -419,7 +419,7 @@ export default function ({ id, data, isConnectable }) {
                 Change Source
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() =>
                   dispatch(
                     showModal({ name: 'PodYaml', id, data, project, cluster })
@@ -429,26 +429,26 @@ export default function ({ id, data, isConnectable }) {
                 Show YAML
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={handleClickBuild}
               >
                 Rebuild
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={handleClickStart}
               >
                 Redeploy
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={handleClickStop}
               >
                 Force Stop
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className='dropdown-separator' />
+              <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -456,10 +456,10 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className='icon'>
+        <div className="icon">
           <Icon path={mdiGithub} style={{ color: 'black' }} size={1} />
         </div>
-        <div className='title'>{data.name}</div>
+        <div className="title">{data.name}</div>
         <div style={{ display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <div
@@ -478,7 +478,7 @@ export default function ({ id, data, isConnectable }) {
                   textAlign: 'center',
                 }}
               >
-                <span className='arrow nodrag'>▲</span>
+                <span className="arrow nodrag">▲</span>
               </div>
               <div
                 style={{
@@ -497,14 +497,14 @@ export default function ({ id, data, isConnectable }) {
                   textAlign: 'center',
                 }}
               >
-                <span className='arrow nodrag'>▼</span>
+                <span className="arrow nodrag">▼</span>
               </div>
             </div>
           </div>
           <div style={{ flex: 1 }}>
             <select
-              name='githubBranch'
-              className='select nodrag'
+              name="githubBranch"
+              className="select nodrag"
               onChange={(e) => setBranch(e.target.value)}
               value={data.githubBranch}
             >
@@ -517,33 +517,33 @@ export default function ({ id, data, isConnectable }) {
                 : ''}
             </select>
             {data.status === 'building' ? (
-              <button className='button busy nodrag'>Building...</button>
+              <button className="button busy nodrag">Building...</button>
             ) : !data.imageName || !data.imageTag ? (
-              <button className='button nodrag' onClick={handleClickBuild}>
+              <button className="button nodrag" onClick={handleClickBuild}>
                 Build
               </button>
             ) : !state.edges.find((edge) => edge.target === id)?.animated ? (
-              <button className='button nodrag disabled'>Deploy</button>
+              <button className="button nodrag disabled">Deploy</button>
             ) : !data.status ? (
-              <button className='button nodrag' onClick={handleClickStart}>
+              <button className="button nodrag" onClick={handleClickStart}>
                 Deploy
               </button>
             ) : data.status === 'deploying' ? (
-              <button className='button busy nodrag'>Deploying...</button>
+              <button className="button busy nodrag">Deploying...</button>
             ) : data.status === 'running' ? (
-              <button className='button stop nodrag' onClick={handleClickStop}>
+              <button className="button stop nodrag" onClick={handleClickStop}>
                 Stop Deployment
               </button>
             ) : (
-              <button className='button busy nodrag'>Stopping...</button>
+              <button className="button busy nodrag">Stopping...</button>
             )}
           </div>
         </div>
       </div>
       <Handle
-        type='source'
+        type="source"
         position={Position.Bottom}
-        id='b'
+        id="b"
         isConnectable={isConnectable}
       />
     </div>

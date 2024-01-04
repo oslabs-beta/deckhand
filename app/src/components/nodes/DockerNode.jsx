@@ -256,26 +256,26 @@ export default function ({ id, data, isConnectable }) {
   return (
     <div className={`node pod ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
-        type='target'
+        type="target"
         position={Position.Top}
-        id='a'
+        id="a"
         isConnectable={isConnectable}
       />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className='node-menu' aria-label='Customise options'>
+            <button className="node-menu" aria-label="Customise options">
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className='dropdown'
+              className="dropdown"
               onClick={(e) => e.stopPropagation()}
             >
               {data.imageName.split('/').length === 1 ? (
                 <DropdownMenu.Item
-                  className='dropdown-item'
+                  className="dropdown-item"
                   onClick={() =>
                     window.open(
                       'https://hub.docker.com/_/' + data.imageName,
@@ -287,7 +287,7 @@ export default function ({ id, data, isConnectable }) {
                 </DropdownMenu.Item>
               ) : data.imageName.split('/').length > 1 ? (
                 <DropdownMenu.Item
-                  className='dropdown-item'
+                  className="dropdown-item"
                   onClick={() =>
                     window.open(
                       'https://hub.docker.com/r/' + data.imageName,
@@ -301,7 +301,7 @@ export default function ({ id, data, isConnectable }) {
                 ''
               )}
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() =>
                   dispatch(showModal({ name: 'PodSource', id, data }))
                 }
@@ -309,7 +309,7 @@ export default function ({ id, data, isConnectable }) {
                 Change Source
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() =>
                   dispatch(
                     showModal({ name: 'PodYaml', id, data, project, cluster })
@@ -319,20 +319,20 @@ export default function ({ id, data, isConnectable }) {
                 Show YAML
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={handleClickStart}
               >
                 Redeploy
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={handleClickStop}
               >
                 Force Stop
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className='dropdown-separator' />
+              <DropdownMenu.Separator className="dropdown-separator" />
               <DropdownMenu.Item
-                className='dropdown-item'
+                className="dropdown-item"
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -340,10 +340,10 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className='icon'>
+        <div className="icon">
           <Icon path={mdiDocker} style={{ color: '#0db7ed' }} size={1} />
         </div>
-        <div className='title'>{data.name}</div>
+        <div className="title">{data.name}</div>
         <div style={{ display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <div
@@ -362,7 +362,7 @@ export default function ({ id, data, isConnectable }) {
                   textAlign: 'center',
                 }}
               >
-                <span className='arrow nodrag'>▲</span>
+                <span className="arrow nodrag">▲</span>
               </div>
               <div
                 style={{
@@ -381,14 +381,14 @@ export default function ({ id, data, isConnectable }) {
                   textAlign: 'center',
                 }}
               >
-                <span className='arrow nodrag'>▼</span>
+                <span className="arrow nodrag">▼</span>
               </div>
             </div>
           </div>
           <div style={{ flex: 1 }}>
             <select
-              name='imageTag'
-              className='select nodrag'
+              name="imageTag"
+              className="select nodrag"
               onChange={(e) => setImageTag(e.target.value)}
               value={data.imageTag}
             >
@@ -401,27 +401,27 @@ export default function ({ id, data, isConnectable }) {
                 : ''}
             </select>
             {!state.edges.find((edge) => edge.target === id)?.animated ? (
-              <button className='button nodrag disabled'>Deploy</button>
+              <button className="button nodrag disabled">Deploy</button>
             ) : !data.status ? (
-              <button className='button nodrag' onClick={handleClickStart}>
+              <button className="button nodrag" onClick={handleClickStart}>
                 Deploy
               </button>
             ) : data.status === 'deploying' ? (
-              <button className='button busy nodrag'>Deploying...</button>
+              <button className="button busy nodrag">Deploying...</button>
             ) : data.status === 'running' ? (
-              <button className='button stop nodrag' onClick={handleClickStop}>
+              <button className="button stop nodrag" onClick={handleClickStop}>
                 Stop Deployment
               </button>
             ) : (
-              <button className='button busy nodrag'>Stopping...</button>
+              <button className="button busy nodrag">Stopping...</button>
             )}
           </div>
         </div>
       </div>
       <Handle
-        type='source'
+        type="source"
         position={Position.Bottom}
-        id='b'
+        id="b"
         isConnectable={isConnectable}
       />
     </div>
