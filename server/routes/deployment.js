@@ -14,9 +14,13 @@ router.post('/addCluster', deploymentController.addCluster, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
-router.post('/deleteCluster', deploymentController.deleteCluster, (req, res) => {
-  res.sendStatus(200);
-});
+router.post(
+  '/deleteCluster',
+  deploymentController.deleteCluster,
+  (req, res) => {
+    res.sendStatus(200);
+  }
+);
 
 router.post('/buildImage', deploymentController.buildImage, (req, res) => {
   res.status(200).json(res.locals.data);
@@ -35,7 +39,7 @@ router.post('/deletePod', deploymentController.deletePod, (req, res) => {
 });
 
 router.post('/getURL', deploymentController.getURL, (req, res) => {
-  res.sendStatus(200);
+  res.status(200).json(res.locals.data);
 });
 
 module.exports = router;
