@@ -311,7 +311,8 @@ export default function ({ id, data, isConnectable }) {
         }),
       });
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-      return data.exposedPort;
+      // return data.exposedPort;
+      return;
     } catch (error) {
       console.log('Error in deployPod', error);
       throw error; // Re-throw the error to be handled in parent function
