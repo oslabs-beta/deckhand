@@ -121,7 +121,7 @@ export default function ({ id, data, isConnectable }) {
           data: { exposedPort: fetchData.exposedPort || '3000' },
         })
       );
-      return;
+      return data.exposedPort;
     } catch (error) {
       console.log('Error in findExposedPort', error);
       throw error; // Re-throw the error to be handled in parent function
@@ -311,7 +311,7 @@ export default function ({ id, data, isConnectable }) {
         }),
       });
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-      return fetchData.exposedPort;
+      return data.exposedPort;
     } catch (error) {
       console.log('Error in deployPod', error);
       throw error; // Re-throw the error to be handled in parent function
