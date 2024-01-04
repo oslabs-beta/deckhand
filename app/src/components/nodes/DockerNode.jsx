@@ -122,7 +122,7 @@ export default function ({ id, data, isConnectable }) {
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
           vpcRegion: project.vpcRegion,
-          clusterName: cluster.data.awsClusterName,
+          awsClusterName: cluster.data.awsClusterName,
           yaml: yaml,
         }),
       });
@@ -145,7 +145,7 @@ export default function ({ id, data, isConnectable }) {
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
           vpcRegion: project.vpcRegion,
-          clusterName: cluster.awsClusterName,
+          awsClusterName: cluster.awsClusterName,
         }),
       });
 
