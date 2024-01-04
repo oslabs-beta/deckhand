@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Handle, Position } from "reactflow";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Handle, Position } from 'reactflow';
 import {
   showModal,
   updateNode,
   deleteNode,
   updateEdge,
-} from "../../deckhandSlice";
-import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiDocker } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import createYaml from "../../yaml";
+} from '../../deckhandSlice';
+import Icon from '@mdi/react';
+import { mdiDotsVertical, mdiDocker } from '@mdi/js';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import createYaml from '../../yaml';
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
@@ -22,7 +22,7 @@ export default function ({ id, data, isConnectable }) {
       dispatch(
         updateEdge({
           id: edge.id,
-          animated: data.status === "running",
+          animated: data.status === 'running',
         })
       )
     );
@@ -43,7 +43,9 @@ export default function ({ id, data, isConnectable }) {
     .map((edge) => state.nodes.find((node) => node.id === edge.target));
 
   // Find connected nodes
-  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+  const ingress = connectedNodes?.find((node) => node.type === 'ingress');
+
+  let yaml;
 
   useEffect(() => {
     (async () => {
@@ -89,10 +91,10 @@ export default function ({ id, data, isConnectable }) {
 
   const getDockerHubExposedPort = async () => {
     try {
-      const res = await fetch("/api/getDockerHubExposedPort", {
-        method: "POST",
+      const res = await fetch('/api/getDockerHubExposedPort', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           imageName: data.imageName,
@@ -102,19 +104,19 @@ export default function ({ id, data, isConnectable }) {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const fetchData = await res.json();
-      return fetchData.exposedPort || "8080";
+      return fetchData.exposedPort || '8080';
     } catch (error) {
-      console.log("Error in getDockerHubExposedPort", error);
+      console.log('Error in getDockerHubExposedPort', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const deployPod = async () => {
     try {
-      const res = await fetch("/api/deployment/deployPod", {
-        method: "POST",
+      const res = await fetch('/api/deployment/deployPod', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
@@ -127,17 +129,17 @@ export default function ({ id, data, isConnectable }) {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return fetchData.exposedPort;
     } catch (error) {
-      console.log("Error in deployPod", error);
+      console.log('Error in deployPod', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const getURL = async () => {
     try {
-      const res = await fetch("/api/deployment/getURL", {
-        method: "POST",
+      const res = await fetch('/api/deployment/getURL', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
@@ -155,29 +157,29 @@ export default function ({ id, data, isConnectable }) {
       const url = fetchData.url;
       dispatch(updateNode({ id, data: { url } }));
     } catch (error) {
-      console.error("Error in handleClickStart:", error);
+      console.error('Error in handleClickStart:', error);
     }
   };
 
   const handleClickStart = async () => {
     if (state.user.demoMode) {
       // Simulate activity if demo mode enabled
-      dispatch(updateNode({ id, data: { status: "deploying" } }));
+      dispatch(updateNode({ id, data: { status: 'deploying' } }));
       setTimeout(() => {
-        dispatch(updateNode({ id, data: { status: "running" } }));
+        dispatch(updateNode({ id, data: { status: 'running' } }));
         if (ingress)
-          dispatch(updateNode({ id, data: { url: "http://example.com" } }));
+          dispatch(updateNode({ id, data: { url: 'http://example.com' } }));
       }, 1000);
     } else {
       try {
         // Update status
-        dispatch(updateNode({ id, data: { status: "deploying" } }));
+        dispatch(updateNode({ id, data: { status: 'deploying' } }));
 
         // Get exposed port
         const exposedPort = await getDockerHubExposedPort();
 
         // Create YAML
-        const yaml = createYaml.all(
+        yaml = createYaml.all(
           data,
           connectedNodes,
           exposedPort,
@@ -192,9 +194,9 @@ export default function ({ id, data, isConnectable }) {
         if (ingress) await getURL();
 
         // Update status
-        dispatch(updateNode({ id, data: { status: "running" } }));
+        dispatch(updateNode({ id, data: { status: 'running' } }));
       } catch (error) {
-        console.error("Error in handleClickStart:", error);
+        console.error('Error in handleClickStart:', error);
         dispatch(updateNode({ id, data: { status: null } }));
       }
     }
@@ -202,10 +204,10 @@ export default function ({ id, data, isConnectable }) {
 
   const deletePod = async () => {
     try {
-      const res = await fetch("/api/deployment/deletePod", {
-        method: "POST",
+      const res = await fetch('/api/deployment/deletePod', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           awsAccessKey: state.user.awsAccessKey,
@@ -222,21 +224,21 @@ export default function ({ id, data, isConnectable }) {
 
       return;
     } catch (error) {
-      console.error("Error in deletePod:", error);
+      console.error('Error in deletePod:', error);
       throw error; // Re-throw the error to be handled in parent function
     }
   };
 
   const handleClickStop = async () => {
     if (state.user.demoMode) {
-      dispatch(updateNode({ id, data: { status: "stopping" } }));
+      dispatch(updateNode({ id, data: { status: 'stopping' } }));
       setTimeout(() => {
         dispatch(updateNode({ id, data: { status: null } }));
       }, 1000);
     } else {
       try {
         // Set status to "stopping"
-        dispatch(updateNode({ id, data: { status: "stopping" } }));
+        dispatch(updateNode({ id, data: { status: 'stopping' } }));
 
         // Delete pod
         await deletePod();
@@ -244,92 +246,92 @@ export default function ({ id, data, isConnectable }) {
         // Set status to null
         dispatch(updateNode({ id, data: { status: null } }));
       } catch (error) {
-        console.error("Error in handleClickStop:", error);
+        console.error('Error in handleClickStop:', error);
         dispatch(updateNode({ id, data: { status: null } }));
       }
     }
   };
 
   return (
-    <div className={`node pod ${data.status === "running" ? "running" : ""}`}>
+    <div className={`node pod ${data.status === 'running' ? 'running' : ''}`}>
       <Handle
-        type="target"
+        type='target'
         position={Position.Top}
-        id="a"
+        id='a'
         isConnectable={isConnectable}
       />
       <div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button className="node-menu" aria-label="Customise options">
+            <button className='node-menu' aria-label='Customise options'>
               <Icon path={mdiDotsVertical} size={1} />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="dropdown"
+              className='dropdown'
               onClick={(e) => e.stopPropagation()}
             >
-              {data.imageName.split("/").length === 1 ? (
+              {data.imageName.split('/').length === 1 ? (
                 <DropdownMenu.Item
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() =>
                     window.open(
-                      "https://hub.docker.com/_/" + data.imageName,
-                      "_blank"
+                      'https://hub.docker.com/_/' + data.imageName,
+                      '_blank'
                     )
                   }
                 >
                   Show Documentation
                 </DropdownMenu.Item>
-              ) : data.imageName.split("/").length > 1 ? (
+              ) : data.imageName.split('/').length > 1 ? (
                 <DropdownMenu.Item
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() =>
                     window.open(
-                      "https://hub.docker.com/r/" + data.imageName,
-                      "_blank"
+                      'https://hub.docker.com/r/' + data.imageName,
+                      '_blank'
                     )
                   }
                 >
                   Show Documentation
                 </DropdownMenu.Item>
               ) : (
-                ""
+                ''
               )}
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() =>
-                  dispatch(showModal({ name: "PodSource", id, data }))
+                  dispatch(showModal({ name: 'PodSource', id, data }))
                 }
               >
                 Change Source
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() =>
                   dispatch(
-                    showModal({ name: "PodYaml", id, data, project, cluster })
+                    showModal({ name: 'PodYaml', id, data, project, cluster })
                   )
                 }
               >
                 Show YAML
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={handleClickStart}
               >
                 Redeploy
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={handleClickStop}
               >
                 Force Stop
               </DropdownMenu.Item>
-              <DropdownMenu.Separator className="dropdown-separator" />
+              <DropdownMenu.Separator className='dropdown-separator' />
               <DropdownMenu.Item
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={() => dispatch(deleteNode(id))}
               >
                 Delete
@@ -337,35 +339,35 @@ export default function ({ id, data, isConnectable }) {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        <div className="icon">
-          <Icon path={mdiDocker} style={{ color: "#0db7ed" }} size={1} />
+        <div className='icon'>
+          <Icon path={mdiDocker} style={{ color: '#0db7ed' }} size={1} />
         </div>
-        <div className="title">{data.name}</div>
-        <div style={{ display: "flex" }}>
+        <div className='title'>{data.name}</div>
+        <div style={{ display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "20px",
-                fontWeight: "bold",
+                display: 'flex',
+                flexDirection: 'column',
+                width: '20px',
+                fontWeight: 'bold',
               }}
             >
               <div
                 onClick={() => handleClickIncrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
-                <span className="arrow nodrag">▲</span>
+                <span className='arrow nodrag'>▲</span>
               </div>
               <div
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
                 {data.replicas}
@@ -374,18 +376,18 @@ export default function ({ id, data, isConnectable }) {
                 onClick={() => handleClickDecrementReplicas()}
                 style={{
                   flex: 1,
-                  margin: "2px",
-                  textAlign: "center",
+                  margin: '2px',
+                  textAlign: 'center',
                 }}
               >
-                <span className="arrow nodrag">▼</span>
+                <span className='arrow nodrag'>▼</span>
               </div>
             </div>
           </div>
           <div style={{ flex: 1 }}>
             <select
-              name="imageTag"
-              className="select nodrag"
+              name='imageTag'
+              className='select nodrag'
               onChange={(e) => setImageTag(e.target.value)}
               value={data.imageTag}
             >
@@ -395,30 +397,30 @@ export default function ({ id, data, isConnectable }) {
                       {el}
                     </option>
                   ))
-                : ""}
+                : ''}
             </select>
             {!state.edges.find((edge) => edge.target === id)?.animated ? (
-              <button className="button nodrag disabled">Deploy</button>
+              <button className='button nodrag disabled'>Deploy</button>
             ) : !data.status ? (
-              <button className="button nodrag" onClick={handleClickStart}>
+              <button className='button nodrag' onClick={handleClickStart}>
                 Deploy
               </button>
-            ) : data.status === "deploying" ? (
-              <button className="button busy nodrag">Deploying...</button>
-            ) : data.status === "running" ? (
-              <button className="button stop nodrag" onClick={handleClickStop}>
+            ) : data.status === 'deploying' ? (
+              <button className='button busy nodrag'>Deploying...</button>
+            ) : data.status === 'running' ? (
+              <button className='button stop nodrag' onClick={handleClickStop}>
                 Stop Deployment
               </button>
             ) : (
-              <button className="button busy nodrag">Stopping...</button>
+              <button className='button busy nodrag'>Stopping...</button>
             )}
           </div>
         </div>
       </div>
       <Handle
-        type="source"
+        type='source'
         position={Position.Bottom}
-        id="b"
+        id='b'
         isConnectable={isConnectable}
       />
     </div>
