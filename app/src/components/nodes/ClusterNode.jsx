@@ -105,7 +105,7 @@ export default function ({ id, data, isConnectable }) {
           userId: state.user.id,
           awsAccessKey: state.user.awsAccessKey,
           awsSecretKey: state.user.awsSecretKey,
-          vpcRegion: state.user.vpcRegion,
+          vpcRegion: project.vpcRegion,
           projectId: project.projectId,
           clusterId: id,
           clusterName: data.name,
