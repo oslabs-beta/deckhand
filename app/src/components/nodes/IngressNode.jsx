@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Handle, Position } from "reactflow";
-import { showModal, deleteNode, updateNode } from "../../deckhandSlice";
-import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiImport } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Handle, Position } from 'reactflow';
+import { showModal, deleteNode, updateNode } from '../../deckhandSlice';
+import Icon from '@mdi/react';
+import { mdiDotsVertical, mdiImport } from '@mdi/js';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export default function ({ id, data, isConnectable }) {
   const state = useSelector((state) => state.deckhand);
@@ -38,7 +38,7 @@ export default function ({ id, data, isConnectable }) {
               <DropdownMenu.Item
                 className="dropdown-item"
                 onClick={() =>
-                  dispatch(showModal({ name: "ConfigureIngress", id, data }))
+                  dispatch(showModal({ name: 'ConfigureIngress', id, data }))
                 }
               >
                 Configure
@@ -56,7 +56,7 @@ export default function ({ id, data, isConnectable }) {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
         <div className="icon">
-          <Icon path={mdiImport} style={{ color: "green" }} size={1} />
+          <Icon path={mdiImport} style={{ color: 'green' }} size={1} />
         </div>
         <div className="title">Ingress Route</div>
         {!url ? (
@@ -64,7 +64,9 @@ export default function ({ id, data, isConnectable }) {
         ) : (
           <button
             className="button nodrag green"
-            onClick={() => window.open(data.url, "_blank")}
+            onClick={() =>
+              window.open('http://' + parentNode.data.url, '_blank')
+            }
           >
             Open Public URL
           </button>

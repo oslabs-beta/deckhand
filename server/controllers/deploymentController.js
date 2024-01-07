@@ -243,6 +243,18 @@ deploymentController.addCluster = async (req, res, next) => {
     );
     res.locals.data = { awsClusterName, volumeHandle };
 
+    // Connect kubectl to EKS cluster via aws
+    console.log('Connecting kubectl');
+    await execAsync(
+      `aws eks update-kubeconfig --region ${vpcRegion} --name ${awsClusterName}`
+    );
+
+    // Deploy nginx controller
+    console.log('Deploying nginx controller');
+    await execAsync(
+      `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml`
+    );
+
     // Log success and continue
     console.log('Done');
     return next();
@@ -406,12 +418,6 @@ deploymentController.deployPod = async (req, res, next) => {
     console.log('Connecting kubectl');
     await execAsync(
       `aws eks update-kubeconfig --region ${vpcRegion} --name ${awsClusterName}`
-    );
-
-    // Deploy nginx controller
-    console.log('Deploying nginx controller');
-    await execAsync(
-      `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml`
     );
 
     // Apply yaml (deploys pod)
