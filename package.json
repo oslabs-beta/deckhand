@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
+    "aws-sdk": "^2.1531.0",
     "body-parser": "^1.20.2",
     "buffer": "^6.0.3",
     "cookie-parser": "^1.4.6",
