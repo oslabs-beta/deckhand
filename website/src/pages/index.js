@@ -99,7 +99,7 @@ function HomepageHeader() {
             </Link>
           </div>
         </div>
-        <div className={styles.preview}><img src={preview} width="600" height="421" /></div>
+        <div className={`${styles.preview} ${styles.fadeInRight}`}><img src={preview} width="600" height="421" /></div>
       </div>
     </div>
   );
