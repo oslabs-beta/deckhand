@@ -85,13 +85,23 @@ const config = {
               },
               {
                 type: 'doc',
-                label: 'Elements',
-                docId: '/category/elements',
+                label: 'Getting Started',
+                docId: '/category/getting-started',
               },
               {
                 type: 'doc',
                 label: 'Integrations',
                 docId: '/category/integrations',
+              },
+              {
+                type: 'doc',
+                label: 'Elements',
+                docId: '/category/elements',
+              },
+              {
+                type: 'doc',
+                label: 'Troubleshooting',
+                docId: '/category/troubleshooting',
               },
             ],
           },
