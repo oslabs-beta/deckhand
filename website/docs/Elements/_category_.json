@@ -1,9 +1,9 @@
 {
   "label": "Elements",
-  "position": 2,
+  "position": 4,
   "link": {
     "type": "generated-index",
-    "description": "5 minutes to learn the most important Docusaurus concepts."
+    "description": "Understand the elements in your Kubernetes project"
   },
-  "collapsed": false
+  "collapsed": true
 }
