@@ -75,7 +75,7 @@ function HomepageHeader() {
             <div className={styles.logoText}>Deckhand</div>
           </div>
           <div className={styles.tagline}>
-            Fully automated, drag and drop Kubernetes.
+            No-code, drag and drop Kubernetes deployment.
           </div>
           <br />
           <div className={styles.buttons}>
