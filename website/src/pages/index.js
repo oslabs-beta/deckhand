@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import preview from '@site/static/img/preview.png';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -98,6 +99,7 @@ function HomepageHeader() {
             </Link>
           </div>
         </div>
+        <div className={styles.preview}><img src={preview} width="600" height="421" /></div>
       </div>
     </div>
   );

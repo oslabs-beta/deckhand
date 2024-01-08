@@ -55,6 +55,14 @@
   font-size: 18px;
 }
 
+.preview img {
+  margin-left: 100px;
+  border: 10px solid var(--secondary-btn-bg);
+  border-radius: 20px;
+  max-width: 600px;
+  height: auto;
+}
+
 .waves {
   position: relative;
   width: 100%;
