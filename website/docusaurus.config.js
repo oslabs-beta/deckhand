@@ -141,10 +141,6 @@ const config = {
                 label: 'Contribute',
                 to: '/contributing',
               },
-              {
-                label: 'LinkedIn',
-                href: 'https://www.linkedin.com/company/deckhand-open-source',
-              },
             ],
           },
           {
@@ -159,8 +155,8 @@ const config = {
                 to: '/blog',
               },
               {
-                label: 'Contact',
-                to: '/contact',
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/deckhand-open-source',
               },
             ],
           },
