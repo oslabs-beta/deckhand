@@ -69,7 +69,7 @@ const config = {
         title: 'Deckhand',
         logo: {
           alt: 'Deckhand Logo',
-          src: 'img/logo.png',
+          src: 'img/logo.svg',
         },
         items: [
           {
