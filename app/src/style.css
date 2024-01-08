@@ -3,9 +3,9 @@
 /* Light theme (default) */
 :root {
   --page-background: linear-gradient(
-    60deg,
-    rgb(213, 202, 255) 0%,
-    rgb(201, 249, 255) 100%
+    136deg,
+    rgb(183, 201, 228) 0%,
+    rgb(207, 213, 255) 100%
   );
   --component-background: white;
   --highlight-background: rgb(228, 248, 255);
@@ -18,7 +18,7 @@
 /* Dark theme */
 body.dark-mode {
   --page-background: linear-gradient(
-    60deg,
+    135deg,
     rgb(60, 60, 74) 0%,
     rgb(81, 82, 108) 100%
   );
@@ -137,7 +137,7 @@ button:active {
 
 .float-logo span {
   margin-left: 10px;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: bold;
 }
 
