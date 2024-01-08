@@ -64,7 +64,7 @@ We deploy directly to your AWS account. The specific services automated include 
 
 If you haven't already, first create an AWS account. Then:
 
-#### Create IAM user for Deckhand
+#### Create Deckhand IAM user
 
 1. Login to AWS account as a root
 2. Navigate to IAM -> Users -> Create User
@@ -77,7 +77,7 @@ If you haven't already, first create an AWS account. Then:
 9. Click "Create User"
 10. Save a record of your console sign-in URL, username, and password
 
-#### Get credentials for IAM user for Deckhand
+#### Get credentials for Deckhand IAM user
 
 1. Visit console sign-in URL, login as IAM user, and change password on login
 2. Navigate IAM -> Users -> deckhand -> "Security credentials" tab
@@ -91,7 +91,7 @@ If you haven't already, first create an AWS account. Then:
 
 ## Troubleshooting
 
-### Building GitHub Pods
+### Building Pods
 
 If running locally, make sure the dependencies listed above are installed. Make sure Docker is running locally. Building repos and scanning ports uses the local Docker Daemon to execute docker commands.
 
@@ -99,7 +99,12 @@ Make sure Github repositories contain a Dockerfile. This is used to build the Do
 
 ### Deploying Pods
 
-If you have trouble deploying a pod, make sure you have enough resources in your cluster. Increase the number of nodes and/or use a instance type with more resources and try again.
+An inability to deploy is typically an indication that there are not enough resources in your cluster to support the pods you are trying to run.
+
+To troubleshoot, make sure you have enough resources in your cluster. Adjust the following in your cluster configuration and try deploying again:
+
+- Increase the number of nodes
+- Select instance type with higher capacity
 
 ## Star us on GitHub!
 
