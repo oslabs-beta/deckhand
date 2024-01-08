@@ -4,13 +4,20 @@ sidebar_position: 1
 
 # Introduction
 
-Let's discover **Deckhand in less than 5 minutes**.
+<img align="right" src="/img/deckhandlogoicon.png" width="200" />
 
-### What you'll need
+Ahoy! And welcome to the exciting world of Kubernetes. I'll be your Deckhand.
 
-- Github Account
-- AWS Account
+Use me for no-code Kubernetes deployments. Fully automated. Open source.
 
-```bash
-example code
-```
+### Simple to use
+
+Visual drag and drop interface lets you virtually craft your system design, so you can focus on what matters and automate the rest.
+
+### Connect any software
+
+Instantly search for and connect any commercial or open source software, including your private Github repositories, and deploy it with a click.
+
+### No vendor lock-in
+
+We'll deploy directly to your linked cloud provider, so you can involve Deckhand as much or as little as you'd like, and take back the wheel at any time.
