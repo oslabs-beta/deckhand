@@ -3,6 +3,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const { exec } = require('child_process');
 const execAsync = util.promisify(exec);
+const AWS = require('aws-sdk');
 
 const deploymentController = {};
 
@@ -298,7 +299,190 @@ deploymentController.deleteCluster = async (req, res, next) => {
   }
 };
 
-// Dockerize github repo and push to AWS ECR
+// Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
+deploymentController.buildImageNEW = async (req, res, next) => {
+  console.log('\n/api/deployment/buildImage:');
+  const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
+  const githubToken = req.cookies.github_token; // GitHub token
+
+  const repoName = repo.split('/').pop(); // Extract repo name from "user/repoName"
+  const awsRepoName = repoName.toLowerCase(); // ECR repository name
+  const imageTag = 'latest'; // Hardcoded image tag
+  const projectName = `${awsRepoName}-${branch}`; // CodeBuild project name
+
+  try {
+    // Configure AWS
+    console.log("Configuring AWS")
+    const awsConfig = {
+      accessKeyId: awsAccessKey,
+      secretAccessKey: awsSecretKey,
+      region: vpcRegion,
+    };
+    AWS.config.update(awsConfig);
+    const ecr = new AWS.ECR();
+    const codebuild = new AWS.CodeBuild();
+    const iam = new AWS.IAM();
+
+    // Configure CodeBuild Service Role
+    console.log("Configuring CodeBuild Service Role");
+    async function ensureCodeBuildServiceRole() {
+      const roleName = 'MyCodeBuildServiceRole';
+      const sts = new AWS.STS();
+
+      // Retrieve the AWS account ID
+      const accountIdData = await sts.getCallerIdentity({}).promise();
+      const awsAccountId = accountIdData.Account;
+
+      const assumeRolePolicyDocument = JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [{
+          Effect: 'Allow',
+          Principal: {
+            Service: 'codebuild.amazonaws.com'
+          },
+          Action: 'sts:AssumeRole'
+        }]
+      });
+
+      try {
+        // Check if role exists
+        await iam.getRole({ RoleName: roleName }).promise();
+        console.log('Role already exists');
+      } catch (error) {
+        if (error.code === 'NoSuchEntity') {
+          // Role does not exist, create it
+          console.log('Creating role');
+          await iam.createRole({
+            RoleName: roleName,
+            AssumeRolePolicyDocument: assumeRolePolicyDocument,
+          }).promise();
+
+          // Attach policies to the role
+          await iam.attachRolePolicy({
+            RoleName: roleName,
+            PolicyArn: 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess',
+          }).promise();
+
+          // Attach the CloudWatchLogs policy
+          const cloudWatchPolicy = {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ],
+                Resource: `arn:aws:logs:${vpcRegion}:${awsAccountId}:log-group:/aws/codebuild/${projectName}:*`
+              }
+            ]
+          };
+
+          await iam.putRolePolicy({
+            RoleName: roleName,
+            PolicyName: 'CodeBuildCloudWatchLogsPolicy',
+            PolicyDocument: JSON.stringify(cloudWatchPolicy)
+          }).promise();
+        } else {
+          // Other errors
+          throw error;
+        }
+      }
+
+      return `arn:aws:iam::${awsAccountId}:role/${roleName}`;
+    }
+    const serviceRoleArn = await ensureCodeBuildServiceRole();
+
+    // Create ECR repository
+    console.log('Creating ECR repository');
+    await ecr.createRepository({ repositoryName: awsRepoName }).promise().catch(err => {
+      if (err.code !== 'RepositoryAlreadyExistsException') {
+        throw err;
+      }
+    });
+
+    // Get ECR repository URI
+    const { repositories } = await ecr.describeRepositories({ repositoryNames: [awsRepoName] }).promise();
+    const repositoryUri = repositories[0].repositoryUri;
+
+    // Define CodeBuild project
+    const buildProjectParams = {
+      name: projectName,
+      source: {
+        type: 'GITHUB',
+        location: `https://github.com/${repo}.git`,
+        auth: {
+          type: 'OAUTH',
+          resource: githubToken,
+        },
+        buildspec: `
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - echo Logging in to Amazon ECR...
+                - $(aws ecr get-login --no-include-email)
+            build:
+              commands:
+                - echo Building the Docker image...
+                - docker build -t ${repositoryUri}:${imageTag} .
+            post_build:
+              commands:
+                - echo Pushing the Docker image...
+                - docker push ${repositoryUri}:${imageTag}
+        `,
+      },
+      artifacts: {
+        type: 'NO_ARTIFACTS',
+      },
+      environment: {
+        type: 'LINUX_CONTAINER',
+        image: 'aws/codebuild/standard:4.0', // this base image has Docker access. update as needed
+        computeType: 'BUILD_GENERAL1_SMALL',
+      },
+      serviceRole: serviceRoleArn,
+    };
+
+    // Create or update CodeBuild project
+    console.log('Creating or updating CodeBuild project');
+    try {
+      // Attempt to create the CodeBuild project
+      await codebuild.createProject(buildProjectParams).promise();
+    } catch (error) {
+      if (error.code === 'ResourceAlreadyExistsException') {
+        // If project already exists, update it
+        console.log('Project already exists, updating existing project');
+        await codebuild.updateProject(buildProjectParams).promise();
+      } else {
+        // If other error, throw it
+        throw error;
+      }
+    }
+
+    // Start build
+    console.log('Starting build in CodeBuild');
+    const buildStartParams = {
+      projectName: projectName,
+      sourceVersion: branch, // Specify the branch
+    };
+    await codebuild.startBuild(buildStartParams).promise();
+
+    // Set response data
+    res.locals.data = { awsRepo: projectName, imageName: repositoryUri, imageTag };
+
+    // Log success and continue
+    console.log('Done');
+    return next();
+  } catch (err) {
+    return next({
+      log: `Error in buildImage: ${err}`,
+      message: { err: 'An error occurred trying to build an image' },
+    });
+  }
+};
+
+// OLD: Dockerize github repo and push to AWS ECR
 deploymentController.buildImage = async (req, res, next) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
@@ -341,6 +525,7 @@ deploymentController.buildImage = async (req, res, next) => {
     console.log('Dockerizing and pushing image to ECR repository');
     const cloneUrl = `https://github.com/${repo}.git#${branch}`;
     const imageUrl = `${ecrUrl}/${awsRepo}`;
+    // await execAsync(`docker build -t ${imageName} ${cloneUrl}`);
     await execAsync(
       `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
     );
@@ -355,6 +540,47 @@ deploymentController.buildImage = async (req, res, next) => {
     return next({
       log: `Error in buildImage: ${err}`,
       message: { err: 'An error occurred trying to build an image' },
+    });
+  }
+};
+
+deploymentController.deleteImageNew = async (req, res, next) => {
+  console.log('\n/api/deployment/deleteImage:');
+  const {
+    awsAccessKey,
+    awsSecretKey,
+    vpcRegion,
+    awsRepo,
+    imageTag, // imageName is not needed for deleting the image
+  } = req.body;
+
+  try {
+    // Configure AWS
+    console.log('Configuring AWS');
+    AWS.config.update({
+      accessKeyId: awsAccessKey,
+      secretAccessKey: awsSecretKey,
+      region: vpcRegion
+    });
+
+    // Create ECR client
+    const ecr = new AWS.ECR();
+
+    // Delete image
+    console.log('Deleting image');
+    await ecr.batchDeleteImage({
+      repositoryName: awsRepo,
+      imageIds: [{ imageTag: imageTag }]
+    }).promise();
+
+    // Log success and continue
+    console.log('Image deleted successfully');
+    return next();
+  } catch (err) {
+    console.error('Error in deleteImage:', err);
+    return next({
+      log: `Error in deleteImage: ${err}`,
+      message: { err: 'An error occurred trying to delete an image' },
     });
   }
 };

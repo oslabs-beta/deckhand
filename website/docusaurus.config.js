@@ -69,7 +69,7 @@ const config = {
         title: 'Deckhand',
         logo: {
           alt: 'Deckhand Logo',
-          src: 'img/logo.png',
+          src: 'img/logo.svg',
         },
         items: [
           {
@@ -85,13 +85,23 @@ const config = {
               },
               {
                 type: 'doc',
-                label: 'Elements',
-                docId: '/category/elements',
+                label: 'Getting Started',
+                docId: '/category/getting-started',
               },
               {
                 type: 'doc',
                 label: 'Integrations',
                 docId: '/category/integrations',
+              },
+              {
+                type: 'doc',
+                label: 'Elements',
+                docId: '/category/elements',
+              },
+              {
+                type: 'doc',
+                label: 'Troubleshooting',
+                docId: '/category/troubleshooting',
               },
             ],
           },
@@ -131,10 +141,6 @@ const config = {
                 label: 'Contribute',
                 to: '/contributing',
               },
-              {
-                label: 'LinkedIn',
-                href: 'https://www.linkedin.com/company/deckhand-open-source',
-              },
             ],
           },
           {
@@ -149,8 +155,8 @@ const config = {
                 to: '/blog',
               },
               {
-                label: 'Contact',
-                to: '/contact',
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/deckhand-open-source',
               },
             ],
           },

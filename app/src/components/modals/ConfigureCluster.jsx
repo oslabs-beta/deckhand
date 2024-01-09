@@ -58,7 +58,7 @@ export default function () {
             Instance Type:
             <select
               name="instanceType"
-              defaultValue={data.instanceType || "t3.micro"}
+              defaultValue={data.instanceType || "t2.medium"}
             >
               {[
                 "a1.medium",
