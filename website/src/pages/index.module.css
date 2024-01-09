@@ -16,7 +16,7 @@
   width: 60px;
   height: 60px;
   fill: white;
-  padding-right: 15px;
+  margin-right: 10px;
 }
 
 .logoText {
@@ -55,6 +55,19 @@
   font-size: 18px;
 }
 
+.preview {
+  max-width: 600px;
+  height: auto;
+}
+
+.preview img {
+  margin-left: 100px;
+  border: 10px solid var(--secondary-btn-bg);
+  border-radius: 20px;
+  max-width: 100%;
+  height: auto;
+}
+
 .waves {
   position: relative;
   width: 100%;
@@ -65,6 +78,25 @@
 }
 
 @media (max-width: 768px) {
+  .innerHeader {
+    flex-direction: column;
+  }
+
+  .logoSVG {
+    width: 40px; /* Smaller logo for mobile */
+    height: 40px;
+  }
+
+  .logoText {
+    font-size: 30px; /* Smaller text for mobile */
+  }
+
+  .preview img {
+    margin: 20px;
+    border: 5px solid var(--secondary-btn-bg); /* Smaller border on mobile */
+    width: 80%; /* Shrink on mobile */
+  }
+
   .waves {
     height: 5vh;
     margin-bottom: -8px; /*Fix for safari gap*/
@@ -116,4 +148,38 @@
 
 .fadeIn {
   animation: fadeIn 2s ease-in-out;
+}
+
+/* Fade-in from left animation */
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fadeInLeft {
+  animation: fadeInLeft 1s ease forwards;
+}
+
+/* Fade-in from right animation */
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fadeInRight {
+  animation: fadeInRight 1s ease forwards;
 }

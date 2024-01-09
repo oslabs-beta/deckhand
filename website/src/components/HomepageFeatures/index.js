@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 const FeatureList = [
   {
     title: 'Simple to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/docker.svg').default,
     description: (
       <>
         Visual drag and drop interface lets you virtually craft your system design,
@@ -15,7 +15,7 @@ const FeatureList = [
   },
   {
     title: 'Connect Any Software',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/github.svg').default,
     description: (
       <>
         Instantly search for and connect any commercial or open source software,
@@ -25,11 +25,11 @@ const FeatureList = [
   },
   {
     title: 'No Vendor Lock-In',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    Svg: require('@site/static/img/aws.svg').default,
     description: (
       <>
         We'll deploy directly to your linked cloud provider, so you can involve Deckhand
-        as much or as little as you'd like, and take the wheel at any time.
+        as much or as little as you'd like, and take back the wheel at any time.
       </>
     ),
   },

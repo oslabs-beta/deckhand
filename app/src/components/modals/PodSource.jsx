@@ -136,7 +136,7 @@ export default function () {
                 justifyContent: "space-between",
               }}
             >
-              <span style={{ color: "#333" }}>
+              <span className="primary">
                 <b>{el.name}</b> by {el.owner.login}
               </span>
               <span style={{ fontSize: "12px" }}>

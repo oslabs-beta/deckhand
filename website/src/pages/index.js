@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import preview from '@site/static/img/preview2.png';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -74,30 +75,31 @@ function HomepageHeader() {
             <div className={styles.logoText}>Deckhand</div>
           </div>
           <div className={styles.tagline}>
-            Fully automated, drag and drop Kubernetes.
+            No-code, drag and drop Kubernetes deployment.
           </div>
           <br />
-          <div className={styles.buttons}>
+          <div>
             <Link
               className="button button--primary button--lg"
               to="http://app.deckhand.dev"
-              style={{ border: 0, backgroundColor: 'var(--main-btn-bg)', color: 'var(--main-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--main-btn-bg)', color: 'var(--main-btn-text)' }}>
               Launch App
-            </Link>&nbsp;&nbsp;&nbsp;
+            </Link>
             {/* <Link
               className="button button--secondary button--lg"
               to="https://github.com/oslabs-beta/deckhand/"
-              style={{ border: 0, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
               <span style={{ color: '#999' }}>★</span> Github
             </Link> */}
             <Link
               className="button button--secondary button--lg"
               to="/docs/intro"
-              style={{ border: 0, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
               📚 Docs
             </Link>
           </div>
         </div>
+        <div className={`${styles.preview} ${styles.fadeInRight}`}><img src={preview} /></div>
       </div>
     </div>
   );
