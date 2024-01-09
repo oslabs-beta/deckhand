@@ -78,28 +78,28 @@ function HomepageHeader() {
             No-code, drag and drop Kubernetes deployment.
           </div>
           <br />
-          <div className={styles.buttons}>
+          <div>
             <Link
               className="button button--primary button--lg"
               to="http://app.deckhand.dev"
-              style={{ border: 0, backgroundColor: 'var(--main-btn-bg)', color: 'var(--main-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--main-btn-bg)', color: 'var(--main-btn-text)' }}>
               Launch App
-            </Link>&nbsp;&nbsp;&nbsp;
+            </Link>
             {/* <Link
               className="button button--secondary button--lg"
               to="https://github.com/oslabs-beta/deckhand/"
-              style={{ border: 0, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
               <span style={{ color: '#999' }}>★</span> Github
             </Link> */}
             <Link
               className="button button--secondary button--lg"
               to="/docs/intro"
-              style={{ border: 0, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
+              style={{ border: 0, margin: 5, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
               📚 Docs
             </Link>
           </div>
         </div>
-        <div className={`${styles.preview} ${styles.fadeInRight}`}><img src={preview} width="600" height="421" /></div>
+        <div className={`${styles.preview} ${styles.fadeInRight}`}><img src={preview} /></div>
       </div>
     </div>
   );

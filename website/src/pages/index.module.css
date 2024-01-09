@@ -55,11 +55,16 @@
   font-size: 18px;
 }
 
+.preview {
+  max-width: 600px;
+  height: auto;
+}
+
 .preview img {
   margin-left: 100px;
   border: 10px solid var(--secondary-btn-bg);
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 100%;
   height: auto;
 }
 
@@ -73,6 +78,25 @@
 }
 
 @media (max-width: 768px) {
+  .innerHeader {
+    flex-direction: column;
+  }
+
+  .logoSVG {
+    width: 40px; /* Smaller logo for mobile */
+    height: 40px;
+  }
+
+  .logoText {
+    font-size: 24px; /* Smaller text for mobile */
+  }
+
+  .preview img {
+    margin: 20px;
+    border: 5px solid var(--secondary-btn-bg); /* Smaller border on mobile */
+    width: 80%; /* Shrink on mobile */
+  }
+
   .waves {
     height: 5vh;
     margin-bottom: -8px; /*Fix for safari gap*/
