@@ -3,7 +3,7 @@
 
 # <img src="./website/static/img/deckhandlogowhite.png#gh-dark-mode-only" width="200" /><img src="./website/static/img/deckhandlogo.png#gh-light-mode-only" width="200" />
 
-<img align="right" src="./website/static/img/ship-character.png" width="150" />
+<img align="right" src="./website/static/img/ship-character.png" width="175" />
 
 Ahoy! And welcome to the exciting world of Kubernetes. I'm your Deckhand.
 
@@ -16,6 +16,8 @@ I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open so
 - **No vendor lock-in:** We'll deploy directly to your linked cloud provider, so you can involve Deckhand as much or as little as you'd like, and take back the wheel at any time.
 
 ## Features
+
+<img align="right" src="./website/static/img/deckhandlogoicon.png" width="175" />
 
 Behind the scenes, Deckhad abstracts away all the work of setting up a Kubernetes cluster, including:
 
