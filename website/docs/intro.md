@@ -4,8 +4,6 @@ sidebar_position: 1
 
 # Introduction
 
-<img align="right" src="/img/ship-character.png" width="175" />
-
 Ahoy! And welcome to the exciting world of Kubernetes. I'm your Deckhand.
 
 I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open source.
@@ -20,7 +18,7 @@ I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open so
 
 <img align="right" src="/img/deckhandlogoicon.png" width="175" />
 
-Behind the scenes, Deckhad abstracts away all the work of setting up a Kubernetes cluster, including:
+Behind the scenes, Deckhand abstracts away all the work of deploying an application on Kubernetes, including:
 
 - Setting up VPCs, subnets, route tables, security groups, and gateways
 - Provisioning an EKS cluster and installing all the necessary add-ons
