@@ -16,7 +16,7 @@
   width: 60px;
   height: 60px;
   fill: white;
-  padding-right: 15px;
+  margin-right: 10px;
 }
 
 .logoText {
@@ -88,7 +88,7 @@
   }
 
   .logoText {
-    font-size: 24px; /* Smaller text for mobile */
+    font-size: 30px; /* Smaller text for mobile */
   }
 
   .preview img {
