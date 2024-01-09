@@ -4,8 +4,8 @@
 :root {
   --page-background: linear-gradient(
     136deg,
-    rgb(183, 201, 228) 0%,
-    rgb(207, 213, 255) 100%
+    rgb(200, 210, 225) 0%,
+    rgb(230, 230, 255) 100%
   );
   --component-background: white;
   --highlight-background: rgb(228, 248, 255);
