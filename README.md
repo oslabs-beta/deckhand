@@ -3,7 +3,7 @@
 
 # <img src="./website/static/img/deckhandlogowhite.png#gh-dark-mode-only" width="200" /><img src="./website/static/img/deckhandlogo.png#gh-light-mode-only" width="200" />
 
-<img align="right" src="./website/static/img/ship-character.png" width="200" />
+<img align="right" src="./website/static/img/ship-character.png" width="150" />
 
 Ahoy! And welcome to the exciting world of Kubernetes. I'm your Deckhand.
 
