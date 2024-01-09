@@ -4,6 +4,8 @@ sidebar_position: 1
 
 # Amazon Web Services (AWS)
 
+<img align="right" src="/img/aws.svg" width="175" />
+
 We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS.
 
 If you haven't already, first create an AWS account. Then:
