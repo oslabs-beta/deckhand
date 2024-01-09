@@ -53,7 +53,9 @@ npm run tf-init
 
 ### Use our Web App
 
-Coming soon!
+Coming soon! No need to clone our repository nor install local dependencies.
+
+Simply launch our web app, enter your AWS credentials, and set sail.
 
 ## Link Third-Party Accounts
 
