@@ -15,6 +15,22 @@ I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open so
 
 - **No vendor lock-in:** We'll deploy directly to your linked cloud provider, so you can involve Deckhand as much or as little as you'd like, and take back the wheel at any time.
 
+## Features
+
+Behind the scenes, Deckhad abstracts away all the work of setting up a Kubernetes cluster, including:
+
+- Setting up VPCs, subnets, route tables, security groups, and gateways
+- Provisioning an EKS cluster and installing all the necessary add-ons
+- Spinning up EC2 instances as nodes in the cluster
+- Implementing an EFS for volume storage
+- Dockerizing Github repos and pushing to ECR
+- Pulling down Docker Hub images
+- Scanning images for necessary environmental variables and exposed ports, guiding the user to add them to their configurations
+- Generating YAML files for deployments, services, configmaps, secrets, persistent volume claims, and ingresses
+- Applying all the YAML files to your cluster
+- Obtaining a public url for your app
+- Automating the entire teardown process with a single click
+
 ## Getting Started
 
 ### Run Locally
@@ -92,6 +108,16 @@ To troubleshoot, make sure you have enough resources in your cluster. Adjust the
 
 - Increase the number of nodes
 - Select instance type with higher capacity
+
+## Future Development
+
+Upcoming features include:
+
+- Google Cloud Services support
+- Microsoft Azure support
+- Advanced cluster monitoring
+
+As an open source product, we welcome your contributions! See the [Contributing](contributing.md) page for details.
 
 ## Star us on GitHub!
 
