@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-<img align="right" src="/img/deckhandlogoicon.png" width="200" />
+<img align="right" src="/img/ship-character.png" width="300" />
 
 Ahoy! And welcome to the exciting world of Kubernetes. I'm your Deckhand.
 
