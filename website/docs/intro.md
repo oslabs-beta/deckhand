@@ -6,9 +6,9 @@ sidebar_position: 1
 
 <img align="right" src="/img/deckhandlogoicon.png" width="200" />
 
-Ahoy! And welcome to the exciting world of Kubernetes. I'll be your Deckhand.
+Ahoy! And welcome to the exciting world of Kubernetes. I'm your Deckhand.
 
-Use me for no-code Kubernetes deployments. Fully automated. Open source.
+I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open source.
 
 ### Simple to use
 
