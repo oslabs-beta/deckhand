@@ -57,17 +57,13 @@ Coming soon!
 
 ## Link Third-Party Accounts
 
-### GitHub
-
-<img align="right" src="./website/static/img/github.svg" width="100" />
+### <img src="./website/static/img/github.svg" width="15" /> GitHub
 
 GitHub is required to search, build, and deploy your Git repositories into Kubernetes pods. It is also how you log into Deckhand.
 
 If you haven't already, first create GitHub account. Then, from the Deckhand login page, click "Log in with GitHub". This will redirect you to GitHub to authorize Deckhand to access your account and repositories. Click "Authoize Deckhand". This will redirect you back to the Deckhand app and log in.
 
-### Amazon Web Services (AWS)
-
-<img align="right" src="./website/static/img/aws.svg" width="100" />
+### <img src="./website/static/img/aws.svg" width="15" /> Amazon Web Services (AWS)
 
 We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS.
 
@@ -119,7 +115,7 @@ To troubleshoot, make sure you have enough resources in your cluster. Adjust the
 
 Upcoming features include:
 
-- Google Cloud Services support
+- Google Cloud Platform support
 - Microsoft Azure support
 - Advanced cluster monitoring
 
