@@ -15,7 +15,7 @@ I'll help you deploy a Kubernetes cluster with no code. Fully automated. Open so
 
 ## Features
 
-<img align="right" src="./website/static/img/preview2.png" width="175" />
+<img align="right" src="./website/static/img/preview2.png" width="50%" />
 
 Behind the scenes, Deckhand abstracts away all the work of deploying an application on Kubernetes, including:
 
