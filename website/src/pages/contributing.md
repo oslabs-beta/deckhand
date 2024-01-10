@@ -1,14 +1,55 @@
 # Contributing to Deckhand
 
-As an open source product, we welcome contributions!
+Welcome to the Deckhand open source community! We're excited to have you onboard and appreciate your interest in contributing to our project.
 
 ## Reporting Bugs
 
-If you've found a bug, please let us know. You can do so from the GitHub repository by clicking the "issues" tab. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. And if you think you can fix the bug yourself, go ahead and submit a pull request with the fix!
+Encountered a bug? We would love to hear about it. Here's how you can report it:
+
+1. Visit our GitHub repository.
+2. Navigate to the "Issues" tab.
+3. Create a new issue with a clear description and instructions on how to reproduce the bug.
+4. Feel free to submit a pull request if you have a fix!
 
 ## Initialization
 
-If you are cloning this repo you must run `npm install` and `npm run tf-init` to download all the necessary dependencies.
+### Development Environment Setup
+
+Before starting, ensure you have the following tools and utilities installed:
+
+- Docker (must be running in the background)
+- AWS CLI
+- kubectl
+- Terraform
+
+### Configuring Environmental Variables
+
+For local development, set up your environmental variables as follows:
+
+1. Refer to the `.env.example` file in the root directory.
+2. Provide your own instances of GitHub OAuth and PostgreSQL.
+
+#### GitHub OAuth Configuration
+
+- Create a GitHub OAuth application in your account.
+- Set the Client ID and Client Secret:
+  - `GITHUB_CLIENT_ID=your_github_client_id_here`
+  - `GITHUB_CLIENT_SECRET=your_github_client_secret_here`
+
+#### PostgreSQL Configuration
+
+- Provide the URI for your PostgreSQL database:
+  - `PG_URI=postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE`
+
+### Clone Repository and Run
+
+```bash
+git clone <repository-url>
+cd <repository-name>
+npm install
+npm run tf-init
+npm run dev
+```
 
 ## Pull Requests
 

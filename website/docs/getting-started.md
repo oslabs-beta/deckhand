@@ -1,8 +1,8 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
-# Using the App
+# Getting Started
 
 ## Cluster
 

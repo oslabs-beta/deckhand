@@ -86,7 +86,7 @@ const config = {
               {
                 type: 'doc',
                 label: 'Getting Started',
-                docId: '/category/getting-started',
+                docId: 'getting-started',
               },
               {
                 type: 'doc',
