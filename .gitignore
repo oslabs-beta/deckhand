@@ -141,3 +141,6 @@ dist
 
 # Compiled app
 /build
+
+# Private local folder
+/__local
