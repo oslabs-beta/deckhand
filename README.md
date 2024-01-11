@@ -115,7 +115,7 @@ To troubleshoot, make sure you have enough resources in your cluster. Adjust the
 
 ## Future Development
 
-Upcoming features include:
+Deckhand currently fully automates the deployment of Kubernetes clusters to Amazon Web Services (AWS), but let’s not drop the anchor there. We intentionally built the app using HCL and Terraform to maximize platform agnosticism. Future high-priority developments include:
 
 - Google Cloud Platform support
 - Microsoft Azure support
