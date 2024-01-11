@@ -119,7 +119,7 @@ Deckhand currently fully automates the deployment of Kubernetes clusters to Amaz
 
 - Google Cloud Platform support
 - Microsoft Azure support
-- Advanced cluster monitoring
+- Advanced cluster health and cost monitoring
 
 As an open source product, we welcome your contributions! See the [Contributing](contributing.md) page for details.
 
