@@ -51,7 +51,7 @@ deploymentController.addVPC = async (req, res, next) => {
     // Copy provider terraform config to project directory
     console.log('Copying provider.tf to project directory');
     await execAsync(
-      `cp ${path.join('server', 'templates', 'provider.tf')} ${projectPath}`
+      `cp ${path.join('server', 'terraform', 'templates', 'provider.tf')} ${projectPath}`
     );
 
     // Create variables file for VPC
@@ -66,7 +66,7 @@ deploymentController.addVPC = async (req, res, next) => {
     // Copy VPC terraform config to project directory
     console.log('Copying vpc.tf to project directory');
     await execAsync(
-      `cp ${path.join('server', 'templates', 'vpc.tf')} ${projectPath}`
+      `cp ${path.join('server', 'terraform', 'templates', 'vpc.tf')} ${projectPath}`
     );
 
     // Apply the terraform files in project directory (provider and VPC)
@@ -160,7 +160,7 @@ deploymentController.addCluster = async (req, res, next) => {
     // Copy EKS terraform config to cluster directory
     console.log('Copying eks.tf file to cluster directory');
     await execAsync(
-      `cp ${path.join('server', 'templates', 'eks.tf')} ${path.join(
+      `cp ${path.join('server', 'terraform', 'templates', 'eks.tf')} ${path.join(
         clusterPath,
         `eks.tf`
       )}`

@@ -62,6 +62,14 @@ export default function FloatAccount() {
           >
             Link AWS Account
           </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() =>
+              window.open("https://deckhand.dev/docs/intro", "_blank")
+            }
+          >
+            Show Documentation
+          </DropdownMenu.Item>
           {state.user.theme === "light" || !state.user.theme ? (
             <DropdownMenu.Item
               className="dropdown-item"
