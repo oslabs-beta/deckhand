@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "allowJs": true,
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "outDir": "./build",
+    "noImplicitAny": true
+  },
+  "include": ["app/**/*.ts", "app/**/*.tsx", "server/**/*.ts"]
+}
