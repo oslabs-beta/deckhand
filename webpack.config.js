@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: path.join(__dirname, 'app', 'src', 'index.js'),
+  entry: path.join(__dirname, 'app', 'src', 'index.tsx'),
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'index_bundle.js',
@@ -23,6 +23,11 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: { loader: 'ts-loader' },
+      },
       {
         test: /\.jsx?/,
         exclude: /node_modules/,
@@ -49,6 +54,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: ['.js', '.jsx'], // these files can be imported without specifying extension
+    extensions: ['.js', '.jsx', '.ts', '.tsx'], // these files can be imported without specifying extension
   },
 };
