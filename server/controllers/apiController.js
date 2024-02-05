@@ -26,8 +26,8 @@ apiController.updateDatabase = async (req, res, next) => {
       avatarUrl,
       githubId,
       theme,
-      cryptoUtils.encrypt(awsAccessKey, process.env.ENCRYPTION_KEY),
-      cryptoUtils.encrypt(awsSecretKey, process.env.ENCRYPTION_KEY),
+      cryptoUtils.encrypt(awsAccessKey),
+      cryptoUtils.encrypt(awsSecretKey),
       state
     ]);
 

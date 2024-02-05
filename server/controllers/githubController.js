@@ -118,8 +118,8 @@ githubController.userData = async (req, res, next) => {
             avatarUrl: user.avatarurl,
             githubId: user.githubid,
             theme: user.theme,
-            awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey, process.env.ENCRYPTION_KEY),
-            awsSecretKey: cryptoUtils.decrypt(user.awssecretkey, process.env.ENCRYPTION_KEY),
+            awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey),
+            awsSecretKey: cryptoUtils.decrypt(user.awssecretkey),
             state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
           };
         }
