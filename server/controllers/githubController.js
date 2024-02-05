@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 const db = require('../database/dbConnect.js');
+const cryptoUtils = require('../utils/cryptoUtils.js');
 
 const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_SECRET_PROD : process.env.GITHUB_CLIENT_SECRET;
@@ -117,8 +118,8 @@ githubController.userData = async (req, res, next) => {
             avatarUrl: user.avatarurl,
             githubId: user.githubid,
             theme: user.theme,
-            awsAccessKey: user.awsaccesskey,
-            awsSecretKey: user.awssecretkey,
+            awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey, process.env.ENCRYPTION_KEY),
+            awsSecretKey: cryptoUtils.decrypt(user.awssecretkey, process.env.ENCRYPTION_KEY),
             state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
           };
         }
