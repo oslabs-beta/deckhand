@@ -1,4 +1,5 @@
 const db = require('../database/dbConnect.js');
+const cryptoUtils = require('../utils/cryptoUtils.js');
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
@@ -18,7 +19,17 @@ apiController.updateDatabase = async (req, res, next) => {
 
   try {
     // Execute the query with the provided values
-    const result = await db.query(updateQuery, [id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state]);
+    const result = await db.query(updateQuery, [
+      id,
+      name,
+      email,
+      avatarUrl,
+      githubId,
+      theme,
+      cryptoUtils.encrypt(awsAccessKey, process.env.ENCRYPTION_KEY),
+      cryptoUtils.encrypt(awsSecretKey, process.env.ENCRYPTION_KEY),
+      state
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found.' });
