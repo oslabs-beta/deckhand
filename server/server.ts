@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const app = express();
 const PORT = 3000;
-const { dbInit } = require('./database/dbInit.js');
+const { dbInit } = require('./database/dbInit');
 
 // Initialize database
 const initDatabase = async () => {
@@ -13,9 +13,9 @@ const initDatabase = async () => {
 initDatabase();
 
 // Require routers
-const apiRouter = require(path.join(__dirname, './routes/api.js'));
-const githubRouter = require(path.join(__dirname, './routes/github.js'));
-const deploymentRouter = require(path.join(__dirname, './routes/deployment.js'));
+const apiRouter = require(path.join(__dirname, './routes/api'));
+const githubRouter = require(path.join(__dirname, './routes/github'));
+const deploymentRouter = require(path.join(__dirname, './routes/deployment'));
 
 // Parse incoming requests
 app.use(express.json());
@@ -30,22 +30,22 @@ app.use('/api', apiRouter);
 // Handle requests for static files
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../build')));
-  app.get('*', (req, res) => {
+  app.get('*', (req: any, res: any) => {
     res.sendFile(path.join(__dirname, '../build/index.html'));
   });
 } else {
-  app.get('/', (req, res) => {
+  app.get('/', (req: any, res: any) => {
     res.sendFile(path.join(__dirname, '../app/public/index.html'));
   });
 }
 
 // Catch-all route handler for any requests to an unknown route
-app.use('*', (req, res) => {
+app.use('*', (req: any, res: any) => {
   return res.sendStatus(404);
 });
 
 // Global error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,

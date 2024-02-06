@@ -1,12 +1,12 @@
-const db = require('../database/dbConnect.js');
-const cryptoUtils = require('../utils/cryptoUtils.js');
+const db = require('../database/dbConnect');
+const cryptoUtilsAPI = require('../utils/cryptoUtils');
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
 
-const apiController = {};
+const apiController: any = {};
 
-apiController.updateDatabase = async (req, res, next) => {
+apiController.updateDatabase = async (req: any, res: any, next: any) => {
   const { id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state } = req.body;
 
   // Prepare the SQL query
@@ -19,15 +19,15 @@ apiController.updateDatabase = async (req, res, next) => {
 
   try {
     // Execute the query with the provided values
-    const result = await db.query(updateQuery, [
+    const result: any = await db.query(updateQuery, [
       id,
       name,
       email,
       avatarUrl,
       githubId,
       theme,
-      cryptoUtils.encrypt(awsAccessKey),
-      cryptoUtils.encrypt(awsSecretKey),
+      cryptoUtilsAPI.encrypt(awsAccessKey),
+      cryptoUtilsAPI.encrypt(awsSecretKey),
       state
     ]);
 
@@ -43,12 +43,12 @@ apiController.updateDatabase = async (req, res, next) => {
   }
 };
 
-apiController.getDockerHubImages = async (req, res, next) => {
+apiController.getDockerHubImages = async (req: any, res: any, next: any) => {
   const image = req.params[0];
   await fetch(`https://hub.docker.com/v2/search/repositories/?query=${image}`)
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.results.map((el) => {
+      res.locals.data = data.results.map((el: any) => {
         return {
           name: el.repo_name,
           description: el.short_description,
@@ -60,19 +60,19 @@ apiController.getDockerHubImages = async (req, res, next) => {
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubImageTags = async (req, res, next) => {
+apiController.getDockerHubImageTags = async (req: any, res: any, next: any) => {
   let imageName = req.params[0];
   if (!imageName.includes('/')) imageName = `library/${imageName}`
   await fetch(`https://hub.docker.com/v2/repositories/${imageName}/tags/`)
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.results.map((el) => el.name)
+      res.locals.data = data.results.map((el: any) => el.name)
       next();
     })
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubExposedPort = async (req, res, next) => {
+apiController.getDockerHubExposedPort = async (req: any, res: any, next: any) => {
   let { imageName, imageTag } = req.body;
   if (!imageName.includes('/')) imageName = `library/${imageName}`
 

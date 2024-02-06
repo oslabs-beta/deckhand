@@ -2,8 +2,8 @@ const { execSync, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const db = require('../database/dbConnect.js');
-const cryptoUtils = require('../utils/cryptoUtils.js');
+const db = require('../database/dbConnect');
+const cryptoUtils = require('../utils/cryptoUtils');
 
 const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_SECRET_PROD : process.env.GITHUB_CLIENT_SECRET;

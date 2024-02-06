@@ -1,5 +1,5 @@
-const cryptoUtils = require('./cryptoUtils.js');
+const cryptoUtils = require('./cryptoUtils');
 
-const migrationQuery = (id, awsaccesskey, awssecretkey) => {
+const migrationQuery = (id: any, awsaccesskey: any, awssecretkey: any) => {
   console.log(`UPDATE users \nSET awsaccesskey = '${cryptoUtils.encrypt(awsaccesskey)}', \nawssecretkey = '${cryptoUtils.encrypt(awssecretkey)}' \nWHERE _id = '${id}';`);
 }
