@@ -4,9 +4,9 @@
   "description": "A fully automated, drag-and-drop tool for Kubernetes deployment.",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node -r dotenv/config ./server/server.js",
+    "start": "NODE_ENV=production node -r dotenv/config ./server/server.ts",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development node -r dotenv/config ./server/server.js",
+    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development ts-node -r dotenv/config ./server/server.ts",
     "test": "jest",
     "tf-init": "cd ./server/terraform && terraform init"
   },
@@ -48,6 +48,7 @@
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.22.15",
     "@babel/runtime": "^7.23.2",
+    "@types/cookie-parser": "^1.4.6",
     "@types/node": "^20.11.17",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
