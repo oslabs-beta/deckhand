@@ -9,5 +9,6 @@
     "outDir": "./build",
     "noImplicitAny": true
   },
-  "include": ["app/**/*.ts", "app/**/*.tsx", "server/**/*.ts", "webpack.config.ts"]
+  "include": ["app/**/*.ts", "app/**/*.tsx", "server/**/*.ts", "webpack.config.ts"],
+  "exclude": ["node_modules"]
 }
