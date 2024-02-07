@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const secretKey = process.env.ENCRYPTION_KEY;
 
-cryptoUtils = {};
+const cryptoUtils = {};
 
 // Encrypt function
 cryptoUtils.encrypt = function (text) {
