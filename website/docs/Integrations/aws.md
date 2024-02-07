@@ -6,7 +6,7 @@ sidebar_position: 1
 
 <img align="right" src="/img/aws.svg" width="175" />
 
-We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS.
+We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS. All keys are encrypted with AES-256.
 
 If you haven't already, first create an AWS account. Then:
 
