@@ -36,6 +36,7 @@ export default function () {
           &times;
         </span>
         <h2>Link AWS Account</h2>
+        <p>See instructions <a href="https://deckhand.dev/docs/Integrations/aws" target="_blank">here</a>. Keys are AES-256 encrypted.</p>
         <form onSubmit={handleSubmit}>
           <label>
             AWS Access Key:
