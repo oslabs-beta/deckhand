@@ -67,7 +67,7 @@ If you haven't already, first create GitHub account. Then, from the Deckhand log
 
 ### <img src="./website/static/img/aws.svg" width="20" /> Amazon Web Services (AWS)
 
-We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS.
+We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS. All keys are encrypted with AES-256.
 
 If you haven't already, first create an AWS account. Then:
 
