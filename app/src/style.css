@@ -64,6 +64,15 @@ html {
   color: var(--primary);
 }
 
+a {
+  color: rgb(64, 128, 255);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 button {
   border: 0;
   border-radius: 5px;
