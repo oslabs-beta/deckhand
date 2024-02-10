@@ -1,5 +1,5 @@
 // @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
-const path = require('path');
+let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 

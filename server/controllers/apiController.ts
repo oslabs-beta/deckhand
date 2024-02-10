@@ -1,19 +1,29 @@
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'apiControl... Remove this comment to see the full error message
-const apiController = {};
+const apiController: any = {};
 
-apiController.updateDatabase = async (req: any, res: any, next: any) => {
-  const { id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state } = req.body;
+import { Request, Response, NextFunction } from 'express';
+
+apiController.updateDatabase = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    id,
+    name,
+    email,
+    avatarUrl,
+    githubId,
+    theme,
+    awsAccessKey,
+    awsSecretKey,
+    state,
+  } = req.body;
 
   // Prepare the SQL query
   const updateQuery = `
@@ -34,7 +44,7 @@ apiController.updateDatabase = async (req: any, res: any, next: any) => {
       theme,
       cryptoUtils.encrypt(awsAccessKey),
       cryptoUtils.encrypt(awsSecretKey),
-      state
+      state,
     ]);
 
     if (result.rows.length === 0) {
@@ -45,11 +55,15 @@ apiController.updateDatabase = async (req: any, res: any, next: any) => {
     // res.locals.data = result.rows[0];
     return next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-apiController.getDockerHubImages = async (req: any, res: any, next: any) => {
+apiController.getDockerHubImages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const image = req.params[0];
   await fetch(`https://hub.docker.com/v2/search/repositories/?query=${image}`)
     .then((res) => res.json())
@@ -59,38 +73,50 @@ apiController.getDockerHubImages = async (req: any, res: any, next: any) => {
           name: el.repo_name,
           description: el.short_description,
           stars: el.star_count,
-        }
-      })
+        };
+      });
       next();
     })
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubImageTags = async (req: any, res: any, next: any) => {
+apiController.getDockerHubImageTags = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let imageName = req.params[0];
-  if (!imageName.includes('/')) imageName = `library/${imageName}`
+  if (!imageName.includes('/')) imageName = `library/${imageName}`;
   await fetch(`https://hub.docker.com/v2/repositories/${imageName}/tags/`)
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.results.map((el: any) => el.name)
+      res.locals.data = data.results.map((el: any) => el.name);
       next();
     })
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubExposedPort = async (req: any, res: any, next: any) => {
+apiController.getDockerHubExposedPort = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   let { imageName, imageTag } = req.body;
-  if (!imageName.includes('/')) imageName = `library/${imageName}`
+  if (!imageName.includes('/')) imageName = `library/${imageName}`;
 
   // Pull docker image
   try {
-    await execAsync(`docker image pull --platform linux/amd64 ${imageName}:${imageTag}`);
+    await execAsync(
+      `docker image pull --platform linux/amd64 ${imageName}:${imageTag}`
+    );
   } catch {
     return 'Wrong type of image architecture';
   }
 
   // Inspect image for exposed port
-  const imageInfoRaw = await execAsync(`docker image inspect ${imageName}:${imageTag} -f json`);
+  const imageInfoRaw = await execAsync(
+    `docker image inspect ${imageName}:${imageTag} -f json`
+  );
   const imageInfo = JSON.parse(imageInfoRaw.stdout);
   const exposedPortObj = imageInfo[0].Config.ExposedPorts;
   const exposedPortKey = Object.keys(exposedPortObj);

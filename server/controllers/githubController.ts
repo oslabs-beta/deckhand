@@ -1,40 +1,46 @@
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { execSync, exec } = require('child_process');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 require('dotenv').config();
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
 
-const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_SECRET_PROD : process.env.GITHUB_CLIENT_SECRET;
+import { Request, Response, NextFunction } from 'express';
+
+const GITHUB_CLIENT_ID =
+  process.env.NODE_ENV === 'production'
+    ? process.env.GITHUB_CLIENT_ID_PROD
+    : process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET =
+  process.env.NODE_ENV === 'production'
+    ? process.env.GITHUB_CLIENT_SECRET_PROD
+    : process.env.GITHUB_CLIENT_SECRET;
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
-const githubController = {};
+const githubController: any = {};
 
 // redirect to github login
-githubController.login = (req: any, res: any) => {
+githubController.login = (req: Request, res: Response) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
   );
 };
 
 // set github_token and redirect home
-githubController.callback = async (req: any, res: any, next: any) => {
+githubController.callback = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    GITHUB_CLIENT_ID +
-    '&client_secret=' +
-    GITHUB_CLIENT_SECRET +
-    '&code=' +
-    auth_code,
+      GITHUB_CLIENT_ID +
+      '&client_secret=' +
+      GITHUB_CLIENT_SECRET +
+      '&code=' +
+      auth_code,
     {
       method: 'POST',
       headers: {
@@ -50,7 +56,7 @@ githubController.callback = async (req: any, res: any, next: any) => {
     .catch((err) => next(err));
 };
 
-githubController.logout = (req: any, res: any, next: any) => {
+githubController.logout = (req: Request, res: Response, next: NextFunction) => {
   if (req.cookies.github_token) {
     // Set the cookie's value to empty and expiration date to now
     res.cookie('github_token', '', { expires: new Date(0), httpOnly: true });
@@ -58,7 +64,11 @@ githubController.logout = (req: any, res: any, next: any) => {
   next();
 };
 
-githubController.userData = async (req: any, res: any, next: any) => {
+githubController.userData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.cookies.github_token) {
     const token = req.cookies.github_token;
 
@@ -73,7 +83,7 @@ githubController.userData = async (req: any, res: any, next: any) => {
     });
 
     Promise.all([userDataFetch, userEmailFetch])
-      .then(async responses => {
+      .then(async (responses) => {
         if (!responses[0].ok || !responses[1].ok) {
           throw new Error('Network response was not ok');
         }
@@ -81,7 +91,9 @@ githubController.userData = async (req: any, res: any, next: any) => {
         const githubEmails = await responses[1].json();
 
         // Map data from Github
-        const email = githubEmails.find((email: any) => email.primary)?.email || githubData.email;
+        const email =
+          githubEmails.find((email: any) => email.primary)?.email ||
+          githubData.email;
         const name = githubData.name || githubData.login || email;
         const avatarUrl = githubData.avatar_url;
         const githubId = githubData.id;
@@ -97,7 +109,12 @@ githubController.userData = async (req: any, res: any, next: any) => {
             VALUES ($1, $2, $3, $4)
             RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
           `;
-          const newUserResult = await db.query(createUserQuery, [name, email, avatarUrl, githubId]);
+          const newUserResult = await db.query(createUserQuery, [
+            name,
+            email,
+            avatarUrl,
+            githubId,
+          ]);
 
           const newUser = newUserResult.rows[0];
 
@@ -112,7 +129,6 @@ githubController.userData = async (req: any, res: any, next: any) => {
             awsSecretKey: newUser.awssecretkey,
             state: newUser.state,
           };
-
         } else {
           // User exists, return the database values
           const user = userExistsResult.rows[0];
@@ -126,20 +142,24 @@ githubController.userData = async (req: any, res: any, next: any) => {
             theme: user.theme,
             awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey),
             awsSecretKey: cryptoUtils.decrypt(user.awssecretkey),
-            state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
+            state: user.state && JSON.parse(user.state), // Parse JSONB state if it exists
           };
         }
 
         return next();
       })
-      .catch(error => next(error));
+      .catch((error) => next(error));
   } else {
     res.status(401).json('Unauthorized');
   }
 };
 
 // get user repos
-githubController.userRepos = async (req: any, res: any, next: any) => {
+githubController.userRepos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.cookies.github_token;
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
@@ -156,13 +176,17 @@ githubController.userRepos = async (req: any, res: any, next: any) => {
 };
 
 // get public repos
-githubController.publicRepos = async (req: any, res: any, next: any) => {
+githubController.publicRepos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.cookies.github_token;
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-    input +
-    '+in:name&sort=stars&order=desc',
+      input +
+      '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -179,7 +203,11 @@ githubController.publicRepos = async (req: any, res: any, next: any) => {
 };
 
 // get user branches
-githubController.branches = async (req: any, res: any, next: any) => {
+githubController.branches = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { repo } = req.body;
   const token = req.cookies.github_token;
   await fetch(`https://api.github.com/repos/${repo}/branches`, {
@@ -197,7 +225,7 @@ githubController.branches = async (req: any, res: any, next: any) => {
 };
 
 // (not currently used) dockerize and push repo to Docker Hub
-githubController.build = (req: any, res: any, next: any) => {
+githubController.build = (req: Request, res: Response, next: NextFunction) => {
   const { repo, branch } = req.body;
   if (!repo || !branch) console.log('Missing repo and/or branch');
 
@@ -215,7 +243,11 @@ githubController.build = (req: any, res: any, next: any) => {
 };
 
 // Find all env variables in repo
-githubController.scanRepo = (req: any, res: any, next: any) => {
+githubController.scanRepo = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 
@@ -315,7 +347,11 @@ githubController.scanRepo = (req: any, res: any, next: any) => {
 };
 
 // Finds the exposed port in the dockerfile
-githubController.findExposedPort = (req: any, res: any, next: any) => {
+githubController.findExposedPort = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 

@@ -1,20 +1,20 @@
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs/promises');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 const AWS = require('aws-sdk');
 
-// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'deployment... Remove this comment to see the full error message
+import { Request, Response, NextFunction } from 'express';
+
 const deploymentController = {};
 
 // @ts-expect-error TS(2339) FIXME: Property 'addVPC' does not exist on type '{}'.
-deploymentController.addVPC = async (req: any, res: any, next: any) => {
+deploymentController.addVPC = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/addVPC:');
   const {
     userId,
@@ -58,7 +58,12 @@ deploymentController.addVPC = async (req: any, res: any, next: any) => {
     // Copy provider terraform config to project directory
     console.log('Copying provider.tf to project directory');
     await execAsync(
-      `cp ${path.join('server', 'terraform', 'templates', 'provider.tf')} ${projectPath}`
+      `cp ${path.join(
+        'server',
+        'terraform',
+        'templates',
+        'provider.tf'
+      )} ${projectPath}`
     );
 
     // Create variables file for VPC
@@ -73,7 +78,12 @@ deploymentController.addVPC = async (req: any, res: any, next: any) => {
     // Copy VPC terraform config to project directory
     console.log('Copying vpc.tf to project directory');
     await execAsync(
-      `cp ${path.join('server', 'terraform', 'templates', 'vpc.tf')} ${projectPath}`
+      `cp ${path.join(
+        'server',
+        'terraform',
+        'templates',
+        'vpc.tf'
+      )} ${projectPath}`
     );
 
     // Apply the terraform files in project directory (provider and VPC)
@@ -94,7 +104,11 @@ deploymentController.addVPC = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deleteVPC' does not exist on type '{}'.
-deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
+deploymentController.deleteVPC = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deleteVPC:');
   const { userId, projectId } = req.body;
   const projectPath = path.join(
@@ -134,7 +148,11 @@ deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'addCluster' does not exist on type '{}'.
-deploymentController.addCluster = async (req: any, res: any, next: any) => {
+deploymentController.addCluster = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/addCluster:');
   const {
     userId,
@@ -169,10 +187,12 @@ deploymentController.addCluster = async (req: any, res: any, next: any) => {
     // Copy EKS terraform config to cluster directory
     console.log('Copying eks.tf file to cluster directory');
     await execAsync(
-      `cp ${path.join('server', 'terraform', 'templates', 'eks.tf')} ${path.join(
-        clusterPath,
-        `eks.tf`
-      )}`
+      `cp ${path.join(
+        'server',
+        'terraform',
+        'templates',
+        'eks.tf'
+      )} ${path.join(clusterPath, `eks.tf`)}`
     );
 
     // Copy provider files to cluster directory
@@ -277,7 +297,11 @@ deploymentController.addCluster = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deleteCluster' does not exist on type '{... Remove this comment to see the full error message
-deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
+deploymentController.deleteCluster = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deleteCluster:');
   const { userId, projectId, clusterId } = req.body;
   const clusterPath = path.join(
@@ -311,7 +335,11 @@ deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
 
 // Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
 // @ts-expect-error TS(2339) FIXME: Property 'buildImageNEW' does not exist on type '{... Remove this comment to see the full error message
-deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
+deploymentController.buildImageNEW = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const githubToken = req.cookies.github_token; // GitHub token
@@ -323,7 +351,7 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
 
   try {
     // Configure AWS
-    console.log("Configuring AWS")
+    console.log('Configuring AWS');
     const awsConfig = {
       accessKeyId: awsAccessKey,
       secretAccessKey: awsSecretKey,
@@ -335,7 +363,7 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
     const iam = new AWS.IAM();
 
     // Configure CodeBuild Service Role
-    console.log("Configuring CodeBuild Service Role");
+    console.log('Configuring CodeBuild Service Role');
     async function ensureCodeBuildServiceRole() {
       const roleName = 'MyCodeBuildServiceRole';
       const sts = new AWS.STS();
@@ -346,13 +374,15 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
 
       const assumeRolePolicyDocument = JSON.stringify({
         Version: '2012-10-17',
-        Statement: [{
-          Effect: 'Allow',
-          Principal: {
-            Service: 'codebuild.amazonaws.com'
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: {
+              Service: 'codebuild.amazonaws.com',
+            },
+            Action: 'sts:AssumeRole',
           },
-          Action: 'sts:AssumeRole'
-        }]
+        ],
       });
 
       try {
@@ -364,38 +394,45 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
         if (error.code === 'NoSuchEntity') {
           // Role does not exist, create it
           console.log('Creating role');
-          await iam.createRole({
-            RoleName: roleName,
-            AssumeRolePolicyDocument: assumeRolePolicyDocument,
-          }).promise();
+          await iam
+            .createRole({
+              RoleName: roleName,
+              AssumeRolePolicyDocument: assumeRolePolicyDocument,
+            })
+            .promise();
 
           // Attach policies to the role
-          await iam.attachRolePolicy({
-            RoleName: roleName,
-            PolicyArn: 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess',
-          }).promise();
+          await iam
+            .attachRolePolicy({
+              RoleName: roleName,
+              PolicyArn:
+                'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess',
+            })
+            .promise();
 
           // Attach the CloudWatchLogs policy
           const cloudWatchPolicy = {
-            Version: "2012-10-17",
+            Version: '2012-10-17',
             Statement: [
               {
-                Effect: "Allow",
+                Effect: 'Allow',
                 Action: [
-                  "logs:CreateLogGroup",
-                  "logs:CreateLogStream",
-                  "logs:PutLogEvents"
+                  'logs:CreateLogGroup',
+                  'logs:CreateLogStream',
+                  'logs:PutLogEvents',
                 ],
-                Resource: `arn:aws:logs:${vpcRegion}:${awsAccountId}:log-group:/aws/codebuild/${projectName}:*`
-              }
-            ]
+                Resource: `arn:aws:logs:${vpcRegion}:${awsAccountId}:log-group:/aws/codebuild/${projectName}:*`,
+              },
+            ],
           };
 
-          await iam.putRolePolicy({
-            RoleName: roleName,
-            PolicyName: 'CodeBuildCloudWatchLogsPolicy',
-            PolicyDocument: JSON.stringify(cloudWatchPolicy)
-          }).promise();
+          await iam
+            .putRolePolicy({
+              RoleName: roleName,
+              PolicyName: 'CodeBuildCloudWatchLogsPolicy',
+              PolicyDocument: JSON.stringify(cloudWatchPolicy),
+            })
+            .promise();
         } else {
           // Other errors
           throw error;
@@ -408,14 +445,19 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
 
     // Create ECR repository
     console.log('Creating ECR repository');
-    await ecr.createRepository({ repositoryName: awsRepoName }).promise().catch((err: any) => {
-      if (err.code !== 'RepositoryAlreadyExistsException') {
-        throw err;
-      }
-    });
+    await ecr
+      .createRepository({ repositoryName: awsRepoName })
+      .promise()
+      .catch((err: any) => {
+        if (err.code !== 'RepositoryAlreadyExistsException') {
+          throw err;
+        }
+      });
 
     // Get ECR repository URI
-    const { repositories } = await ecr.describeRepositories({ repositoryNames: [awsRepoName] }).promise();
+    const { repositories } = await ecr
+      .describeRepositories({ repositoryNames: [awsRepoName] })
+      .promise();
     const repositoryUri = repositories[0].repositoryUri;
 
     // Define CodeBuild project
@@ -482,7 +524,11 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
     await codebuild.startBuild(buildStartParams).promise();
 
     // Set response data
-    res.locals.data = { awsRepo: projectName, imageName: repositoryUri, imageTag };
+    res.locals.data = {
+      awsRepo: projectName,
+      imageName: repositoryUri,
+      imageTag,
+    };
 
     // Log success and continue
     console.log('Done');
@@ -497,7 +543,11 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
 
 // OLD: Dockerize github repo and push to AWS ECR
 // @ts-expect-error TS(2339) FIXME: Property 'buildImage' does not exist on type '{}'.
-deploymentController.buildImage = async (req: any, res: any, next: any) => {
+deploymentController.buildImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
 
@@ -559,7 +609,11 @@ deploymentController.buildImage = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deleteImageNew' does not exist on type '... Remove this comment to see the full error message
-deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
+deploymentController.deleteImageNew = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
     awsAccessKey,
@@ -575,7 +629,7 @@ deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
     AWS.config.update({
       accessKeyId: awsAccessKey,
       secretAccessKey: awsSecretKey,
-      region: vpcRegion
+      region: vpcRegion,
     });
 
     // Create ECR client
@@ -583,10 +637,12 @@ deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
 
     // Delete image
     console.log('Deleting image');
-    await ecr.batchDeleteImage({
-      repositoryName: awsRepo,
-      imageIds: [{ imageTag: imageTag }]
-    }).promise();
+    await ecr
+      .batchDeleteImage({
+        repositoryName: awsRepo,
+        imageIds: [{ imageTag: imageTag }],
+      })
+      .promise();
 
     // Log success and continue
     console.log('Image deleted successfully');
@@ -601,7 +657,11 @@ deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deleteImage' does not exist on type '{}'... Remove this comment to see the full error message
-deploymentController.deleteImage = async (req: any, res: any, next: any) => {
+deploymentController.deleteImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
     awsAccessKey,
@@ -641,7 +701,11 @@ deploymentController.deleteImage = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deployPod' does not exist on type '{}'.
-deploymentController.deployPod = async (req: any, res: any, next: any) => {
+deploymentController.deployPod = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deployPod:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
     req.body;
@@ -681,7 +745,11 @@ deploymentController.deployPod = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'deletePod' does not exist on type '{}'.
-deploymentController.deletePod = async (req: any, res: any, next: any) => {
+deploymentController.deletePod = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/deletePod:');
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
     req.body;
@@ -718,7 +786,11 @@ deploymentController.deletePod = async (req: any, res: any, next: any) => {
 };
 
 // @ts-expect-error TS(2339) FIXME: Property 'getURL' does not exist on type '{}'.
-deploymentController.getURL = async (req: any, res: any, next: any) => {
+deploymentController.getURL = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   console.log('\n/api/deployment/getURL:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
