@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ideastation
+  labels:
+    app: ideastation
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ideastation
+  template:
+    metadata:
+      labels:
+        app: ideastation
+    spec:
+      containers:
+        - name: ideastation
+          image: 057477132536.dkr.ecr.us-east-1.amazonaws.com/goblin-shark-cs-brainstormapp:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PG_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: PG_URI

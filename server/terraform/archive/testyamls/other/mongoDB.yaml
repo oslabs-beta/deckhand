@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-mongo-set
+spec:
+  selector:
+    matchLabels:
+      app: my-mongo
+  serviceName: 'my-mongo'
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: my-mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: my-mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: my-mongo-store
+              mountPath: /data/db
+          # env:
+          #   - name: MYSQL_ROOT_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-mongo-password
+          #         key: my-mongo_ROOT_PASSWORD
+      # volumes:
+      #   - name: my-mongo-store
+      #     persistentVolumeClaim:
+      #       claimName: my-efs-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: my-mongo-store
+      spec:
+        accessModes: ['ReadWriteMany']
+        storageClassName: my-efs-sc
+        resources:
+          requests:
+            storage: 5Gi
+# Is this not working because I need difference PVCs for each replica? Is that the purpose of using a volumetemplate instead of connecting to a specific VPC?
+
