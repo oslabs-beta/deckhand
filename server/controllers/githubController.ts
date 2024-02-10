@@ -18,7 +18,7 @@ const GITHUB_CLIENT_SECRET =
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
-const githubController: any = {};
+const githubController: Record<string, Function> = {};
 
 // redirect to github login
 githubController.login = (req: Request, res: Response) => {

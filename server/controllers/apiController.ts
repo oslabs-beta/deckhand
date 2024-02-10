@@ -4,7 +4,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
 
-const apiController: any = {};
+const apiController: Record<string, Function> = {};
 
 import { Request, Response, NextFunction } from 'express';
 

@@ -7,9 +7,8 @@ const AWS = require('aws-sdk');
 
 import { Request, Response, NextFunction } from 'express';
 
-const deploymentController = {};
+const deploymentController: Record<string, Function> = {};
 
-// @ts-expect-error TS(2339) FIXME: Property 'addVPC' does not exist on type '{}'.
 deploymentController.addVPC = async (
   req: Request,
   res: Response,
@@ -103,7 +102,6 @@ deploymentController.addVPC = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deleteVPC' does not exist on type '{}'.
 deploymentController.deleteVPC = async (
   req: Request,
   res: Response,
@@ -147,7 +145,6 @@ deploymentController.deleteVPC = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'addCluster' does not exist on type '{}'.
 deploymentController.addCluster = async (
   req: Request,
   res: Response,
@@ -296,7 +293,6 @@ deploymentController.addCluster = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deleteCluster' does not exist on type '{... Remove this comment to see the full error message
 deploymentController.deleteCluster = async (
   req: Request,
   res: Response,
@@ -334,7 +330,6 @@ deploymentController.deleteCluster = async (
 };
 
 // Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
-// @ts-expect-error TS(2339) FIXME: Property 'buildImageNEW' does not exist on type '{... Remove this comment to see the full error message
 deploymentController.buildImageNEW = async (
   req: Request,
   res: Response,
@@ -542,7 +537,6 @@ deploymentController.buildImageNEW = async (
 };
 
 // OLD: Dockerize github repo and push to AWS ECR
-// @ts-expect-error TS(2339) FIXME: Property 'buildImage' does not exist on type '{}'.
 deploymentController.buildImage = async (
   req: Request,
   res: Response,
@@ -608,7 +602,6 @@ deploymentController.buildImage = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deleteImageNew' does not exist on type '... Remove this comment to see the full error message
 deploymentController.deleteImageNew = async (
   req: Request,
   res: Response,
@@ -656,7 +649,6 @@ deploymentController.deleteImageNew = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deleteImage' does not exist on type '{}'... Remove this comment to see the full error message
 deploymentController.deleteImage = async (
   req: Request,
   res: Response,
@@ -700,7 +692,6 @@ deploymentController.deleteImage = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deployPod' does not exist on type '{}'.
 deploymentController.deployPod = async (
   req: Request,
   res: Response,
@@ -744,7 +735,6 @@ deploymentController.deployPod = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'deletePod' does not exist on type '{}'.
 deploymentController.deletePod = async (
   req: Request,
   res: Response,
@@ -785,7 +775,6 @@ deploymentController.deletePod = async (
   }
 };
 
-// @ts-expect-error TS(2339) FIXME: Property 'getURL' does not exist on type '{}'.
 deploymentController.getURL = async (
   req: Request,
   res: Response,
