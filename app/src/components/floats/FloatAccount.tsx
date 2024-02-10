@@ -6,6 +6,7 @@ import { mdiChevronDown } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function FloatAccount() {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 

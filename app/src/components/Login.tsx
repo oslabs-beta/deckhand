@@ -4,6 +4,7 @@ import {} from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 
 export default function Login() {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 

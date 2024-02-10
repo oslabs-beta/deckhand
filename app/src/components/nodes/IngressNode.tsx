@@ -6,13 +6,18 @@ import Icon from '@mdi/react';
 import { mdiDotsVertical, mdiImport } from '@mdi/js';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-export default function ({ id, data, isConnectable }) {
+export default function ({
+  id,
+  data,
+  isConnectable
+}: any) {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   // Get url from parent node
-  const parentEdge = state.edges.find((edge) => edge.target === id);
-  const parentNode = state.nodes.find((node) => node.id === parentEdge?.source);
+  const parentEdge = state.edges.find((edge: any) => edge.target === id);
+  const parentNode = state.nodes.find((node: any) => node.id === parentEdge?.source);
   const url = parentNode?.data.url;
 
   return (

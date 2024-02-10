@@ -11,26 +11,30 @@ import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiDotsHexagon } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-export default function ({ id, data, isConnectable }) {
+export default function ({
+  id,
+  data,
+  isConnectable
+}: any) {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   let project = state.projects.find(
-    (project) => project.projectId === state.projectId
+    (project: any) => project.projectId === state.projectId
   );
 
   useEffect(() => {
     state.edges
       // Get child edges
-      .filter((edge) => edge.source === id)
+      .filter((edge: any) => edge.source === id)
       // Animate edges if node is running
-      .forEach((edge) =>
-        dispatch(
-          updateEdge({
-            id: edge.id,
-            animated: data.status === "running",
-          })
-        )
+      .forEach((edge: any) => dispatch(
+      updateEdge({
+        id: edge.id,
+        animated: data.status === "running",
+      })
+    )
       );
   }, [state.edges, data]);
 
@@ -38,7 +42,7 @@ export default function ({ id, data, isConnectable }) {
     // Add VPC (if no clusters are running)
     if (
       state.nodes.filter(
-        (node) => node.type === "cluster" && node.data.status !== null
+        (node: any) => node.type === "cluster" && node.data.status !== null
       ).length
     ) {
       try {
@@ -195,8 +199,7 @@ export default function ({ id, data, isConnectable }) {
 
         // Delete VPC if there are no other running clusters in project
         const nodes = state.nodes.filter(
-          (node) =>
-            node.type === "cluster" && node.projectId === state.projectId
+          (node: any) => node.type === "cluster" && node.projectId === state.projectId
         );
         if (!nodes) await deleteVPC();
 
@@ -212,10 +215,10 @@ export default function ({ id, data, isConnectable }) {
   const countDeployedPods = () => {
     const childNodes = state.edges
       // Get child edges
-      .filter((edge) => edge.source === id)
+      .filter((edge: any) => edge.source === id)
       // Get child nodes
-      .map((edge) => state.nodes.find((node) => node.id === edge.target));
-    return childNodes.filter((node) => node.data.status === "running").length;
+      .map((edge: any) => state.nodes.find((node: any) => node.id === edge.target));
+    return childNodes.filter((node: any) => node.data.status === "running").length;
   };
 
   return (
@@ -309,7 +312,7 @@ export default function ({ id, data, isConnectable }) {
               }}
             >
               <b>{countDeployedPods()}</b> of{" "}
-              <b>{state.edges.filter((edge) => edge.source === id).length}</b>{" "}
+              <b>{state.edges.filter((edge: any) => edge.source === id).length}</b>{" "}
               pods deployed
             </div>
             <button className="button stop nodrag" onClick={handleClickStop}>

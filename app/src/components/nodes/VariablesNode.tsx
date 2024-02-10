@@ -6,7 +6,12 @@ import Icon from "@mdi/react";
 import { mdiDotsVertical, mdiKeyVariant } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-export default function ({ id, data, isConnectable }) {
+export default function ({
+  id,
+  data,
+  isConnectable
+}: any) {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 

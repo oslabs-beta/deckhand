@@ -4,6 +4,7 @@ import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => {
@@ -22,7 +23,7 @@ export default function () {
     setShow(true);
   }, []);
 
-  const handleInputChange = (index, event) => {
+  const handleInputChange = (index: any, event: any) => {
     const values = [...inputs];
     const updatedValue = {
       ...values[index],
@@ -39,13 +40,13 @@ export default function () {
     setInputs([...inputs, { key: "", value: "", secret: false }]);
   };
 
-  const deleteRow = (index) => {
+  const deleteRow = (index: any) => {
     const values = [...inputs];
     values.splice(index, 1);
     setInputs(values);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     dispatch(updateNode({ id, data: { variables: inputs } }));
     closeModal();
@@ -62,6 +63,7 @@ export default function () {
           <table>
             <thead>
               <tr>
+                // @ts-expect-error TS(2322): Type '{ children: string; type: string; }' is not ... Remove this comment to see the full error message
                 <th type="label">Key</th>
                 <th>Value</th>
                 <th>Secret</th>
@@ -69,7 +71,7 @@ export default function () {
               </tr>
             </thead>
             <tbody>
-              {inputs.map((input, index) => (
+              {inputs.map((input: any, index: any) => (
                 <tr key={index}>
                   <td>
                     <input

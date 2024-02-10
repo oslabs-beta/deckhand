@@ -4,9 +4,11 @@ import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => {
+    // @ts-expect-error TS(2345): Argument of type '""' is not assignable to paramet... Remove this comment to see the full error message
     setShow("");
     setTimeout(() => dispatch(showModal({})), 300);
   };
@@ -27,84 +29,83 @@ export default function () {
     if (type === "my-github") getUserRepos();
   }, [type]);
 
-  const getDockerHubImages = async (input) => {
+  const getDockerHubImages = async (input: any) => {
     if (!input) return setDockerHubImages([]);
+    // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
     setDockerHubImages(<span style={{ color: "#ccc" }}>Loading...</span>);
     await fetch(`/api/dockerHubImages/${input}`)
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.map((el) => (
+        const arr = data.map((el: any) => <div
+          key={el.name}
+          className="pod-source"
+          onClick={() => handleClickDockerHub(el.name)}
+        >
           <div
-            key={el.name}
-            className="pod-source"
-            onClick={() => handleClickDockerHub(el.name)}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span className="primary">
-                <b>{el.name}</b>
-              </span>
-              <span style={{ fontSize: "12px" }}>
-                {"☆ " + formatStars(el.stars)}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: "14px",
-              }}
-            >
-              <span>{el.description}</span>
-            </div>
+            <span className="primary">
+              <b>{el.name}</b>
+            </span>
+            <span style={{ fontSize: "12px" }}>
+              {"☆ " + formatStars(el.stars)}
+            </span>
           </div>
-        ));
+          <div
+            style={{
+              display: "flex",
+              fontSize: "14px",
+            }}
+          >
+            <span>{el.description}</span>
+          </div>
+        </div>);
         setDockerHubImages(arr);
       });
   };
 
   const getUserRepos = async () => {
     setUserRepos(
+      // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       <div style={{ color: "#ccc", marginTop: "10px" }}>Loading...</div>
     );
     await fetch("/api/github/userRepos")
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.map((el) => (
+        const arr = data.map((el: any) => <div
+          key={el.name + "-" + el.owner.login}
+          className="pod-source"
+          onClick={() => handleClickGithub(el.full_name)}
+        >
           <div
-            key={el.name + "-" + el.owner.login}
-            className="pod-source"
-            onClick={() => handleClickGithub(el.full_name)}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span className="primary">
-                <b>{el.name}</b> by {el.owner.login}
-              </span>
-              <span style={{ fontSize: "12px" }}>
-                {"☆ " + formatStars(el.stargazers_count)}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: "14px",
-              }}
-            >
-              <span>{el.description}</span>
-            </div>
+            <span className="primary">
+              <b>{el.name}</b> by {el.owner.login}
+            </span>
+            <span style={{ fontSize: "12px" }}>
+              {"☆ " + formatStars(el.stargazers_count)}
+            </span>
           </div>
-        ));
+          <div
+            style={{
+              display: "flex",
+              fontSize: "14px",
+            }}
+          >
+            <span>{el.description}</span>
+          </div>
+        </div>);
         if (arr.length) setUserRepos(arr);
         else
           setUserRepos(
+            // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
             <div className="tertiary" style={{ marginTop: "10px" }}>
               No repositories found.
             </div>
@@ -112,8 +113,9 @@ export default function () {
       });
   };
 
-  const getPublicRepos = async (input) => {
+  const getPublicRepos = async (input: any) => {
     if (!input) return setPublicRepos([]);
+    // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
     setPublicRepos(<span style={{ color: "#ccc" }}>Loading...</span>);
     await fetch("/api/github/publicRepos", {
       method: "POST",
@@ -124,46 +126,44 @@ export default function () {
     })
       .then((res) => res.json())
       .then((data) => {
-        const arr = data.items.map((el) => (
+        const arr = data.items.map((el: any) => <div
+          key={el.name + "-" + el.owner.login}
+          className="pod-source"
+          onClick={() => handleClickGithub(el.full_name)}
+        >
           <div
-            key={el.name + "-" + el.owner.login}
-            className="pod-source"
-            onClick={() => handleClickGithub(el.full_name)}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span className="primary">
-                <b>{el.name}</b> by {el.owner.login}
-              </span>
-              <span style={{ fontSize: "12px" }}>
-                {"☆ " + formatStars(el.stargazers_count)}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: "14px",
-              }}
-            >
-              <span>{el.description}</span>
-            </div>
+            <span className="primary">
+              <b>{el.name}</b> by {el.owner.login}
+            </span>
+            <span style={{ fontSize: "12px" }}>
+              {"☆ " + formatStars(el.stargazers_count)}
+            </span>
           </div>
-        ));
+          <div
+            style={{
+              display: "flex",
+              fontSize: "14px",
+            }}
+          >
+            <span>{el.description}</span>
+          </div>
+        </div>);
         setPublicRepos(arr);
       });
   };
 
-  function formatStars(starCount) {
+  function formatStars(starCount: any) {
     if (starCount < 10 ** 3) return starCount;
     else if (starCount < 10 ** 6) return (starCount / 1000).toFixed(1) + "k";
     else return (starCount / 10 ** 9).toFixed(1) + "M";
   }
 
-  const handleClickDockerHub = async (image) => {
+  const handleClickDockerHub = async (image: any) => {
     await fetch(`/api/dockerHubImageTags/${image}`)
       .then((res) => res.json())
       .then((imageTags) => {
@@ -186,7 +186,7 @@ export default function () {
     closeModal();
   };
 
-  const handleClickGithub = async (repo) => {
+  const handleClickGithub = async (repo: any) => {
     await fetch("/api/github/branches", {
       method: "POST",
       headers: {

@@ -12,40 +12,44 @@ import { mdiDotsVertical, mdiDocker } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import createYaml from "../../yaml";
 
-export default function ({ id, data, isConnectable }) {
+export default function ({
+  id,
+  data,
+  isConnectable
+}: any) {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const edges = state.edges.filter((edge) => edge.source === id);
-    edges.forEach((edge) =>
-      dispatch(
-        updateEdge({
-          id: edge.id,
-          animated: data.status === "running",
-        })
-      )
+    const edges = state.edges.filter((edge: any) => edge.source === id);
+    edges.forEach((edge: any) => dispatch(
+      updateEdge({
+        id: edge.id,
+        animated: data.status === "running",
+      })
+    )
     );
   }, [state.edges, data]);
 
   // Find parent project
   const project = state.projects.find(
-    (project) => project.projectId === state.projectId
+    (project: any) => project.projectId === state.projectId
   );
 
   // Find parent cluster
-  const clusterEdge = state.edges.find((edge) => edge.target === id);
-  const cluster = state.nodes.find((node) => node.id === clusterEdge?.source);
+  const clusterEdge = state.edges.find((edge: any) => edge.target === id);
+  const cluster = state.nodes.find((node: any) => node.id === clusterEdge?.source);
 
   // Find connected nodes
   const connectedNodes = state.edges
-    .filter((edge) => edge.source === id)
-    .map((edge) => state.nodes.find((node) => node.id === edge.target));
+    .filter((edge: any) => edge.source === id)
+    .map((edge: any) => state.nodes.find((node: any) => node.id === edge.target));
 
   // Find connected nodes
-  const ingress = connectedNodes?.find((node) => node.type === "ingress");
+  const ingress = connectedNodes?.find((node: any) => node.type === "ingress");
 
-  let yaml;
+  let yaml: any;
 
   useEffect(() => {
     (async () => {
@@ -65,7 +69,7 @@ export default function ({ id, data, isConnectable }) {
     })();
   }, []);
 
-  const setImageTag = (imageTag) => {
+  const setImageTag = (imageTag: any) => {
     dispatch(
       updateNode({
         id,
@@ -180,6 +184,7 @@ export default function ({ id, data, isConnectable }) {
         const exposedPort = await getDockerHubExposedPort();
 
         // Create YAML
+        // @ts-expect-error TS(2339): Property 'all' does not exist on type '{}'.
         yaml = createYaml.all(
           data,
           connectedNodes,
@@ -393,14 +398,12 @@ export default function ({ id, data, isConnectable }) {
               value={data.imageTag}
             >
               {data.imageTags
-                ? data.imageTags.map((el) => (
-                    <option key={el} value={el}>
-                      {el}
-                    </option>
-                  ))
+                ? data.imageTags.map((el: any) => <option key={el} value={el}>
+                {el}
+              </option>)
                 : ""}
             </select>
-            {!state.edges.find((edge) => edge.target === id)?.animated ? (
+            {!state.edges.find((edge: any) => edge.target === id)?.animated ? (
               <button className="button nodrag disabled">Deploy</button>
             ) : !data.status ? (
               <button className="button nodrag" onClick={handleClickStart}>

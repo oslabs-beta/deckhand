@@ -1,8 +1,13 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
 const { execSync, exec } = require('child_process');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 require('dotenv').config();
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
 
 const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
@@ -10,17 +15,18 @@ const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
 const githubController = {};
 
 // redirect to github login
-githubController.login = (req, res) => {
+githubController.login = (req: any, res: any) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
   );
 };
 
 // set github_token and redirect home
-githubController.callback = async (req, res, next) => {
+githubController.callback = async (req: any, res: any, next: any) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
@@ -44,7 +50,7 @@ githubController.callback = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-githubController.logout = (req, res, next) => {
+githubController.logout = (req: any, res: any, next: any) => {
   if (req.cookies.github_token) {
     // Set the cookie's value to empty and expiration date to now
     res.cookie('github_token', '', { expires: new Date(0), httpOnly: true });
@@ -52,7 +58,7 @@ githubController.logout = (req, res, next) => {
   next();
 };
 
-githubController.userData = async (req, res, next) => {
+githubController.userData = async (req: any, res: any, next: any) => {
   if (req.cookies.github_token) {
     const token = req.cookies.github_token;
 
@@ -75,7 +81,7 @@ githubController.userData = async (req, res, next) => {
         const githubEmails = await responses[1].json();
 
         // Map data from Github
-        const email = githubEmails.find(email => email.primary)?.email || githubData.email;
+        const email = githubEmails.find((email: any) => email.primary)?.email || githubData.email;
         const name = githubData.name || githubData.login || email;
         const avatarUrl = githubData.avatar_url;
         const githubId = githubData.id;
@@ -133,7 +139,7 @@ githubController.userData = async (req, res, next) => {
 };
 
 // get user repos
-githubController.userRepos = async (req, res, next) => {
+githubController.userRepos = async (req: any, res: any, next: any) => {
   const token = req.cookies.github_token;
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
@@ -150,7 +156,7 @@ githubController.userRepos = async (req, res, next) => {
 };
 
 // get public repos
-githubController.publicRepos = async (req, res, next) => {
+githubController.publicRepos = async (req: any, res: any, next: any) => {
   const token = req.cookies.github_token;
   const { input } = req.body;
   await fetch(
@@ -173,7 +179,7 @@ githubController.publicRepos = async (req, res, next) => {
 };
 
 // get user branches
-githubController.branches = async (req, res, next) => {
+githubController.branches = async (req: any, res: any, next: any) => {
   const { repo } = req.body;
   const token = req.cookies.github_token;
   await fetch(`https://api.github.com/repos/${repo}/branches`, {
@@ -184,14 +190,14 @@ githubController.branches = async (req, res, next) => {
   })
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.map((el) => el.name);
+      res.locals.data = data.map((el: any) => el.name);
       return next();
     })
     .catch((err) => next(err));
 };
 
 // (not currently used) dockerize and push repo to Docker Hub
-githubController.build = (req, res, next) => {
+githubController.build = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   if (!repo || !branch) console.log('Missing repo and/or branch');
 
@@ -209,7 +215,7 @@ githubController.build = (req, res, next) => {
 };
 
 // Find all env variables in repo
-githubController.scanRepo = (req, res, next) => {
+githubController.scanRepo = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 
@@ -232,16 +238,16 @@ githubController.scanRepo = (req, res, next) => {
   const repoPath = path.join(tempsPath, repoName);
 
   // An array to hold the paths of all files nested within the repo
-  const filePaths = [];
+  const filePaths: any = [];
 
   // Recursive helper function to get all nested files
-  const getFiles = (dir) => {
+  const getFiles = (dir: any) => {
     const dirContents = fs.readdirSync(dir); // This will return an array with names of all files and directories in the *top* level of the directory
 
     // Ignoring anything within the .git directory, check if each content if a file or directory
     // If it's a file, push its path to filePaths
     // If it's a directory, send it recursively back into this function
-    dirContents.forEach((content) => {
+    dirContents.forEach((content: any) => {
       if (content !== '.git') {
         const contentPath = path.join(dir, content);
         const stats = fs.statSync(contentPath);
@@ -254,15 +260,17 @@ githubController.scanRepo = (req, res, next) => {
   // Execute function on the cloned repo
   getFiles(repoPath);
 
-  const fileContents = [];
+  const fileContents: any = [];
   const envs = new Set();
 
   // Push the text content of each file into the fileContents array
+  // @ts-expect-error TS(7006): Parameter 'filePath' implicitly has an 'any' type.
   filePaths.forEach((filePath) => {
     fileContents.push(fs.readFileSync(filePath, 'utf8'));
   });
 
   // Using regex, scan the text of each file for environmental variables and push them to envs array.
+  // @ts-expect-error TS(7006): Parameter 'fileString' implicitly has an 'any' typ... Remove this comment to see the full error message
   fileContents.forEach((fileString) => {
     const regexJs = /process.env.([\w$]+)/g;
     const regexPy = /os.environ.get\(['"](\w+)/g;
@@ -307,7 +315,7 @@ githubController.scanRepo = (req, res, next) => {
 };
 
 // Finds the exposed port in the dockerfile
-githubController.findExposedPort = (req, res, next) => {
+githubController.findExposedPort = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 
@@ -322,6 +330,7 @@ githubController.findExposedPort = (req, res, next) => {
   try {
     const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
     const regex = /expose\s+(\d+)/i;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     exposedPort = Number(regex.exec(dockerfile)[1]);
   } catch {
     console.log('failed to find dockerfile');

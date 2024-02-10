@@ -12,13 +12,14 @@ import {
 } from "@mdi/js";
 
 export default function FloatNav() {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find(
-    (project) => project.projectId === state.projectId
+    (project: any) => project.projectId === state.projectId
   );
 
-  const onDragStart = (event, nodeType) => {
+  const onDragStart = (event: any, nodeType: any) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
   };

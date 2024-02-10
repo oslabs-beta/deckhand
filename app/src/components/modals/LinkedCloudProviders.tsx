@@ -4,6 +4,7 @@ import { showModal, setUser } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => {
@@ -17,7 +18,7 @@ export default function () {
     setShow(true);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     dispatch(

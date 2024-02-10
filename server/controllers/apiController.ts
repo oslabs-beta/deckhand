@@ -1,12 +1,18 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'apiControl... Remove this comment to see the full error message
 const apiController = {};
 
-apiController.updateDatabase = async (req, res, next) => {
+apiController.updateDatabase = async (req: any, res: any, next: any) => {
   const { id, name, email, avatarUrl, githubId, theme, awsAccessKey, awsSecretKey, state } = req.body;
 
   // Prepare the SQL query
@@ -43,12 +49,12 @@ apiController.updateDatabase = async (req, res, next) => {
   }
 };
 
-apiController.getDockerHubImages = async (req, res, next) => {
+apiController.getDockerHubImages = async (req: any, res: any, next: any) => {
   const image = req.params[0];
   await fetch(`https://hub.docker.com/v2/search/repositories/?query=${image}`)
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.results.map((el) => {
+      res.locals.data = data.results.map((el: any) => {
         return {
           name: el.repo_name,
           description: el.short_description,
@@ -60,19 +66,19 @@ apiController.getDockerHubImages = async (req, res, next) => {
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubImageTags = async (req, res, next) => {
+apiController.getDockerHubImageTags = async (req: any, res: any, next: any) => {
   let imageName = req.params[0];
   if (!imageName.includes('/')) imageName = `library/${imageName}`
   await fetch(`https://hub.docker.com/v2/repositories/${imageName}/tags/`)
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.results.map((el) => el.name)
+      res.locals.data = data.results.map((el: any) => el.name)
       next();
     })
     .catch((error) => next(error));
 };
 
-apiController.getDockerHubExposedPort = async (req, res, next) => {
+apiController.getDockerHubExposedPort = async (req: any, res: any, next: any) => {
   let { imageName, imageTag } = req.body;
   if (!imageName.includes('/')) imageName = `library/${imageName}`
 

@@ -1,13 +1,19 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs/promises');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 const AWS = require('aws-sdk');
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'deployment... Remove this comment to see the full error message
 const deploymentController = {};
 
-deploymentController.addVPC = async (req, res, next) => {
+deploymentController.addVPC = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/addVPC:');
   const {
     userId,
@@ -86,7 +92,7 @@ deploymentController.addVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteVPC = async (req, res, next) => {
+deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteVPC:');
   const { userId, projectId } = req.body;
   const projectPath = path.join(
@@ -125,7 +131,7 @@ deploymentController.deleteVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.addCluster = async (req, res, next) => {
+deploymentController.addCluster = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/addCluster:');
   const {
     userId,
@@ -267,7 +273,7 @@ deploymentController.addCluster = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteCluster = async (req, res, next) => {
+deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteCluster:');
   const { userId, projectId, clusterId } = req.body;
   const clusterPath = path.join(
@@ -300,7 +306,7 @@ deploymentController.deleteCluster = async (req, res, next) => {
 };
 
 // Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
-deploymentController.buildImageNEW = async (req, res, next) => {
+deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
   const githubToken = req.cookies.github_token; // GitHub token
@@ -349,6 +355,7 @@ deploymentController.buildImageNEW = async (req, res, next) => {
         await iam.getRole({ RoleName: roleName }).promise();
         console.log('Role already exists');
       } catch (error) {
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         if (error.code === 'NoSuchEntity') {
           // Role does not exist, create it
           console.log('Creating role');
@@ -396,7 +403,7 @@ deploymentController.buildImageNEW = async (req, res, next) => {
 
     // Create ECR repository
     console.log('Creating ECR repository');
-    await ecr.createRepository({ repositoryName: awsRepoName }).promise().catch(err => {
+    await ecr.createRepository({ repositoryName: awsRepoName }).promise().catch((err: any) => {
       if (err.code !== 'RepositoryAlreadyExistsException') {
         throw err;
       }
@@ -450,6 +457,7 @@ deploymentController.buildImageNEW = async (req, res, next) => {
       // Attempt to create the CodeBuild project
       await codebuild.createProject(buildProjectParams).promise();
     } catch (error) {
+      // @ts-expect-error TS(2571): Object is of type 'unknown'.
       if (error.code === 'ResourceAlreadyExistsException') {
         // If project already exists, update it
         console.log('Project already exists, updating existing project');
@@ -483,7 +491,7 @@ deploymentController.buildImageNEW = async (req, res, next) => {
 };
 
 // OLD: Dockerize github repo and push to AWS ECR
-deploymentController.buildImage = async (req, res, next) => {
+deploymentController.buildImage = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
 
@@ -544,7 +552,7 @@ deploymentController.buildImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteImageNew = async (req, res, next) => {
+deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
     awsAccessKey,
@@ -585,7 +593,7 @@ deploymentController.deleteImageNew = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteImage = async (req, res, next) => {
+deploymentController.deleteImage = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
     awsAccessKey,
@@ -624,7 +632,7 @@ deploymentController.deleteImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deployPod = async (req, res, next) => {
+deploymentController.deployPod = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deployPod:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
     req.body;
@@ -663,7 +671,7 @@ deploymentController.deployPod = async (req, res, next) => {
   }
 };
 
-deploymentController.deletePod = async (req, res, next) => {
+deploymentController.deletePod = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deletePod:');
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
     req.body;
@@ -699,7 +707,7 @@ deploymentController.deletePod = async (req, res, next) => {
   }
 };
 
-deploymentController.getURL = async (req, res, next) => {
+deploymentController.getURL = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/getURL:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 

@@ -144,3 +144,6 @@ dist
 
 # Private local folder
 /__local
+
+# Javascript Output
+/jsconversion

@@ -1,5 +1,7 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'express'.
 const express = require('express');
 const cookieParser = require('cookie-parser');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 const app = express();
 const PORT = 3000;
@@ -30,22 +32,22 @@ app.use('/api', apiRouter);
 // Handle requests for static files
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../build')));
-  app.get('*', (req, res) => {
+  app.get('*', (req: any, res: any) => {
     res.sendFile(path.join(__dirname, '../build/index.html'));
   });
 } else {
-  app.get('/', (req, res) => {
+  app.get('/', (req: any, res: any) => {
     res.sendFile(path.join(__dirname, '../app/public/index.html'));
   });
 }
 
 // Catch-all route handler for any requests to an unknown route
-app.use('*', (req, res) => {
+app.use('*', (req: any, res: any) => {
   return res.sendStatus(404);
 });
 
 // Global error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,
