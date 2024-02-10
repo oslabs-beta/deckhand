@@ -1,0 +1,595 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:300,800");
+
+/* Light theme (default) */
+:root {
+  --page-background: linear-gradient(
+    136deg,
+    rgb(200, 210, 225) 0%,
+    rgb(230, 230, 255) 100%
+  );
+  --component-background: white;
+  --highlight-background: rgb(228, 248, 255);
+  --primary: #333;
+  --secondary: #999;
+  --tertiary: #ddd;
+  --logo: #333;
+}
+
+/* Dark theme */
+body.dark-mode {
+  --page-background: linear-gradient(
+    135deg,
+    rgb(60, 60, 74) 0%,
+    rgb(81, 82, 108) 100%
+  );
+  --component-background: #333;
+  --highlight-background: rgb(81, 97, 126);
+  --primary: white;
+  --secondary: #999;
+  --tertiary: #666;
+  --logo: skyblue;
+}
+
+/* General styles */
+
+.primary {
+  color: var(--primary);
+}
+
+.secondary {
+  color: var(--secondary);
+}
+
+.tertiary {
+  color: var(--tertiary);
+}
+
+.blue {
+  background-color: rgb(0, 128, 255);
+  color: white;
+}
+
+.delete {
+  background-color: darkred;
+  color: white;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Lato", sans-serif;
+  background: var(--page-background);
+  color: var(--primary);
+}
+
+a {
+  color: rgb(64, 128, 255);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  border: 0;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 4px;
+}
+
+button:hover {
+  filter: brightness(80%);
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.icon {
+  color: #999;
+  margin-left: 5px;
+}
+
+.icon:hover {
+  color: #000;
+  cursor: pointer;
+}
+
+.icon:active {
+  transform: scale(0.98);
+}
+
+.container {
+  position: relative;
+  height: 100vh;
+}
+
+.content-container {
+  padding-top: 100px;
+}
+
+.content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.edit {
+  font-weight: bold;
+}
+
+/* Logo Float */
+
+.float-logo {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 10;
+  height: 40px;
+  color: var(--primary);
+  font-family: "Lato", sans-serif;
+}
+
+.float-logo .stroke {
+  stroke: var(--logo);
+}
+
+.float-logo .fill {
+  fill: var(--logo);
+}
+
+.float-logo span {
+  margin-left: 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* Active Project */
+
+.active-project {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px;
+  z-index: 10;
+}
+
+/* Account Float */
+
+.float-account {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 10px;
+  right: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: var(--component-background);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.float-account img {
+  height: 30px;
+  width: auto;
+  border-radius: 15px;
+}
+
+.float-account span {
+  margin-left: 10px;
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Dropdown */
+
+.dropdown {
+  margin-right: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--tertiary);
+  background-color: var(--component-background);
+  cursor: pointer;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+}
+
+.dropdown-item:hover {
+  background-color: var(--tertiary);
+}
+
+.dropdown-separator {
+  height: 1px;
+  background-color: var(--tertiary);
+  margin: 3px 6px;
+}
+
+/* Login page */
+
+#login-container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.image-section {
+  flex: 2;
+  background-image: url("./assets/loginbackground.jpg");
+  background-size: cover;
+  height: 100%;
+}
+
+.login-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f4f4;
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+}
+
+.login-section .button-container {
+  width: 80%;
+  max-width: 300px;
+  text-align: center;
+}
+
+#github-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+}
+
+#github-button:hover {
+  background-color: #555;
+}
+
+#github-button:active {
+  transform: scale(0.98);
+}
+
+/* Home page */
+
+#project-cards {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#project-cards .card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 10px;
+  height: 200px;
+  width: 200px;
+  text-align: center;
+  background-color: var(--component-background);
+  transition: all 0.1s ease-in-out;
+}
+
+#project-cards .card:hover {
+  filter: brightness(98%);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+#project-cards .card .new-project {
+  font-size: 28px;
+  flex-grow: 1;
+  border: 5px dotted var(--tertiary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+#project-cards .card .name {
+  font-size: 24px;
+  font-weight: bold;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#project-cards .card .date-info {
+  font-size: 12px;
+  color: var(--secondary);
+  margin-top: auto;
+}
+
+.card-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  background-color: var(--component-background);
+  color: var(--secondary);
+}
+
+.card-menu:hover {
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.card-menu:active {
+  transform: scale(0.98);
+}
+
+/* Canvas */
+
+.float-toolbar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 10px;
+  top: 40%;
+  transform: translateY(-40%);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: var(--component-background);
+  z-index: 10;
+  text-align: center;
+}
+
+.float-toolbar div.float-toolbar-item {
+  padding: 10px 0px;
+  cursor: move;
+}
+
+.float-toolbar div.float-toolbar-item span {
+  margin-top: 10px 0px;
+}
+
+.node-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  background-color: var(--component-background);
+  color: var(--secondary);
+}
+
+.node-menu:hover {
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.node-menu:active {
+  transform: scale(0.98);
+}
+
+.node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px 20px 20px;
+  width: 200px;
+  text-align: center;
+  background-color: var(--component-background);
+}
+
+.node.pod {
+  width: 235px;
+}
+
+.node.running {
+  box-shadow: 0px 0px 25px 0px rgba(70, 180, 51, 0.52);
+}
+
+.node .icon {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+.node .title {
+  position: absolute;
+  top: 22px;
+  left: 50px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.node select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 200px;
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.node select > label {
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  background-color: white;
+}
+
+.node .button {
+  background-color: #5988da;
+  color: white;
+  padding: 10px;
+  width: 200px;
+}
+
+.node .button.disabled {
+  background-color: var(--tertiary);
+  cursor: not-allowed;
+}
+
+.node .button.busy {
+  background-color: rgb(160, 114, 28);
+  cursor: wait;
+}
+
+.node .button.green {
+  background-color: darkgreen;
+}
+
+.node .button.stop {
+  background-color: darkred;
+}
+
+.arrow {
+  color: #ccc;
+  cursor: pointer;
+}
+
+.arrow:hover {
+  color: #000;
+}
+
+/* Modals */
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  color: var(--primary);
+  background-color: var(--component-background);
+  margin: auto;
+  padding: 20px 40px;
+  border: 1px;
+  border-color: var(--secondary);
+  border-radius: 20px;
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal .close-button {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  font-size: 28px;
+  color: var(--secondary);
+}
+
+.modal .close-button:hover,
+.modal .close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal label {
+  margin-top: 10px;
+  display: block;
+  color: var(--secondary);
+}
+
+.modal select,
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.yaml {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 16px;
+  max-height: 500px;
+  overflow: auto;
+  background-color: #2f2f2f;
+  color: white;
+}
+
+.modal .buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal button {
+  padding: 10px;
+  margin: 0px 5px;
+  cursor: pointer;
+}
+
+.pod-source {
+  padding: 20px 10px;
+  color: var(--primary);
+  border: 1px solid var(--component-background);
+  border-radius: 5px;
+}
+
+.pod-source:hover {
+  background-color: var(--highlight-background);
+  border: 1px solid var(--secondary);
+}

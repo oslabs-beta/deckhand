@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-efs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: my-efs-sc
+  resources:
+    requests:
+      storage: 5Gi # Must be speficied, but is ignored since FS is elastic 
