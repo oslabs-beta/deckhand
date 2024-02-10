@@ -1,4 +1,4 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'db'.
 const db = require('./dbConnect.js');
 
 module.exports = {

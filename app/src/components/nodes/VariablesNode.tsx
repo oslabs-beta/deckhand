@@ -11,7 +11,7 @@ export default function ({
   data,
   isConnectable
 }: any) {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 

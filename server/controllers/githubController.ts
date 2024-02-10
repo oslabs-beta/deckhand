@@ -1,13 +1,13 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { execSync, exec } = require('child_process');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 require('dotenv').config();
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
 
 const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
@@ -15,7 +15,7 @@ const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
 const githubController = {};
 
 // redirect to github login
@@ -264,13 +264,13 @@ githubController.scanRepo = (req: any, res: any, next: any) => {
   const envs = new Set();
 
   // Push the text content of each file into the fileContents array
-  // @ts-expect-error TS(7006): Parameter 'filePath' implicitly has an 'any' type.
+  // @ts-expect-error TS(7006) FIXME: Parameter 'filePath' implicitly has an 'any' type.
   filePaths.forEach((filePath) => {
     fileContents.push(fs.readFileSync(filePath, 'utf8'));
   });
 
   // Using regex, scan the text of each file for environmental variables and push them to envs array.
-  // @ts-expect-error TS(7006): Parameter 'fileString' implicitly has an 'any' typ... Remove this comment to see the full error message
+  // @ts-expect-error TS(7006) FIXME: Parameter 'fileString' implicitly has an 'any' typ... Remove this comment to see the full error message
   fileContents.forEach((fileString) => {
     const regexJs = /process.env.([\w$]+)/g;
     const regexPy = /os.environ.get\(['"](\w+)/g;
@@ -330,7 +330,7 @@ githubController.findExposedPort = (req: any, res: any, next: any) => {
   try {
     const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
     const regex = /expose\s+(\d+)/i;
-    // @ts-expect-error TS(2531): Object is possibly 'null'.
+    // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
     exposedPort = Number(regex.exec(dockerfile)[1]);
   } catch {
     console.log('failed to find dockerfile');

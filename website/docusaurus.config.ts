@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-// @ts-expect-error TS(2307): Cannot find module 'prism-react-renderer' or its c... Remove this comment to see the full error message
+// @ts-expect-error TS(2307) FIXME: Cannot find module 'prism-react-renderer' or its c... Remove this comment to see the full error message
 import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */

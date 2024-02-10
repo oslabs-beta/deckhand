@@ -1,7 +1,7 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'express'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'express'.
 const express = require('express');
 const cookieParser = require('cookie-parser');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 const app = express();
 const PORT = 3000;

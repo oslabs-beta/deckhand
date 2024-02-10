@@ -4,11 +4,11 @@ import { showModal, updateNode } from "../../deckhandSlice";
 import "./modal.css";
 
 export default function () {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const closeModal = () => {
-    // @ts-expect-error TS(2345): Argument of type '""' is not assignable to paramet... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345) FIXME: Argument of type '""' is not assignable to paramet... Remove this comment to see the full error message
     setShow("");
     setTimeout(() => dispatch(showModal({})), 300);
   };
@@ -31,7 +31,7 @@ export default function () {
 
   const getDockerHubImages = async (input: any) => {
     if (!input) return setDockerHubImages([]);
-    // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
     setDockerHubImages(<span style={{ color: "#ccc" }}>Loading...</span>);
     await fetch(`/api/dockerHubImages/${input}`)
       .then((res) => res.json())
@@ -69,7 +69,7 @@ export default function () {
 
   const getUserRepos = async () => {
     setUserRepos(
-      // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
       <div style={{ color: "#ccc", marginTop: "10px" }}>Loading...</div>
     );
     await fetch("/api/github/userRepos")
@@ -105,7 +105,7 @@ export default function () {
         if (arr.length) setUserRepos(arr);
         else
           setUserRepos(
-            // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
+            // @ts-expect-error TS(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
             <div className="tertiary" style={{ marginTop: "10px" }}>
               No repositories found.
             </div>
@@ -115,7 +115,7 @@ export default function () {
 
   const getPublicRepos = async (input: any) => {
     if (!input) return setPublicRepos([]);
-    // @ts-expect-error TS(2345): Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345) FIXME: Argument of type 'Element' is not assignable to pa... Remove this comment to see the full error message
     setPublicRepos(<span style={{ color: "#ccc" }}>Loading...</span>);
     await fetch("/api/github/publicRepos", {
       method: "POST",

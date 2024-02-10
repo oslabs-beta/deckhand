@@ -1,18 +1,19 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'util'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs/promises');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 const AWS = require('aws-sdk');
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'deployment... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'deployment... Remove this comment to see the full error message
 const deploymentController = {};
 
+// @ts-expect-error TS(2339) FIXME: Property 'addVPC' does not exist on type '{}'.
 deploymentController.addVPC = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/addVPC:');
   const {
@@ -92,6 +93,7 @@ deploymentController.addVPC = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deleteVPC' does not exist on type '{}'.
 deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteVPC:');
   const { userId, projectId } = req.body;
@@ -131,6 +133,7 @@ deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'addCluster' does not exist on type '{}'.
 deploymentController.addCluster = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/addCluster:');
   const {
@@ -273,6 +276,7 @@ deploymentController.addCluster = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deleteCluster' does not exist on type '{... Remove this comment to see the full error message
 deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteCluster:');
   const { userId, projectId, clusterId } = req.body;
@@ -306,6 +310,7 @@ deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
 };
 
 // Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
+// @ts-expect-error TS(2339) FIXME: Property 'buildImageNEW' does not exist on type '{... Remove this comment to see the full error message
 deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
@@ -355,7 +360,7 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
         await iam.getRole({ RoleName: roleName }).promise();
         console.log('Role already exists');
       } catch (error) {
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
+        // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
         if (error.code === 'NoSuchEntity') {
           // Role does not exist, create it
           console.log('Creating role');
@@ -457,7 +462,7 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
       // Attempt to create the CodeBuild project
       await codebuild.createProject(buildProjectParams).promise();
     } catch (error) {
-      // @ts-expect-error TS(2571): Object is of type 'unknown'.
+      // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
       if (error.code === 'ResourceAlreadyExistsException') {
         // If project already exists, update it
         console.log('Project already exists, updating existing project');
@@ -491,6 +496,7 @@ deploymentController.buildImageNEW = async (req: any, res: any, next: any) => {
 };
 
 // OLD: Dockerize github repo and push to AWS ECR
+// @ts-expect-error TS(2339) FIXME: Property 'buildImage' does not exist on type '{}'.
 deploymentController.buildImage = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
@@ -552,6 +558,7 @@ deploymentController.buildImage = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deleteImageNew' does not exist on type '... Remove this comment to see the full error message
 deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
@@ -593,6 +600,7 @@ deploymentController.deleteImageNew = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deleteImage' does not exist on type '{}'... Remove this comment to see the full error message
 deploymentController.deleteImage = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deleteImage:');
   const {
@@ -632,6 +640,7 @@ deploymentController.deleteImage = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deployPod' does not exist on type '{}'.
 deploymentController.deployPod = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deployPod:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
@@ -671,6 +680,7 @@ deploymentController.deployPod = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'deletePod' does not exist on type '{}'.
 deploymentController.deletePod = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/deletePod:');
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
@@ -707,6 +717,7 @@ deploymentController.deletePod = async (req: any, res: any, next: any) => {
   }
 };
 
+// @ts-expect-error TS(2339) FIXME: Property 'getURL' does not exist on type '{}'.
 deploymentController.getURL = async (req: any, res: any, next: any) => {
   console.log('\n/api/deployment/getURL:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;

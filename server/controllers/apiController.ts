@@ -1,15 +1,15 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'db'.
 const db = require('../database/dbConnect.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'cryptoUtil... Remove this comment to see the full error message
 const cryptoUtils = require('../utils/cryptoUtils.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'exec'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'exec'.
 const { exec } = require('child_process');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'util'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'util'.
 const util = require('util');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'execAsync'... Remove this comment to see the full error message
 const execAsync = util.promisify(exec);
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'apiControl... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'apiControl... Remove this comment to see the full error message
 const apiController = {};
 
 apiController.updateDatabase = async (req: any, res: any, next: any) => {

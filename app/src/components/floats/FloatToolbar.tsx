@@ -12,7 +12,7 @@ import {
 } from "@mdi/js";
 
 export default function FloatNav() {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find(

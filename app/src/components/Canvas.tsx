@@ -46,7 +46,7 @@ const nodeTypes = {
 };
 
 export default function Canvas() {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
@@ -66,7 +66,7 @@ export default function Canvas() {
     setEdges(projectEdges);
   }, [state.nodes, state.edges, setNodes, setEdges]);
 
-  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
+  // @ts-expect-error TS(2554) FIXME: Expected 2 arguments, but got 1.
   const onConnect = useCallback((params: any) => {
     // setEdges((eds) => addEdge(params, eds)), [];
     const id = `${params.source}-${params.target}`;
@@ -94,7 +94,7 @@ export default function Canvas() {
       const id = generateUniqueId();
       const type = event.dataTransfer.getData("application/reactflow");
       const projectId = state.projectId;
-      // @ts-expect-error TS(2531): Object is possibly 'null'.
+      // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -102,7 +102,7 @@ export default function Canvas() {
       const deletable = false;
       const data = {};
 
-      // @ts-expect-error TS(2339): Property 'replicas' does not exist on type '{}'.
+      // @ts-expect-error TS(2339) FIXME: Property 'replicas' does not exist on type '{}'.
       if (type === "pod") data.replicas = 1;
 
       dispatch(addNode({ id, type, projectId, position, deletable, data }));
@@ -129,7 +129,7 @@ export default function Canvas() {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
-              // @ts-expect-error TS(2322): Type 'Dispatch<SetStateAction<null>>' is not assig... Remove this comment to see the full error message
+              // @ts-expect-error TS(2322) FIXME: Type 'Dispatch<SetStateAction<null>>' is not assig... Remove this comment to see the full error message
               onInit={setReactFlowInstance}
               onDrop={onDrop}
               onDragOver={onDragOver}

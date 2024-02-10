@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 
 const createYaml = {};
 
-// @ts-expect-error TS(2339): Property 'deployment' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'deployment' does not exist on type '{}'.
 createYaml.deployment = (
   name: any,
   imageName: any,
@@ -54,21 +54,21 @@ createYaml.deployment = (
 
   if (volume) {
     deploymentConfig.spec.template.spec.containers[0].volumeMounts.push({
-      // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+      // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
       name: name + '-volume',
-      // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
+      // @ts-expect-error TS(2322) FIXME: Type 'any' is not assignable to type 'never'.
       mountPath: volume.mountPath || '/var/lib/' + name + '/data/',
     });
     deploymentConfig.spec.template.spec.volumes.push({
-      // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+      // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
       name: name + '-volume',
-      // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+      // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
       persistentVolumeClaim: { claimName: name + '-pvc' },
     });
   }
 
   if (variables) {
-    // @ts-expect-error TS(2339): Property 'data' does not exist on type 'never'.
+    // @ts-expect-error TS(2339) FIXME: Property 'data' does not exist on type 'never'.
     const configMapData = variables.data.variables
       .filter((item: any) => !item.secret)
       .reduce((acc: any, item: any) => {
@@ -83,11 +83,11 @@ createYaml.deployment = (
       }, {});
 
     if (Object.keys(configMapData).length) {
-      // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
       deploymentConfig.spec.template.spec.containers[0].env.push(configMapData);
     }
 
-    // @ts-expect-error TS(2339): Property 'data' does not exist on type 'never'.
+    // @ts-expect-error TS(2339) FIXME: Property 'data' does not exist on type 'never'.
     const secretData = variables.data.variables
       .filter((item: any) => item.secret)
       .reduce((acc: any, item: any) => {
@@ -102,7 +102,7 @@ createYaml.deployment = (
       }, {});
 
     if (Object.keys(secretData).length) {
-      // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
       deploymentConfig.spec.template.spec.containers[0].env.push(secretData);
     }
   }
@@ -110,7 +110,7 @@ createYaml.deployment = (
   return YAML.stringify(deploymentConfig);
 };
 
-// @ts-expect-error TS(2339): Property 'service' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'service' does not exist on type '{}'.
 createYaml.service = (name: any, exposedPort: any, port = 80) => {
   const serviceConfig = {
     apiVersion: 'v1',
@@ -136,7 +136,7 @@ createYaml.service = (name: any, exposedPort: any, port = 80) => {
   return YAML.stringify(serviceConfig);
 };
 
-// @ts-expect-error TS(2339): Property 'ingress' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'ingress' does not exist on type '{}'.
 createYaml.ingress = (name: any, port = 80) => {
   return YAML.stringify({
     apiVersion: 'networking.k8s.io/v1',
@@ -172,7 +172,7 @@ createYaml.ingress = (name: any, port = 80) => {
   });
 };
 
-// @ts-expect-error TS(2339): Property 'configMap' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'configMap' does not exist on type '{}'.
 createYaml.configMap = (name: any, variables: any) => {
   const configMapData = variables.data.variables
     .filter((item: any) => !item.secret)
@@ -191,7 +191,7 @@ createYaml.configMap = (name: any, variables: any) => {
   });
 };
 
-// @ts-expect-error TS(2339): Property 'secret' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'secret' does not exist on type '{}'.
 createYaml.secret = (name: any, variables: any) => {
   const secretData = variables.data.variables
     .filter((item: any) => item.secret)
@@ -203,7 +203,7 @@ createYaml.secret = (name: any, variables: any) => {
   // Base64-encode all values in the data object
   const encodedData = {};
   for (const [key, value] of Object.entries(secretData)) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+    // @ts-expect-error TS(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     encodedData[key] = Buffer.from(value).toString('base64');
   }
 
@@ -218,7 +218,7 @@ createYaml.secret = (name: any, variables: any) => {
   });
 };
 
-// @ts-expect-error TS(2339): Property 'persistentVolume' does not exist on type... Remove this comment to see the full error message
+// @ts-expect-error TS(2339) FIXME: Property 'persistentVolume' does not exist on type... Remove this comment to see the full error message
 createYaml.persistentVolume = (
   name: any,
   volumeHandle: any,
@@ -249,7 +249,7 @@ createYaml.persistentVolume = (
   return YAML.stringify(pvConfig);
 };
 
-// @ts-expect-error TS(2339): Property 'persistentVolumeClaim' does not exist on... Remove this comment to see the full error message
+// @ts-expect-error TS(2339) FIXME: Property 'persistentVolumeClaim' does not exist on... Remove this comment to see the full error message
 createYaml.persistentVolumeClaim = (
   name: any,
   storage = '1Gi',
@@ -275,7 +275,7 @@ createYaml.persistentVolumeClaim = (
   return YAML.stringify(pvConfig);
 };
 
-// @ts-expect-error TS(2339): Property 'storageClass' does not exist on type '{}... Remove this comment to see the full error message
+// @ts-expect-error TS(2339) FIXME: Property 'storageClass' does not exist on type '{}... Remove this comment to see the full error message
 createYaml.storageClass = (name: any, volumeHandle: any, vpcRegion: any) => {
   const pvConfig = {
     apiVersion: 'storage.k8s.io/v1',
@@ -295,7 +295,7 @@ createYaml.storageClass = (name: any, volumeHandle: any, vpcRegion: any) => {
   return YAML.stringify(pvConfig);
 };
 
-// @ts-expect-error TS(2339): Property 'all' does not exist on type '{}'.
+// @ts-expect-error TS(2339) FIXME: Property 'all' does not exist on type '{}'.
 createYaml.all = (
   data: any,
   connectedNodes: any,
@@ -319,7 +319,7 @@ createYaml.all = (
   const volume = connectedNodes.find((node: any) => node.type === 'volume');
 
   yamlArr.push(
-    // @ts-expect-error TS(2339): Property 'deployment' does not exist on type '{}'.
+    // @ts-expect-error TS(2339) FIXME: Property 'deployment' does not exist on type '{}'.
     createYaml.deployment(
       name,
       imageName,
@@ -330,20 +330,20 @@ createYaml.all = (
       volume
     )
   );
-  // @ts-expect-error TS(2339): Property 'service' does not exist on type '{}'.
+  // @ts-expect-error TS(2339) FIXME: Property 'service' does not exist on type '{}'.
   yamlArr.push(createYaml.service(name, exposedPort, port));
-  // @ts-expect-error TS(2339): Property 'ingress' does not exist on type '{}'.
+  // @ts-expect-error TS(2339) FIXME: Property 'ingress' does not exist on type '{}'.
   if (ingress) yamlArr.push(createYaml.ingress(name, port));
-  // @ts-expect-error TS(2339): Property 'configMap' does not exist on type '{}'.
+  // @ts-expect-error TS(2339) FIXME: Property 'configMap' does not exist on type '{}'.
   if (configMapData?.length) yamlArr.push(createYaml.configMap(name, variables));
-  // @ts-expect-error TS(2339): Property 'secret' does not exist on type '{}'.
+  // @ts-expect-error TS(2339) FIXME: Property 'secret' does not exist on type '{}'.
   if (secretData?.length) yamlArr.push(createYaml.secret(name, variables));
-  // @ts-expect-error TS(2339): Property 'persistentVolume' does not exist on type... Remove this comment to see the full error message
+  // @ts-expect-error TS(2339) FIXME: Property 'persistentVolume' does not exist on type... Remove this comment to see the full error message
   if (volume) yamlArr.push(createYaml.persistentVolume(name, volumeHandle));
-  // @ts-expect-error TS(2339): Property 'persistentVolumeClaim' does not exist on... Remove this comment to see the full error message
+  // @ts-expect-error TS(2339) FIXME: Property 'persistentVolumeClaim' does not exist on... Remove this comment to see the full error message
   if (volume) yamlArr.push(createYaml.persistentVolumeClaim(name));
   if (volume)
-    // @ts-expect-error TS(2339): Property 'storageClass' does not exist on type '{}... Remove this comment to see the full error message
+    // @ts-expect-error TS(2339) FIXME: Property 'storageClass' does not exist on type '{}... Remove this comment to see the full error message
     yamlArr.push(createYaml.storageClass(name, volumeHandle, vpcRegion));
 
   return yamlArr.join('\n---\n\n');

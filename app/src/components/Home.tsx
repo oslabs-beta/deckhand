@@ -14,7 +14,7 @@ import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function Home() {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
 
@@ -33,7 +33,7 @@ export default function Home() {
   };
 
   const timeAgo = (date: any) => {
-    // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+    // @ts-expect-error TS(2362) FIXME: The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
     const minutes = (new Date() - new Date(date)) / (1000 * 60);
     const hours = minutes / 60;
     const days = hours / 24;
@@ -49,7 +49,7 @@ export default function Home() {
   const sortedProjects = [...state.projects].sort((a, b) => {
     const dateA = new Date(a.modifiedDate);
     const dateB = new Date(b.modifiedDate);
-    // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+    // @ts-expect-error TS(2362) FIXME: The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
     return dateB - dateA;
   });
   for (const project of sortedProjects) {

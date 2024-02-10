@@ -5,7 +5,7 @@ import Icon from "@mdi/react";
 import { mdiCogOutline } from "@mdi/js";
 
 export default function FloatNav() {
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
+  // @ts-expect-error TS(2571) FIXME: Object is of type 'unknown'.
   const state = useSelector((state) => state.deckhand);
   const dispatch = useDispatch();
   const project = state.projects.find(
@@ -19,7 +19,7 @@ export default function FloatNav() {
         path={mdiCogOutline}
         size={0.75}
         className="icon"
-        // @ts-expect-error TS(2322): Type '{ path: string; size: number; className: str... Remove this comment to see the full error message
+        // @ts-expect-error TS(2322) FIXME: Type '{ path: string; size: number; className: str... Remove this comment to see the full error message
         onClick={() => {
           dispatch(showModal({ name: "ConfigureProject", data: project }));
         }}

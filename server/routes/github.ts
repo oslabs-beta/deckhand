@@ -1,8 +1,8 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'express'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'express'.
 const express = require('express');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'router'.
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'router'.
 const router = express.Router();
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
+// @ts-expect-error TS(2451) FIXME: Cannot redeclare block-scoped variable 'githubCont... Remove this comment to see the full error message
 const githubController = require('../controllers/githubController');
 
 router.get('/login', githubController.login, (req: any, res: any) => {

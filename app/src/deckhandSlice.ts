@@ -171,11 +171,11 @@ export const deckhandSlice = createSlice({
       state.projectId = action.payload;
     },
     toggleLayout: (state, action) => {
-      // @ts-expect-error TS(2339): Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
+      // @ts-expect-error TS(2339) FIXME: Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
       state.layout === 'cards'
-        // @ts-expect-error TS(2339): Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
         ? (state.layout = 'canvas')
-        // @ts-expect-error TS(2339): Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'layout' does not exist on type 'Writable... Remove this comment to see the full error message
         : (state.layout = 'cards');
     },
     showModal: (state, action) => {
@@ -187,39 +187,39 @@ export const deckhandSlice = createSlice({
     addProject: (state, action) => {
       // payload: projectId
       state.projects.push({
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'any' is not assignable to type 'never'.
         projectId: action.payload,
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
         name: `Default Project`,
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
         createdDate: new Date().toString(),
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
         modifiedDate: new Date().toString(),
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
         provider: 'aws', // default
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
+        // @ts-expect-error TS(2322) FIXME: Type 'string' is not assignable to type 'never'.
         vpcRegion: 'us-east-1', // default
       });
     },
     deleteProject: (state, action) => {
       // payload: projectId
       state.projects = state.projects.filter(
-        // @ts-expect-error TS(2339): Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
         (project) => project.projectId !== action.payload
       );
       state.nodes = state.nodes.filter(
-        // @ts-expect-error TS(2339): Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
         (node) => node.projectId !== action.payload
       );
       state.edges = state.edges.filter(
-        // @ts-expect-error TS(2339): Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
         (edge) => edge.projectId !== action.payload
       );
     },
     configureProject: (state, action) => {
       // payload: {projectId, ...props to merge...}
       const project = state.projects.find(
-        // @ts-expect-error TS(2339): Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339) FIXME: Property 'projectId' does not exist on type 'never... Remove this comment to see the full error message
         (project) => project.projectId === action.payload.projectId
       );
       if (project) Object.assign(project, action.payload);
@@ -228,24 +228,24 @@ export const deckhandSlice = createSlice({
     // Node Reducers
     addNode: (state, action) => {
       // payload: { id, type, data, position, projectId }
-      // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
       state.nodes.push(action.payload);
     },
     deleteNode: (state, action) => {
       // payload: id
       const id = action.payload;
-      // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
+      // @ts-expect-error TS(2339) FIXME: Property 'id' does not exist on type 'never'.
       state.nodes = state.nodes.filter((node) => node.id !== id);
-      // @ts-expect-error TS(2339): Property 'source' does not exist on type 'never'.
+      // @ts-expect-error TS(2339) FIXME: Property 'source' does not exist on type 'never'.
       state.edges = state.edges.filter(edge => edge.source !== id && edge.target !== id);
     },
     updateNode: (state, action) => {
       // payload: { id, ...props to merge }
-      // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
+      // @ts-expect-error TS(2339) FIXME: Property 'id' does not exist on type 'never'.
       const node = state.nodes.find((node) => node.id === action.payload.id);
       if (node) {
         // Copy previous data prop
-        // @ts-expect-error TS(2339): Property 'data' does not exist on type 'never'.
+        // @ts-expect-error TS(2339) FIXME: Property 'data' does not exist on type 'never'.
         const previousData = { ...node.data };
 
         // Merge node with new properties (replacing data prop)
@@ -253,7 +253,7 @@ export const deckhandSlice = createSlice({
 
         // Merge the previous and new data props
         if (action.payload.data) {
-          // @ts-expect-error TS(2339): Property 'data' does not exist on type 'never'.
+          // @ts-expect-error TS(2339) FIXME: Property 'data' does not exist on type 'never'.
           node.data = { ...previousData, ...action.payload.data };
         }
       }
@@ -262,17 +262,17 @@ export const deckhandSlice = createSlice({
     // Edge Reducers
     addNewEdge: (state, action) => {
       // payload: { id, ...params, project.id }
-      // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
       state.edges.push(action.payload);
     },
     deleteEdge: (state, action) => {
       // payload: id
-      // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
+      // @ts-expect-error TS(2339) FIXME: Property 'id' does not exist on type 'never'.
       state.edges = state.edges.filter((edge) => edge.id !== action.payload);
     },
     updateEdge: (state, action) => {
       // payload: { id, ...props to merge }
-      // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
+      // @ts-expect-error TS(2339) FIXME: Property 'id' does not exist on type 'never'.
       const edge = state.edges.find((edge) => edge.id === action.payload.id);
       if (edge) Object.assign(edge, action.payload);
     },
