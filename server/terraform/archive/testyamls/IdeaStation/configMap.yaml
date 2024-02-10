@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: app-config
-data:
-  # PG_URI: 'postgres://skptzoyf:u3kpKLsWJoZVDq8HU6irjCOOzhNDzJUz@suleiman.db.elephantsql.com/skptzoyf'
-  # PG_URI: 'postgres://<username>:<password>@postgres-service:5432/<database-name>'
-  PG_URI: 'postgres://postgres:testPass@pg-service:5432/postgres'

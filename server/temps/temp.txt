@@ -1,1 +1,0 @@
-This empty directory is where github repos will be cloned temporarily. 
