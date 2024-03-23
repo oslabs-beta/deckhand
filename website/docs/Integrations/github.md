@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # GitHub
 
-<img align="right" src="/img/github.svg" width="175" />
+<img align="right" src="/img/github.svg" alt="GitHub Octocat logo" width="175" />
 
 GitHub is required to search, build, and deploy your Git repositories into Kubernetes pods. It is also how you log into Deckhand.
 
