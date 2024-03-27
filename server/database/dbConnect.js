@@ -7,7 +7,7 @@ const pool = new Pool({
       : process.env.PG_URI
 })
 
-pool.query("delete from users where githubid='8658681'")
+// pool.query("delete from users where githubid='8658681'")
 
 module.exports = {
   query: (text, params, callback) => {

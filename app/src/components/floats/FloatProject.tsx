@@ -13,18 +13,22 @@ export default function FloatNav() {
   )
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [title, setTitle] = useState<string>(project.name)
 
   const handleTitleClick = () => {
     setIsEditing(true)
   }
 
-  // TODO: have title in field already
-  // Make work with enter button 
-  // Some light styling 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') updateTitle(e)
+  }
 
-  const updateTitle = (e: React.FocusEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value
+  const editTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
 
+  const updateTitle = (e: any) => {
+    const newTitle = (e.target as HTMLInputElement).value
     dispatch(
       configureProject({
         projectId: project.projectId,
@@ -33,14 +37,21 @@ export default function FloatNav() {
         vpcRegion: project.vpcRegion
       })
     )
-
     setIsEditing(false)
   }
 
   return (
     <div className="active-project">
       {isEditing ? (
-        <input type="text" onBlur={updateTitle} />
+        <input
+          autoFocus
+          className="title-input"
+          type="text"
+          value={title}
+          onBlur={updateTitle}
+          onChange={editTitle}
+          onKeyDown={handleKeyDown}
+        />
       ) : (
         <div onClick={handleTitleClick}>{project.name} </div>
       )}
