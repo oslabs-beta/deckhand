@@ -222,9 +222,7 @@ githubController.build = (req, res, next) => {
 
 // Find all env variables in repo
 githubController.scanRepo = (req, res, next) => {
-  console.log('reached scanRepo middleware');
   const { repo, branch } = req.body;
-  console.log({ repo, branch });
   const repoName = repo.split('/')[1];
 
   // const cloneUrl = `https://github.com/${repo}.git#${branch}`;
@@ -235,7 +233,6 @@ githubController.scanRepo = (req, res, next) => {
   // Clones repo into the temps folder
   let tempsPath;
   try {
-    console.log({ __dirname });
     tempsPath = path.join(__dirname, '..', 'temps');
     execSync(`cd "${tempsPath}" && git clone -b ${branch} ${cloneUrl}`);
   } catch {

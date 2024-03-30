@@ -34,6 +34,17 @@ export default function () {
     setInputs(values);
   };
 
+  // Adds an input field for each passed in key
+  const populateInputs = (keys: string[]) => {
+    const values = [...inputs];
+
+    keys.forEach((key) => {
+      values.push({ key, value: '', secret: false });
+    });
+
+    setInputs(values);
+  };
+
   const addRow = () => {
     setInputs([...inputs, { key: '', value: '', secret: false }]);
   };
@@ -50,7 +61,7 @@ export default function () {
     closeModal();
   };
 
-  // Finds all GitHub nodes connected to a node with the given id
+  // Finds all GitHub nodes connected to the node with the given id
   // Returns array of the GitHub nodes' ids
   const findConnectedGitHubNodes = (id: string): string[] => {
     const nodes: any[] = state.nodes;
@@ -69,20 +80,14 @@ export default function () {
     return gitHubIds;
   };
 
-  const loadEnv = async () => {
-    // TODO:
-
+  const getEnvs = async () => {
     const connectedGitHubNodes: string[] = findConnectedGitHubNodes(id);
-    console.log({ connectedGitHubNodes });
     const envKeys: string[] = [];
 
-    connectedGitHubNodes.forEach(async (id) => {
-      // for each one, get the repo and branch. Send those to a fetch request to get back the envs. Add them to the keys array
+    for (let i = 0; i < connectedGitHubNodes.length; i++) {
+      const id = connectedGitHubNodes[i];
       const node = state.nodes.find((node: any) => node.id === id);
-      console.log({ node });
-
       const { githubRepo, githubBranch } = node.data;
-      console.log({ githubRepo, githubBranch });
 
       const response = await fetch('/api/github/scan', {
         method: 'POST',
@@ -93,9 +98,9 @@ export default function () {
       });
       const envs = await response.json();
       envKeys.push(...envs);
-    });
+    }
 
-    console.log({ envKeys });
+    populateInputs(envKeys);
   };
 
   return (
@@ -155,8 +160,8 @@ export default function () {
             </tbody>
           </table>
           <div className="buttons">
-            <button type="button" onClick={loadEnv}>
-              Load envs
+            <button type="button" onClick={getEnvs}>
+              Load Envs
             </button>
             <button type="button" onClick={addRow}>
               Add Row
