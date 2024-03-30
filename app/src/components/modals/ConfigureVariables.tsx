@@ -52,15 +52,15 @@ export default function () {
 
   // Finds all GitHub nodes connected to a node with the given id
   // Returns array of the GitHub nodes' ids
-  const findConnectedGitHubNodes = (id: number): number[] => {
+  const findConnectedGitHubNodes = (id: string): string[] => {
     const nodes: any[] = state.nodes;
     const edges: any[] = state.edges;
 
-    const connectedNodeIds: number[] = edges
+    const connectedNodeIds: string[] = edges
       .filter((edge) => edge.target === id)
       .map((edge) => edge.source);
 
-    const gitHubIds: number[] = nodes
+    const gitHubIds: string[] = nodes
       .filter(
         (node) => node.type === 'github' && connectedNodeIds.includes(node.id),
       )
@@ -71,16 +71,31 @@ export default function () {
 
   const loadEnv = async () => {
     // TODO:
-   
-    const connectedGitHubNodes = findConnectedGitHubNodes(id);
+
+    const connectedGitHubNodes: string[] = findConnectedGitHubNodes(id);
     console.log({ connectedGitHubNodes });
-    // const response = await fetch('/api/github/scan', {
-    //   method: 'POST',
-    //   body: JSON.stringify({}),
-    // });
-    // const envs = await response.json();
-    // // returns array of variable names
-    // // const { repo, branch } = req.body;
+    const envKeys: string[] = [];
+
+    connectedGitHubNodes.forEach(async (id) => {
+      // for each one, get the repo and branch. Send those to a fetch request to get back the envs. Add them to the keys array
+      const node = state.nodes.find((node: any) => node.id === id);
+      console.log({ node });
+
+      const { githubRepo, githubBranch } = node.data;
+      console.log({ githubRepo, githubBranch });
+
+      const response = await fetch('/api/github/scan', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ repo: githubRepo, branch: githubBranch }),
+      });
+      const envs = await response.json();
+      envKeys.push(...envs);
+    });
+
+    console.log({ envKeys });
   };
 
   return (
