@@ -5,8 +5,14 @@ require('dotenv').config();
 const db = require('../database/dbConnect');
 const cryptoUtils = require('../utils/cryptoUtils');
 
-const GITHUB_CLIENT_ID = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_ID_PROD : process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.NODE_ENV === 'production' ? process.env.GITHUB_CLIENT_SECRET_PROD : process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_CLIENT_ID =
+  process.env.NODE_ENV === 'production'
+    ? process.env.GITHUB_CLIENT_ID_PROD
+    : process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET =
+  process.env.NODE_ENV === 'production'
+    ? process.env.GITHUB_CLIENT_SECRET_PROD
+    : process.env.GITHUB_CLIENT_SECRET;
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
@@ -15,7 +21,7 @@ const githubController = {};
 // redirect to github login
 githubController.login = (req, res) => {
   res.redirect(
-    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`
+    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`,
   );
 };
 
@@ -24,17 +30,17 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-    GITHUB_CLIENT_ID +
-    '&client_secret=' +
-    GITHUB_CLIENT_SECRET +
-    '&code=' +
-    auth_code,
+      GITHUB_CLIENT_ID +
+      '&client_secret=' +
+      GITHUB_CLIENT_SECRET +
+      '&code=' +
+      auth_code,
     {
       method: 'POST',
       headers: {
         Accept: 'application/json',
       },
-    }
+    },
   )
     .then((res) => res.json())
     .then((data) => {
@@ -67,7 +73,7 @@ githubController.userData = async (req, res, next) => {
     });
 
     Promise.all([userDataFetch, userEmailFetch])
-      .then(async responses => {
+      .then(async (responses) => {
         if (!responses[0].ok || !responses[1].ok) {
           throw new Error('Network response was not ok');
         }
@@ -75,7 +81,9 @@ githubController.userData = async (req, res, next) => {
         const githubEmails = await responses[1].json();
 
         // Map data from Github
-        const email = githubEmails.find(email => email.primary)?.email || githubData.email;
+        const email =
+          githubEmails.find((email) => email.primary)?.email ||
+          githubData.email;
         const name = githubData.name || githubData.login || email;
         const avatarUrl = githubData.avatar_url;
         const githubId = githubData.id;
@@ -91,7 +99,12 @@ githubController.userData = async (req, res, next) => {
             VALUES ($1, $2, $3, $4)
             RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
           `;
-          const newUserResult = await db.query(createUserQuery, [name, email, avatarUrl, githubId]);
+          const newUserResult = await db.query(createUserQuery, [
+            name,
+            email,
+            avatarUrl,
+            githubId,
+          ]);
 
           const newUser = newUserResult.rows[0];
 
@@ -106,7 +119,6 @@ githubController.userData = async (req, res, next) => {
             awsSecretKey: newUser.awssecretkey,
             state: newUser.state,
           };
-
         } else {
           // User exists, return the database values
           const user = userExistsResult.rows[0];
@@ -120,13 +132,13 @@ githubController.userData = async (req, res, next) => {
             theme: user.theme,
             awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey),
             awsSecretKey: cryptoUtils.decrypt(user.awssecretkey),
-            state: user.state && JSON.parse(user.state) // Parse JSONB state if it exists
+            state: user.state && JSON.parse(user.state), // Parse JSONB state if it exists
           };
         }
 
         return next();
       })
-      .catch(error => next(error));
+      .catch((error) => next(error));
   } else {
     res.status(401).json('Unauthorized');
   }
@@ -155,14 +167,14 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-    input +
-    '+in:name&sort=stars&order=desc',
+      input +
+      '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   )
     .then((res) => res.json())
     .then((data) => {
