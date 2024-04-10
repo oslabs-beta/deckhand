@@ -1,14 +1,22 @@
-const apiController = require('../../../server/controllers/apiController.js');
+import { Request, Response, NextFunction } from 'express';
+const apiController = require('../../../server/controllers/apiController');
 
 describe('Testing the functionality of the "getDockerHubExposedPort" method', () => {
 
-  const req = {
-    body: {}
-  };
-  const res = {
-    locals: {}
-  };
-  const next = jest.fn();
+  interface DockerRequest {
+    imageName: string;
+    imageTag: string;
+  }
+
+  const req: Request & { body: DockerRequest } = {
+    body: {} as DockerRequest,
+  } as Request;
+
+  const res: Response & { locals: any } = {
+    locals: {},
+  } as Response;
+
+  const next: NextFunction = jest.fn();
 
   it('See if image architecture is incorrect', async () => {
     req.body.imageName = 'deckhandapp/ideastation';
