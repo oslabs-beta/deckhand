@@ -19,7 +19,7 @@ const deploymentRouter = require(path.join(__dirname, './routes/deployment'));
 
 // Parse incoming requests
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Define route handlers
