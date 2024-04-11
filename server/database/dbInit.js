@@ -1,4 +1,4 @@
-const db = require('./dbConnect.js');
+const db = require('./dbConnect');
 
 module.exports = {
   dbInit: async () => {

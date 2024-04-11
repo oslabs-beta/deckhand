@@ -89,6 +89,11 @@ button:active {
   transform: scale(0.98);
 }
 
+.icon-container {
+  cursor: pointer;
+  display: inline-block;
+}
+
 .icon {
   color: #999;
   margin-left: 5px;
@@ -341,6 +346,11 @@ button:active {
 
 /* Canvas */
 
+#container-react-flow {
+  width: "100vw";
+  height: "100vh";
+}
+
 .float-toolbar {
   position: absolute;
   display: flex;
@@ -468,6 +478,32 @@ button:active {
   color: #000;
 }
 
+.display-flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1; 
+}
+
+.replicas {
+  display: flex;
+  flex-direction: column;
+  width: 20px;
+  font-weight: bold;
+}
+
+.replicas-content {
+  flex: 1;
+  margin: 2px;
+  text-align: center;
+}
+
+.cluster-node-content {
+  font-size: 14px;
+  padding-bottom: 10px;
+}
+
 /* Modals */
 
 .modal {
@@ -592,4 +628,28 @@ button:active {
 .pod-source:hover {
   background-color: var(--highlight-background);
   border: 1px solid var(--secondary);
+}
+
+.pod-source-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pod-source-text {
+  margin-top: 10px;
+  color: var(--tertiary);
+}
+
+.pod-source-stars {
+  font-size: 12px;
+}
+
+.pod-source-repo-desc {
+  display: flex;
+  font-size: 14px;
+}
+
+.modal-scroll {
+  max-height: 300px;
+  overflow: auto;
 }
