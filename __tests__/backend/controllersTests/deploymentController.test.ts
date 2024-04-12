@@ -1,4 +1,3 @@
-const deploymentControllerController = require('../../../server/controllers/deploymentController.js');
 
 describe('Testing the build functionality', () => {
 
