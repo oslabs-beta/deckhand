@@ -16,16 +16,16 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['*.jsx', '*.tsx'],
       rules: {
-        quotes: ['error', 'double'], // Use double quotes for TSX/JSX files
+        quotes: ['error', 'double'],
         semi: ['error', 'always'],
       },
     },
     {
-      files: ['*.js', '*.jsx', '*.mjs'],
+      files: ['*.js', '*.ts'],
       rules: {
-        quotes: ['error', 'single'], // Use single quotes for JS/JSX files
+        quotes: ['error', 'single'],
         semi: ['error', 'always'],
       },
     },
