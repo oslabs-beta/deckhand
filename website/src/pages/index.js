@@ -1,12 +1,12 @@
-import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import preview from '@site/static/img/preview2.png';
+import clsx from "clsx";
+import Link from "@docusaurus/Link";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import Layout from "@theme/Layout";
+import HomepageFeatures from "@site/src/components/HomepageFeatures";
+import preview from "@site/static/img/preview2.png";
 
-import Heading from '@theme/Heading';
-import styles from './index.module.css';
+import Heading from "@theme/Heading";
+import styles from "./index.module.css";
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -82,7 +82,13 @@ function HomepageHeader() {
             <Link
               className="button button--primary button--lg"
               to="http://app.deckhand.dev"
-              style={{ border: 0, margin: 5, backgroundColor: 'var(--main-btn-bg)', color: 'var(--main-btn-text)' }}>
+              style={{
+                border: 0,
+                margin: 5,
+                backgroundColor: "var(--main-btn-bg)",
+                color: "var(--main-btn-text)",
+              }}
+            >
               Launch App
             </Link>
             {/* <Link
@@ -94,12 +100,20 @@ function HomepageHeader() {
             <Link
               className="button button--secondary button--lg"
               to="/docs/intro"
-              style={{ border: 0, margin: 5, backgroundColor: 'var(--secondary-btn-bg)', color: 'var(--secondary-btn-text)' }}>
+              style={{
+                border: 0,
+                margin: 5,
+                backgroundColor: "var(--secondary-btn-bg)",
+                color: "var(--secondary-btn-text)",
+              }}
+            >
               📚 Docs
             </Link>
           </div>
         </div>
-        <div className={`${styles.preview} ${styles.fadeInRight}`}><img src={preview} /></div>
+        <div className={`${styles.preview} ${styles.fadeInRight}`}>
+          <img src={preview} alt="Deckhand canvas preview" />
+        </div>
       </div>
     </div>
   );
@@ -116,7 +130,10 @@ function Waves() {
         shapeRendering="auto"
       >
         <defs>
-          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          <path
+            id="gentle-wave"
+            d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+          />
         </defs>
         <g className={styles.parallax}>
           <use xlinkHref="#gentle-wave" x="48" y="0" fill="var(--wave1)" />
@@ -134,7 +151,8 @@ export default function Home() {
   return (
     <Layout
       // title={`${siteConfig.title}`}
-      description="Fully automated, drag and drop Kubernetes">
+      description="Fully automated, drag and drop Kubernetes"
+    >
       <div className={styles.header}>
         <HomepageHeader />
         <Waves />

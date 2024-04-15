@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Lato:300,800");
+@import url('https://fonts.googleapis.com/css?family=Lato:300,800');
 
 /* Light theme (default) */
 :root {
@@ -59,7 +59,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   background: var(--page-background);
   color: var(--primary);
 }
@@ -138,7 +138,7 @@ button:active {
   z-index: 10;
   height: 40px;
   color: var(--primary);
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .float-logo .stroke {
@@ -234,7 +234,7 @@ button:active {
 
 .image-section {
   flex: 2;
-  background-image: url("./assets/loginbackground.jpg");
+  background-image: url('./assets/loginbackground.jpg');
   background-size: cover;
   height: 100%;
 }
@@ -347,8 +347,8 @@ button:active {
 /* Canvas */
 
 #container-react-flow {
-  width: "100vw";
-  height: "100vh";
+  width: '100vw';
+  height: '100vh';
 }
 
 .float-toolbar {
@@ -483,7 +483,7 @@ button:active {
 }
 
 .flex-1 {
-  flex: 1; 
+  flex: 1;
 }
 
 .replicas {
@@ -652,4 +652,15 @@ button:active {
 .modal-scroll {
   max-height: 300px;
   overflow: auto;
+}
+
+.title-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: var(--component-background);
+  color: var(--primary);
 }

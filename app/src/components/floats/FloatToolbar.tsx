@@ -29,6 +29,7 @@ export default function FloatNav() {
         className="float-toolbar-item"
         onDragStart={(event) => onDragStart(event, "cluster")}
         draggable
+        aria-label="Drag on cluster"
       >
         <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1} />
         <br />
@@ -39,6 +40,7 @@ export default function FloatNav() {
         className="float-toolbar-item"
         onDragStart={(event) => onDragStart(event, "pod")}
         draggable
+        aria-label="Drag on pod"
       >
         <Icon path={mdiCircle} style={{ color: "#0db7ed" }} size={1} />
         <br />
@@ -49,6 +51,7 @@ export default function FloatNav() {
         className="float-toolbar-item"
         onDragStart={(event) => onDragStart(event, "variables")}
         draggable
+        aria-label="Drag on variables"
       >
         <Icon path={mdiKeyVariant} style={{ color: "orange" }} size={1} />
         <br />
@@ -58,6 +61,7 @@ export default function FloatNav() {
         className="float-toolbar-item"
         onDragStart={(event) => onDragStart(event, "ingress")}
         draggable
+        aria-label="Drag on ingress"
       >
         <Icon path={mdiImport} style={{ color: "green" }} size={1} />
         <br />
@@ -67,6 +71,7 @@ export default function FloatNav() {
         className="float-toolbar-item"
         onDragStart={(event) => onDragStart(event, "volume")}
         draggable
+        aria-label="Drag on volume"
       >
         <Icon path={mdiDatabase} style={{ color: "violet" }} size={1} />
         <br />
