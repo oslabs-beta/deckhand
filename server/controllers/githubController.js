@@ -30,11 +30,11 @@ githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
-      GITHUB_CLIENT_ID +
-      '&client_secret=' +
-      GITHUB_CLIENT_SECRET +
-      '&code=' +
-      auth_code,
+    GITHUB_CLIENT_ID +
+    '&client_secret=' +
+    GITHUB_CLIENT_SECRET +
+    '&code=' +
+    auth_code,
     {
       method: 'POST',
       headers: {
@@ -167,8 +167,8 @@ githubController.publicRepos = async (req, res, next) => {
   const { input } = req.body;
   await fetch(
     'https://api.github.com/search/repositories?q=' +
-      input +
-      '+in:name&sort=stars&order=desc',
+    input +
+    '+in:name&sort=stars&order=desc',
     {
       method: 'GET',
       headers: {
@@ -318,35 +318,46 @@ githubController.scanRepo = (req, res, next) => {
   return next();
 };
 
-// Finds the exposed port in the dockerfile
+// Finds the exposed port in the GitHub repo
 githubController.findExposedPort = (req, res, next) => {
+  console.log('\n/api/github/findExposedPort:');
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
-
   const cloneUrl = `https://github.com/${repo}.git`;
-
-  // Clones repo into the temps folder
-  const tempsPath = path.join(__dirname, '..', 'temps');
-  execSync(`cd ${tempsPath} && git clone -b ${branch} ${cloneUrl}`);
-  const repoPath = path.join(tempsPath, repoName);
-
   let exposedPort;
+
   try {
-    const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
-    const regex = /expose\s+(\d+)/i;
-    exposedPort = Number(regex.exec(dockerfile)[1]);
-  } catch {
-    console.log('failed to find dockerfile');
-    exposedPort = undefined;
+    // Clone repo into temp folder
+    console.log('Cloning repo');
+    const tempPath = path.join(__dirname, '..', 'temps');
+    execSync(`cd ${tempPath} && git clone -b ${branch} ${cloneUrl}`);
+    const repoPath = path.join(tempPath, repoName);
+
+    // Scan repo for exposed port
+    console.log('Scanning for exposed port');
+    try {
+      const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
+      const regex = /expose\s+(\d+)/i;
+      exposedPort = Number(regex.exec(dockerfile)[1]);
+      console.log('Exposed port:', exposedPort);
+    } catch {
+      console.log('Failed to find dockerfile');
+      exposedPort = undefined;
+    }
+
+    // Delete cloned repo
+    execSync(`cd ${tempPath} && rm -r ${repoName}`);
+
+    // Log success and continue
+    console.log('Done');
+    res.locals.data = { exposedPort };
+    return next();
+  } catch (err) {
+    return next({
+      log: `Error in findExposedPort: ${err}`,
+      message: { err: 'An error occurred trying to find an exposed port' },
+    });
   }
-
-  // Delete cloned repo
-  execSync(`cd ${tempsPath} && rm -r ${repoName}`);
-
-  console.log('Scanned for exposed port and found:', exposedPort);
-
-  res.locals.data = { exposedPort };
-  return next();
 };
 
 module.exports = githubController;
