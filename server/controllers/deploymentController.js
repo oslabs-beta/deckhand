@@ -341,6 +341,8 @@ deploymentController.buildImage = async (req, res, next) => {
     console.log('Dockerizing and pushing image to ECR repository');
     const cloneUrl = `https://github.com/${repo}.git#${branch}`;
     const imageUrl = `${ecrUrl}/${awsRepo}:latest`;
+    // await execAsync(`echo ${process.env.DOCKER_PASSWORD} | docker login --username ${process.env.DOCKER_USERNAME} --password-stdin`);
+    // await execAsync(`docker buildx use cloud-deckhandapp-builder --global`);
     await execAsync(
       `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
     );
