@@ -11,7 +11,7 @@ import styles from "./index.module.css";
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <div className="container">
+    <>
       <div className={`${styles.innerHeader} ${styles.flex}`}>
         <div className={`${styles.logoAndTagline} ${styles.fadeIn}`}>
           <div className={styles.flex}>
@@ -115,7 +115,7 @@ function HomepageHeader() {
           <img src={preview} alt="Deckhand canvas preview" />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
