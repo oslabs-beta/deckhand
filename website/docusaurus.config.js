@@ -9,7 +9,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Deckhand',
-  tagline: 'Fully automated, drag and drop Kubernetes deployment',
+  tagline: 'No-code, drag and drop Kubernetes deployment.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -165,7 +165,7 @@ const config = {
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Deckhand | MIT License | Open Source`,
+        copyright: `© ${new Date().getFullYear()} Deckhand | MIT License`,
       },
       prism: {
         theme: prismThemes.github,

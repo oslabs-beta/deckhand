@@ -151,7 +151,7 @@ export default function Home() {
   return (
     <Layout
       // title={`${siteConfig.title}`}
-      description="Fully automated, drag and drop Kubernetes"
+      description="Deckhand is a drag and drop Kubernetes tool for deploying production-grade software with no code. Scale any application to millions of users in seconds."
     >
       <div className={styles.header}>
         <HomepageHeader />
