@@ -89,19 +89,19 @@ function HomepageHeader() {
               to="http://app.deckhand.dev"
               style={{
                 border: 0,
-                margin: 5,
+                marginRight: 5,
                 backgroundColor: "var(--main-btn-bg)",
                 color: "var(--main-btn-text)",
               }}
             >
-              Launch App
+              Get Started ➤
             </Link>
             <Link
               className="button button--secondary button--lg"
               to="/docs/intro"
               style={{
                 border: 0,
-                margin: 5,
+                marginLeft: 5,
                 backgroundColor: "var(--secondary-btn-bg)",
                 color: "var(--secondary-btn-text)",
               }}

@@ -51,26 +51,28 @@ export default function ScrollingLogos() {
   ];
 
   return (
-    <motion.div
-      className={styles.scrollContainer}
-      initial="hidden"
-      whileInView="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 }
-      }}
-      transition={{ duration: 1 }}
-      viewport={{ once: true, amount: 0.5 }}
-    >
-      <div className={styles.logoHeader}><h1>Highly Compatible...</h1></div>
-      <div className={styles.scrollingWrapper}>
-        {/* Render each logo multiple times for seamless animation */}
-        {Array.from({ length: 3 }).flatMap(_ => logos).map((Component, index) => (
-          <div key={index} className={styles.logo}>
-            <Component alt={`Logo ${index % logos.length + 1}`} />
-          </div>
-        ))}
-      </div>
-    </motion.div>
+    <>
+      <div className={styles.logoHeader}><h1>Got your back, no matter your stack.</h1></div>
+      <motion.div
+        className={styles.scrollContainer}
+        initial="hidden"
+        whileInView="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1 }
+        }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true, amount: 0.5 }}
+      >
+        <div className={styles.scrollingWrapper}>
+          {/* Render each logo multiple times for seamless animation */}
+          {Array.from({ length: 3 }).flatMap(_ => logos).map((Component, index) => (
+            <div key={index} className={styles.logo}>
+              <Component alt={`Logo ${index % logos.length + 1}`} />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </>
   );
 }
