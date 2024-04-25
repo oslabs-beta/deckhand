@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import { motion } from 'framer-motion';
 
 const FeatureList = [
   {
@@ -37,14 +38,34 @@ const FeatureList = [
 
 function Feature({ Svg, title, description }) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
+    <div
+      className={clsx('col col--4')}
+    >
+      <motion.div
+        className="text--center"
+        initial="hidden"
+        whileInView="visible"
+        variants={{
+          hidden: { opacity: 0, scale: 0 },
+          visible: { opacity: 1, scale: 1 }
+        }}
+        transition={{ duration: 0.25 }}
+        viewport={{ once: true, amount: 0.5 }}>
         <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
+      </motion.div>
+      <motion.div
+        className="text--center padding-horiz--md"
+        initial="hidden"
+        whileInView="visible"
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0 }
+        }}
+        transition={{ duration: 0.25 }}
+        viewport={{ once: true, amount: 0.5 }}>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
-      </div>
+      </motion.div>
     </div>
   );
 }

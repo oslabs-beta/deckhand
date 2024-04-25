@@ -78,7 +78,7 @@ const config = {
         items: [
           {
             type: 'dropdown', // 'docSidebar'
-            sidebarId: 'mySidebar',
+            sidebarid: 'mySidebar', // changed sidebarId to sidebarid due to console warning
             label: 'Docs',
             position: 'left',
             items: [

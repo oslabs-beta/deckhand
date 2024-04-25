@@ -16,7 +16,6 @@
   width: 60px;
   height: 60px;
   fill: white;
-  margin-right: 10px;
 }
 
 .logoText {
@@ -24,7 +23,8 @@
   font-weight: 300;
   letter-spacing: 2px;
   font-size: 48px;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
+  margin-left: 10px;
 }
 
 .innerHeader {

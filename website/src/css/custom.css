@@ -28,6 +28,8 @@
     rgba(84, 58, 183, 1) 0%,
     rgba(0, 172, 193, 1) 100%
   );
+  --light-text: #ccc;
+  --bg: rgba(255, 255, 255, 1);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -53,4 +55,6 @@
     rgb(48, 33, 103) 0%,
     rgb(0, 94, 106) 100%
   );
+  --light-text: #444;
+  --bg: rgba(27, 27, 29, 1);
 }

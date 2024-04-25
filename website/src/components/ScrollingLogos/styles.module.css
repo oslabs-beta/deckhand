@@ -1,0 +1,83 @@
+.logoHeader {
+    display: flex;
+    justify-content: center;
+    color: var(--light-text);
+    margin-top: 50px;
+}
+
+.scrollContainer {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.scrollingWrapper {
+    display: flex;
+    animation: scrollLogo 30s linear infinite;
+}
+
+.logo {
+    flex: 0 0 auto; /* Do not grow, do not shrink, and basis auto */
+    margin: 20px;
+}
+
+@keyframes scrollLogo {
+    0% {
+        transform: translateX(0); /* Start position */
+    }
+    100% {
+        transform: translateX(-50%); /* Move to left half of the original width */
+    }
+}
+
+.logo > svg {
+    width: 100px;
+    max-height: 100px;
+    filter: grayscale(100%) opacity(0.5);
+    transition: filter 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+[data-theme="dark"] .logo > svg {
+    /* Additionally invert in dark mode */
+    filter: grayscale(100%) invert(100%) opacity(0.5);
+}
+
+.logo > svg:hover {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+}
+
+/* Gradient overlay to create fading edges */
+.scrollContainer::before,
+.scrollContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 10%; /* Width of the fade effect */
+    height: 100%;
+    z-index: 2;
+    pointer-events: none; /* Prevents interaction blocking */
+}
+
+.scrollContainer::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.scrollContainer::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+@media (max-width: 768px) {
+    .logoHeader h1 {
+        font-size: 1.25rem;
+    }
+    .scrollingWrapper {
+        animation: scrollLogo 10s linear infinite; /* Adjust duration for mobile */
+    }
+    .logo {
+        margin: 20px; /* Shrink margin on mobile */
+    }
+}
