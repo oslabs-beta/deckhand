@@ -34,7 +34,7 @@ export default function () {
         <span className="close-button" onClick={closeModal}>
           &times;
         </span>
-        <h2>Link AWS Account</h2>
+        <h2>🔒 Link AWS Account</h2>
         <p>See instructions <a rel="noopener" href="https://deckhand.dev/docs/Integrations/aws" target="_blank">here</a>. Keys are AES-256 encrypted.</p>
         <form onSubmit={handleSubmit}>
           <label>
