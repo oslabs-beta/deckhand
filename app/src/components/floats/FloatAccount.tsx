@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setState, showModal } from "../../deckhandSlice";
+import { setUser, setState, showModal, setProjectId } from "../../deckhandSlice";
 import Icon from "@mdi/react";
-import { mdiChevronDown } from "@mdi/js";
+import { mdiChevronDown, mdiOpenInNew } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function FloatAccount() {
@@ -56,19 +56,17 @@ export default function FloatAccount() {
         >
           <DropdownMenu.Item
             className="dropdown-item"
+        onClick={() => dispatch(setProjectId(null))}
+          >
+            All Projects
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="dropdown-item"
             onClick={() => {
               dispatch(showModal({ name: "LinkedCloudProviders" }));
             }}
           >
             Link AWS Account
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onClick={() =>
-              window.open("https://deckhand.dev/docs/intro", "_blank")
-            }
-          >
-            Show Documentation
           </DropdownMenu.Item>
           {state.user.theme === "light" || !state.user.theme ? (
             <DropdownMenu.Item
@@ -110,6 +108,14 @@ export default function FloatAccount() {
               Disable Demo Mode
             </DropdownMenu.Item>
           )}
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() =>
+              window.open("https://deckhand.dev/docs/intro", "_blank")
+            }
+          >
+            Documentation <Icon path={mdiOpenInNew} size={0.5} />
+          </DropdownMenu.Item>
           <DropdownMenu.Separator className="dropdown-separator" />
           <DropdownMenu.Item
             className="dropdown-item"
