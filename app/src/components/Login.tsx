@@ -27,7 +27,7 @@ export default function Login() {
               window.location.href = "/api/github/login";
             }}
           >
-            <Icon path={mdiGithub} style={{ color: "white", marginRight: '0.5rem' }} size={1} />Sign in with GitHub
+            <Icon path={mdiGithub} style={{ color: "white", position: 'absolute', left: '15px' }} size={1} />Sign in with GitHub
           </div>
           <p className="or">or</p>
           <div
@@ -37,7 +37,7 @@ export default function Login() {
               window.location.href = "https://github.com/signup";
             }}
           >
-            <Icon path={mdiGithub} style={{ color: "#333", marginRight: '0.5rem' }} size={1} />Create GitHub Account
+            <Icon path={mdiGithub} style={{ color: "#333", position: 'absolute', left: '15px' }} size={1} />Create GitHub Account
           </div>
         </div>
         <div className="login-footer">

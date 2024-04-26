@@ -111,6 +111,7 @@ button:active {
 .container {
   position: relative;
   height: 100vh;
+  height: 100dvh;
 }
 
 .content-container {
@@ -229,6 +230,7 @@ button:active {
 #login-container {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   font-family: Arial, sans-serif;
 }
 
@@ -238,6 +240,7 @@ button:active {
   background-size: cover;
   background-position: center center;
   height: 100vh;
+  height: 100dvh;
 }
 
 .login-section, .login-section * {
@@ -253,6 +256,7 @@ button:active {
   background-color: #f4f4f4;
   box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
   height: 100vh;
+  height: 100dvh;
   min-width: 300px;
 }
 
@@ -266,7 +270,7 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  margin-top: 2svh;
 }
 
 .login-header span {
@@ -284,8 +288,8 @@ button:active {
   flex-grow: 1;
   width: 100%;
   text-align: center;
-  padding: 10%;
-  animation: fadeIn 0.5s ease-in-out;
+  padding: 0 10%;
+  animation: fadeIn 1s ease-in-out;
 }
 
 .login-footer {
@@ -293,35 +297,48 @@ button:active {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 100px;
-  margin-bottom: 20px;
+  margin-top: 12svh;
+  margin-bottom: 2svh;
 }
 
 #github-button {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 60px;
   width: 100%;
-  padding: 15px;
   border: none;
-  border-radius: 30px;
+  border-radius: 60px;
   background-color: #222;
   color: #fff;
   cursor: pointer;
-  margin-top: 50px;
+  margin-top: 6svh;
+}
+
+.or {
+  width: 100%;
+  margin: 3svh;
+  text-align: center;
+  font-size: 16px;
+  color: #aaa;
+  background: linear-gradient(to right, transparent, #aaa) left,
+              linear-gradient(to left, transparent, #aaa) right;
+  background-size: 43% 1px;
+  background-repeat: no-repeat;
 }
 
 #create-github-button {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 60px;
   width: 100%;
-  padding: 13px;
+  border: none;
+  border-radius: 60px;
   border: 2px solid #999;
-  border-radius: 30px;
-  /* background-color: #fff; */
   color: #222;
-  margin-top: 10px;
   cursor: pointer;
 }
 
@@ -335,17 +352,6 @@ button:active {
 
 #github-button:active, #create-github-button:active {
   transform: scale(0.98);
-}
-
-.or {
-  text-align: center;
-  font-size: 16px;
-  background: linear-gradient(to right, transparent, #aaa) left,
-              linear-gradient(to left, transparent, #aaa) right;
-  background-size: 43% 1px;
-  background-repeat: no-repeat;
-  width: 100%;
-  color: #aaa;
 }
 
 /* Home page */
@@ -424,7 +430,8 @@ button:active {
 
 #container-react-flow {
   width: '100vw';
-  height: '100vh';
+  height: 100vh;
+  height: '100dvh';
 }
 
 .float-toolbar {
