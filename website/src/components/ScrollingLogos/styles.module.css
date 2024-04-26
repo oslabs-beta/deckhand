@@ -17,6 +17,12 @@
     animation: scrollLogo 30s linear infinite;
 }
 
+@media (prefers-reduced-motion) {
+  .scrollingWrapper {
+    animation: none;
+  }
+}
+
 .logo {
     flex: 0 0 auto; /* Do not grow, do not shrink, and basis auto */
     margin: 20px;

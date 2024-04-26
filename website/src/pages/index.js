@@ -7,7 +7,7 @@ import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import Yaml from "@site/src/components/Yaml";
 import ScrollingLogos from "@site/src/components/ScrollingLogos";
 import preview from "@site/static/img/preview2.png";
-import { motion } from "framer-motion";
+import { motion, MotionConfig } from "framer-motion";
 import { useState, useEffect } from 'react';
 
 import Heading from "@theme/Heading";
@@ -153,19 +153,21 @@ function Waves() {
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <Layout
-      // title={`${siteConfig.title}`}
-      description="Deckhand is a drag and drop Kubernetes tool for deploying production-grade software with no code. Scale any application to millions of users in minutes."
-    >
-      <div className={styles.header}>
-        <HomepageHeader />
-        <Waves />
-      </div>
-      <main>
-        <HomepageFeatures />
-        <Yaml />
-        <ScrollingLogos />
-      </main>
-    </Layout>
+    <MotionConfig reducedMotion='user'>
+      <Layout
+        // title={`${siteConfig.title}`}
+        description="Deckhand is a drag and drop Kubernetes tool for deploying production-grade software with no code. Scale any application to millions of users in minutes."
+      >
+        <div className={styles.header}>
+          <HomepageHeader />
+          <Waves />
+        </div>
+        <main>
+          <HomepageFeatures />
+          <Yaml />
+          <ScrollingLogos />
+        </main>
+      </Layout>
+    </MotionConfig>
   );
 }

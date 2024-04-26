@@ -135,6 +135,12 @@
   }
 }
 
+@media (prefers-reduced-motion) {
+  .parallax > use {
+    animation: none;
+  }
+}
+
 /* Fade-in animation */
 
 @keyframes fadeIn {
