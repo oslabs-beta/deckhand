@@ -236,31 +236,92 @@ button:active {
   flex: 2;
   background-image: url('./assets/loginbackground.jpg');
   background-size: cover;
-  height: 100%;
+  background-position: center center;
+  height: 100vh;
+}
+
+.login-section, .login-section * {
+  box-sizing: border-box;
 }
 
 .login-section {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   background-color: #f4f4f4;
   box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  min-width: 300px;
 }
 
-.login-section .button-container {
-  width: 80%;
-  max-width: 300px;
+@media (max-width: 768px) {
+  .image-section {
+    display: none;
+  }
+}
+
+.login-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-header span {
+  margin-left: 15px;
+  cursor: default;
+  font: bold 30px 'Lato', sans-serif;
+  color: #333;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
   text-align: center;
+  padding: 10%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.login-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+  margin-bottom: 20px;
 }
 
 #github-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   padding: 15px;
   border: none;
-  border-radius: 5px;
-  background-color: #333;
-  color: white;
+  border-radius: 30px;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 50px;
+}
+
+#create-github-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 13px;
+  border: 2px solid #999;
+  border-radius: 30px;
+  /* background-color: #fff; */
+  color: #222;
+  margin-top: 10px;
   cursor: pointer;
 }
 
@@ -268,8 +329,23 @@ button:active {
   background-color: #555;
 }
 
-#github-button:active {
+#create-github-button:hover {
+  background-color: #ddd;
+}
+
+#github-button:active, #create-github-button:active {
   transform: scale(0.98);
+}
+
+.or {
+  text-align: center;
+  font-size: 16px;
+  background: linear-gradient(to right, transparent, #aaa) left,
+              linear-gradient(to left, transparent, #aaa) right;
+  background-size: 43% 1px;
+  background-repeat: no-repeat;
+  width: 100%;
+  color: #aaa;
 }
 
 /* Home page */
@@ -663,4 +739,15 @@ button:active {
   font-size: 16px;
   background-color: var(--component-background);
   color: var(--primary);
+}
+
+/* Animations */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
