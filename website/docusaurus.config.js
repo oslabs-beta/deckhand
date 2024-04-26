@@ -129,6 +129,10 @@ const config = {
             title: 'Product',
             items: [
               {
+                label: 'Log In',
+                href: 'https://app.deckhand.dev',
+              },
+              {
                 label: 'Documentation',
                 to: '/docs/intro',
               },
@@ -142,8 +146,12 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Contribute',
+                label: 'Contributing',
                 to: '/contributing',
+              },
+              {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/deckhand-open-source',
               },
             ],
           },
@@ -158,14 +166,32 @@ const config = {
                 label: 'Blog',
                 to: '/blog',
               },
+            ],
+          },
+          {
+            title: 'Legal',
+            items: [
               {
-                label: 'LinkedIn',
-                href: 'https://www.linkedin.com/company/deckhand-open-source',
+                label: 'Privacy',
+                to: '/privacy',
+              },
+              {
+                label: 'Terms',
+                to: '/terms',
+              },
+              {
+                label: 'License',
+                to: '/license',
               },
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Deckhand | MIT License`,
+        logo: {
+          alt: 'Deckhand Logo',
+          src: 'img/logo-gray.svg',
+          height: 80,
+        },
+        copyright: `Copyright © ${new Date().getFullYear()} Deckhand. All rights reserved.`,
       },
       prism: {
         theme: prismThemes.github,
