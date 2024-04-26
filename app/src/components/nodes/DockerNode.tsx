@@ -8,7 +8,7 @@ import {
   updateEdge,
 } from "../../deckhandSlice";
 import Icon from "@mdi/react";
-import { mdiDotsVertical, mdiDocker } from "@mdi/js";
+import { mdiDotsVertical, mdiDocker, mdiOpenInNew } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import createYaml from "../../yaml";
 
@@ -283,7 +283,7 @@ export default function ({ id, data, isConnectable }: any) {
                     )
                   }
                 >
-                  Show Documentation
+                  Documentation <Icon path={mdiOpenInNew} size={0.5} />
                 </DropdownMenu.Item>
               ) : data.imageName.split("/").length > 1 ? (
                 <DropdownMenu.Item
