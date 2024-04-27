@@ -13,7 +13,7 @@
 
 .imageContainer img {
   max-width: 100%;
-  border: 1rem solid var(--secondary-btn-bg);
+  /* border: 1rem solid var(--secondary-btn-bg); */
   border-radius: 3rem;
   margin: 1rem;
   height: auto;

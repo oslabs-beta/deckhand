@@ -57,7 +57,7 @@ export default function Yaml() {
           transition={isMobile ? { duration: 0.25 } : { duration: 0.5 }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <img src="/img/preview-yaml.png" alt="YAML Code" />
+          <img src="/img/yaml.png" alt="YAML Code" />
         </motion.div>
         <motion.div
           className={styles.textContainer}
@@ -68,7 +68,7 @@ export default function Yaml() {
           viewport={{ once: true, amount: 0.5 }}
         >
           <h1>Industry Best Practices</h1>
-          <p>Never manually configure a YAML file again. Behind the scenes, Deckhand abstracts away the complexity of scaling microservices to millions of users, so you can focus on the important part <span>&#8212;</span> creating your app.</p>
+          <p>Never manually configure a YAML file again. Behind the scenes, Deckhand abstracts away the complexity of scaling and load balancing microservices for millions of users, so you can focus on what you do best <span>&#8212;</span> creating your app.</p>
           <h4>🔒 AES 256-bit encrypted</h4>
         </motion.div>
       </div>
