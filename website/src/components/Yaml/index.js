@@ -1,6 +1,5 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 import { motion } from 'framer-motion';
-import clsx from 'clsx';
 import styles from './styles.module.css';
 import { useState, useEffect } from 'react';
 
@@ -51,7 +50,7 @@ export default function Yaml() {
     <div className="container">
       <div className={styles.yamlContainer}>
         <motion.div
-          className={clsx(styles.imageContainer)}
+          className={styles.imageContainer}
           initial="hidden"
           whileInView="visible"
           variants={isMobile ? variantsScaleIn : variantsLeft}
@@ -61,7 +60,7 @@ export default function Yaml() {
           <img src="/img/preview-yaml.png" alt="YAML Code" />
         </motion.div>
         <motion.div
-          className={clsx(styles.textContainer)}
+          className={styles.textContainer}
           initial="hidden"
           whileInView="visible"
           variants={isMobile ? variantsBottom : variantsRight}

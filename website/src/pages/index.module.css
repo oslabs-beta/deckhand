@@ -5,14 +5,40 @@
 
 @import url("https://fonts.googleapis.com/css?family=Lato:300:400");
 
-.header {
-  position: relative;
+.headerAndWaves {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
   text-align: center;
+  height: calc(100svh - var(--ifm-navbar-height));
   background: var(--main-gradient);
   color: white;
 }
 
-.logoSVG {
+.header {
+  flex: 1;
+  display: flex;
+  margin: 20px auto;
+}
+
+.leftHeader {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 440px;
+}
+
+.fullLogo {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+.logoIcon {
   width: 60px;
   height: 60px;
   fill: white;
@@ -21,87 +47,75 @@
 .logoText {
   font-family: "Lato", sans-serif;
   font-weight: 300;
-  letter-spacing: 2px;
   font-size: 48px;
-  margin-bottom: 5px;
-  margin-left: 10px;
-}
-
-.innerHeader {
-  height: 75vh;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.flex {
-  /*Flexbox for containers*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.logoAndTagline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  margin-bottom: 6px;
 }
 
 .tagline {
-  color: white;
   font-family: "Lato", sans-serif;
-  font-size: 18px;
+  font-size: 1.5rem;
 }
 
-.preview {
-  max-width: 600px;
-  height: auto;
+.rightHeader {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 50px 50px 20px;
 }
 
-.preview img {
-  margin-left: 100px;
+.rightHeader img {
   border: 10px solid var(--secondary-btn-bg);
   border-radius: 20px;
-  max-width: 100%;
+  max-height: 600px;
   height: auto;
 }
 
 .waves {
-  position: relative;
+  height: 15svh;
   width: 100%;
-  height: 15vh;
   margin-bottom: -8px; /*Fix for safari gap*/
-  min-height: 100px;
-  max-height: 150px;
 }
 
 @media (max-width: 768px) {
-  .innerHeader {
+  .header {
     flex-direction: column;
   }
 
-  .logoSVG {
-    width: 40px; /* Smaller logo for mobile */
-    height: 40px;
+  .leftHeader {
+    justify-content: end;
+    min-width: 360px;
+    margin-bottom: 15px;
+  }
+
+  .logoIcon{
+    width: 50px; /* Smaller logo for mobile */
+    height: 50px;
   }
 
   .logoText {
-    font-size: 30px; /* Smaller text for mobile */
+    font-size: 35px; /* Smaller text for mobile */
   }
 
-  .preview img {
-    margin: 20px;
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .rightHeader {
+    justify-content: start;
+    padding: 0;
+    margin-top: 15px;
+  }
+
+  .rightHeader img {
     border: 5px solid var(--secondary-btn-bg); /* Smaller border on mobile */
-    width: 80%; /* Shrink on mobile */
+    height: 80%;
+    max-height: 250px;
   }
 
   .waves {
-    height: 5vh;
-    margin-bottom: -8px; /*Fix for safari gap*/
-    min-height: 50px;
-    max-height: 100px;
+    height: 7.5svh;
   }
 }
 
@@ -126,6 +140,7 @@
   animation-delay: -5s;
   animation-duration: 20s;
 }
+
 @keyframes move-forever {
   0% {
     transform: translate3d(-90px, 0, 0);
@@ -139,53 +154,4 @@
   .parallax > use {
     animation: none;
   }
-}
-
-/* Fade-in animation */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.fadeIn {
-  animation: fadeIn 2s ease-in-out;
-}
-
-/* Fade-in from left animation */
-
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.fadeInLeft {
-  animation: fadeInLeft 1s ease forwards;
-}
-
-/* Fade-in from right animation */
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.fadeInRight {
-  animation: fadeInRight 1s ease forwards;
 }

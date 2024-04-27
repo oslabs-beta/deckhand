@@ -1,5 +1,4 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
-import clsx from "clsx";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -9,13 +8,9 @@ import ScrollingLogos from "@site/src/components/ScrollingLogos";
 import preview from "@site/static/img/preview2.png";
 import { motion, MotionConfig } from "framer-motion";
 import { useState, useEffect } from 'react';
-
-import Heading from "@theme/Heading";
 import styles from "./index.module.css";
 
 function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-
   const [isMobile, setIsMobile] = useState(() => {
     if (ExecutionEnvironment.canUseDOM) {
       return window.innerWidth <= 768;
@@ -38,18 +33,17 @@ function HomepageHeader() {
   }, []);
 
   return (
-    <div className="container">
-      <div className={`${styles.innerHeader} ${styles.flex}`}>
+    <div className={styles.headerAndWaves}>
+      <div className={styles.header}>
         <motion.div
-          className={styles.logoAndTagline}
+          className={styles.leftHeader}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 4, delay: 0.25 }}
         >
-          <div className={styles.flex}>
+          <div className={styles.fullLogo}>
             <motion.div
               animate={{
-                scale: [1, 1.2, 1.2, 1],
                 rotate: [0, 15, -15, 0],
               }}
               transition={{
@@ -57,10 +51,10 @@ function HomepageHeader() {
                 ease: "easeInOut",
                 times: [0, .3, .6, 1],
                 repeat: Infinity,
-                repeatDelay: 1
+                repeatDelay: 2
               }}>
               <svg
-                className={styles.logoSVG}
+                className={styles.logoIcon}
                 x="0px"
                 y="0px"
                 viewBox="0 0 500 500"
@@ -76,20 +70,23 @@ function HomepageHeader() {
             <div className={styles.logoText}>Deckhand</div>
           </div>
           <div className={styles.tagline}>
-            <p>No-code, drag and drop Kubernetes.<br /><i>Scale any app to <b>millions of users</b>.</i></p>
+            <p>No-code, drag and drop Kubernetes.<br />Quickly scale any app to <b>millions of users</b>.</p>
           </div>
-          <br />
           <motion.div
             initial={isMobile ? { y: -5 } : { y: 10 }}
             animate={{ y: 0 }}
             transition={{ duration: 1 }}
+            style={{
+              display: 'flex',
+              gap: 10,
+            }}
           >
             <Link
               className="button button--primary button--lg"
               to="http://app.deckhand.dev"
               style={{
                 border: 0,
-                marginRight: 5,
+                borderRadius: 30,
                 backgroundColor: "var(--main-btn-bg)",
                 color: "var(--main-btn-text)",
               }}
@@ -101,7 +98,7 @@ function HomepageHeader() {
               to="/docs/intro"
               style={{
                 border: 0,
-                marginLeft: 5,
+                borderRadius: 30,
                 backgroundColor: "var(--secondary-btn-bg)",
                 color: "var(--secondary-btn-text)",
               }}
@@ -111,7 +108,7 @@ function HomepageHeader() {
           </motion.div>
         </motion.div>
         <motion.div
-          className={styles.preview}
+          className={styles.rightHeader}
           initial={isMobile ? { opacity: 0, y: 10 } : { opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 1, delay: 0.25 }}
@@ -119,34 +116,28 @@ function HomepageHeader() {
           <img src={preview} alt="Deckhand canvas preview" />
         </motion.div>
       </div>
-    </div>
-  );
-}
-
-function Waves() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <div>
-      <svg
-        className={styles.waves}
-        viewBox="0 24 150 28"
-        preserveAspectRatio="none"
-        shapeRendering="auto"
-      >
-        <defs>
-          <path
-            id="gentle-wave"
-            d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-          />
-        </defs>
-        <g className={styles.parallax}>
-          <use xlinkHref="#gentle-wave" x="48" y="0" fill="var(--wave1)" />
-          <use xlinkHref="#gentle-wave" x="48" y="3" fill="var(--wave2)" />
-          <use xlinkHref="#gentle-wave" x="48" y="5" fill="var(--wave3)" />
-          <use xlinkHref="#gentle-wave" x="48" y="7" fill="var(--wave4)" />
-        </g>
-      </svg>
-    </div>
+      <div>
+        <svg
+          className={styles.waves}
+          viewBox="0 24 150 28"
+          preserveAspectRatio="none"
+          shapeRendering="auto"
+        >
+          <defs>
+            <path
+              id="gentle-wave"
+              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+            />
+          </defs>
+          <g className={styles.parallax}>
+            <use xlinkHref="#gentle-wave" x="48" y="0" fill="var(--wave1)" />
+            <use xlinkHref="#gentle-wave" x="48" y="3" fill="var(--wave2)" />
+            <use xlinkHref="#gentle-wave" x="48" y="5" fill="var(--wave3)" />
+            <use xlinkHref="#gentle-wave" x="48" y="7" fill="var(--wave4)" />
+          </g>
+        </svg>
+      </div>
+    </div >
   );
 }
 
@@ -158,11 +149,8 @@ export default function Home() {
         // title={`${siteConfig.title}`}
         description="Deckhand is a drag and drop Kubernetes tool for deploying production-grade software with no code. Scale any application to millions of users in minutes."
       >
-        <div className={styles.header}>
-          <HomepageHeader />
-          <Waves />
-        </div>
         <main>
+          <HomepageHeader />
           <HomepageFeatures />
           <Yaml />
           <ScrollingLogos />
