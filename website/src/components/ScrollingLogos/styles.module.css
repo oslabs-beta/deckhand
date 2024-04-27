@@ -40,14 +40,14 @@
 .logo > svg {
     width: 100px;
     max-height: 100px;
-    filter: grayscale(100%) opacity(0.5);
+    /* filter: grayscale(100%) opacity(0.5); */
     transition: filter 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
-[data-theme="dark"] .logo > svg {
+/* [data-theme="dark"] .logo > svg { */
     /* Additionally invert in dark mode */
-    filter: grayscale(100%) invert(100%) opacity(0.5);
-}
+    /* filter: grayscale(100%) invert(100%) opacity(0.5); */
+/* } */
 
 .logo > svg:hover {
     filter: grayscale(0%) opacity(1);
