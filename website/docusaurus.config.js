@@ -43,15 +43,15 @@ const config = {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/oslabs-beta/deckhand/website',
+          // editUrl:
+          //   'https://github.com/oslabs-beta/deckhand/website',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/oslabs-beta/deckhand/website',
+          // editUrl:
+          //   'https://github.com/oslabs-beta/deckhand/website',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -94,13 +94,13 @@ const config = {
               },
               {
                 type: 'doc',
-                label: 'Integrations',
-                docId: '/category/integrations',
+                label: 'Elements',
+                docId: '/category/elements',
               },
               {
                 type: 'doc',
-                label: 'Elements',
-                docId: '/category/elements',
+                label: 'Integrations',
+                docId: '/category/integrations',
               },
               {
                 type: 'doc',
