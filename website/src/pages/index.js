@@ -4,6 +4,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import Yaml from "@site/src/components/Yaml";
+import Features from "@site/src/components/Features";
 import ScrollingLogos from "@site/src/components/ScrollingLogos";
 import preview from "@site/static/img/preview2.png";
 import { motion, MotionConfig } from "framer-motion";
@@ -91,7 +92,7 @@ function HomepageHeader() {
                 color: "var(--main-btn-text)",
               }}
             >
-              Get Started ➤
+              Launch ➤
             </Link>
             <Link
               className="button button--secondary button--lg"
@@ -154,6 +155,7 @@ export default function Home() {
           <HomepageFeatures />
           <Yaml />
           <ScrollingLogos />
+          <Features />
         </main>
       </Layout>
     </MotionConfig>
