@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLayout } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import {
   mdiDotsHexagon,

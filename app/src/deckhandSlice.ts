@@ -170,11 +170,6 @@ export const deckhandSlice = createSlice({
       // payload: projectId
       state.projectId = action.payload;
     },
-    toggleLayout: (state: any, action: PayloadAction<any>) => {
-      state.layout === 'cards'
-        ? (state.layout = 'canvas')
-        : (state.layout = 'cards');
-    },
     showModal: (state: any, action: PayloadAction<any>) => {
       // payload: {name, ...}
       state.modal = action.payload;
@@ -262,7 +257,6 @@ export const {
   setUser,
   setState,
   setProjectId,
-  toggleLayout,
   showModal,
 
   addProject,
