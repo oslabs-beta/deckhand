@@ -45,6 +45,7 @@ export default function FloatNav() {
       {isEditing ? (
         <input
           autoFocus
+          title="title-input"
           className="title-input"
           type="text"
           value={title}
