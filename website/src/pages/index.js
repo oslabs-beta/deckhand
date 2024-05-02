@@ -92,7 +92,7 @@ function HomepageHeader() {
                 color: "var(--main-btn-text)",
               }}
             >
-              Launch ➤
+              Get Started ➤
             </Link>
             <Link
               className="button button--secondary button--lg"
@@ -110,7 +110,7 @@ function HomepageHeader() {
         </motion.div>
         <motion.div
           className={styles.rightHeader}
-          initial={isMobile ? { opacity: 0, y: 10 } : { opacity: 0, x: 10 }}
+          initial={isMobile ? { opacity: 0, y: -10 } : { opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 1, delay: 0.25 }}
         >

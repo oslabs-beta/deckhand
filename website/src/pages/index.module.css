@@ -80,13 +80,13 @@
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   .leftHeader {
-    justify-content: end;
+    justify-content: start;
     min-width: 360px;
-    margin-bottom: 15px;
+    margin-top: 15px;
   }
 
   .logoIcon{
@@ -103,9 +103,9 @@
   }
 
   .rightHeader {
-    justify-content: start;
+    justify-content: end;
     padding: 0;
-    margin-top: 15px;
+    margin-bottom: 15px;
   }
 
   .rightHeader img {

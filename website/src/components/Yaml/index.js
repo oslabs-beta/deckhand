@@ -24,6 +24,10 @@ export default function Yaml() {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 }
   };
+  const variantFadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
 
   const [isMobile, setIsMobile] = useState(() => {
     if (ExecutionEnvironment.canUseDOM) {
@@ -46,6 +50,23 @@ export default function Yaml() {
     }
   }, []);
 
+  const listVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1  // Delay between each child's animation
+      }
+    },
+  };
+
+  const items = [
+    "🔒 AES 256-bit encryption",
+    "🕸 Multi-cluster configurations",
+    "🌐 Deploy VPCs in N. America, Europe, Asia Pac., S. America",
+  ];
+
   return (
     <div className="container">
       <div className={styles.yamlContainer}>
@@ -67,9 +88,24 @@ export default function Yaml() {
           transition={isMobile ? { duration: 0.25 } : { duration: 0.5 }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <h1>Industry Best Practices</h1>
+          <h1 style={{ marginBottom: 0 }}>Industry Best Practices</h1>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={variantFadeIn}
+            transition={isMobile ? { delay: 0.5, duration: 1 } : { delay: 0.5, duration: 2 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
+            <h2 style={{ color: '#999' }}>Built by engineers for engineers.</h2>
+          </motion.div>
           <p>Never manually configure a YAML file again. Behind the scenes, Deckhand abstracts away the complexity of scaling and load balancing microservices for millions of users, so you can focus on what you do best <span>&#8212;</span> creating your app.</p>
-          <h4>🔒 AES 256-bit encrypted</h4>
+          <motion.ul variants={listVariants}>
+            {items.map((item, index) => (
+              <motion.li key={index} variants={variantsBottom}>
+                {item}
+              </motion.li>
+            ))}
+          </motion.ul>
         </motion.div>
       </div>
     </div>

@@ -57,11 +57,6 @@ export default function Features() {
     },
   };
 
-  const listItemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 }
-  };
-
   const items = [
     "Setting up VPCs, subnets, route tables, security groups, and gateways",
     "Provisioning an EKS cluster and installing all the necessary add-ons",
@@ -99,7 +94,7 @@ export default function Features() {
           <h1>Automated Features</h1>
           <motion.ul variants={listVariants}>
             {items.map((item, index) => (
-              <motion.li key={index} variants={listItemVariants}>
+              <motion.li key={index} variants={variantsBottom}>
                 {item}
               </motion.li>
             ))}
