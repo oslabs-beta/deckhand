@@ -4,9 +4,9 @@ const path = require('path');
 const { exec } = require('child_process');
 const execAsync = util.promisify(exec);
 
-const deploymentController = {};
+const deploymentController: any = {};
 
-deploymentController.addVPC = async (req, res, next) => {
+deploymentController.addVPC = async (req: any, res: any, next: any) => {
   const {
     userId,
     awsAccessKey,
@@ -82,7 +82,7 @@ deploymentController.addVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteVPC = async (req, res, next) => {
+deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
   const { userId, projectId } = req.body;
   const projectPath = path.join(
     'server',
@@ -118,7 +118,7 @@ deploymentController.deleteVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.addCluster = async (req, res, next) => {
+deploymentController.addCluster = async (req: any, res: any, next: any) => {
   const {
     userId,
     awsAccessKey,
@@ -257,7 +257,7 @@ deploymentController.addCluster = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteCluster = async (req, res, next) => {
+deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
   const { userId, projectId, clusterId } = req.body;
   const clusterPath = path.join(
     'server',
@@ -287,7 +287,7 @@ deploymentController.deleteCluster = async (req, res, next) => {
 };
 
 // Dockerize github repo and push to AWS ECR
-deploymentController.buildImage = async (req, res, next) => {
+deploymentController.buildImage = async (req: any, res: any, next: any) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
 
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
@@ -346,7 +346,7 @@ deploymentController.buildImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteImage = async (req, res, next) => {
+deploymentController.deleteImage = async (req: any, res: any, next: any) => {
   const {
     awsAccessKey,
     awsSecretKey,
@@ -388,7 +388,7 @@ deploymentController.deleteImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deployPod = async (req, res, next) => {
+deploymentController.deployPod = async (req: any, res: any, next: any) => {
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
     req.body;
 
@@ -424,7 +424,7 @@ deploymentController.deployPod = async (req, res, next) => {
   }
 };
 
-deploymentController.deletePod = async (req, res, next) => {
+deploymentController.deletePod = async (req: any, res: any, next: any) => {
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
     req.body;
 
@@ -457,7 +457,7 @@ deploymentController.deletePod = async (req, res, next) => {
   }
 };
 
-deploymentController.getURL = async (req, res, next) => {
+deploymentController.getURL = async (req: any, res: any, next: any) => {
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
   try {

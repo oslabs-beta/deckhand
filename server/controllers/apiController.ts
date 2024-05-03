@@ -1,5 +1,5 @@
 const db = require('../database/dbConnect');
-const cryptoUtilsAPI = require('../utils/cryptoUtils');
+const cryptoUtils = require('../utils/cryptoUtils');
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
@@ -26,8 +26,8 @@ apiController.updateDatabase = async (req: any, res: any, next: any) => {
       avatarUrl,
       githubId,
       theme,
-      awsAccessKey ? cryptoUtilsAPI.encrypt(awsAccessKey) : null,
-      awsAccessKey ? cryptoUtilsAPI.encrypt(awsSecretKey) : null,
+      awsAccessKey ? cryptoUtils.encrypt(awsAccessKey) : null,
+      awsAccessKey ? cryptoUtils.encrypt(awsSecretKey) : null,
       JSON.stringify(state),
     ]);
 

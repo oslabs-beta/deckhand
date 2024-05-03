@@ -16,17 +16,17 @@ const GITHUB_CLIENT_SECRET =
 const DOCKER_USERNAME = process.env.DOCKER_USERNAME;
 const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
-const githubController = {};
+const githubController: any = {};
 
 // Redirect to GitHub login
-githubController.login = (req, res) => {
+githubController.login = (req: any, res: any) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`,
   );
 };
 
 // Set github_token and redirect home
-githubController.callback = async (req, res, next) => {
+githubController.callback = async (req: any, res: any, next: any) => {
   const auth_code = req.query.code;
   await fetch(
     'https://github.com/login/oauth/access_token?client_id=' +
@@ -50,7 +50,7 @@ githubController.callback = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-githubController.logout = (req, res, next) => {
+githubController.logout = (req: any, res: any, next: any) => {
   if (req.cookies.github_token) {
     // Set the cookie's value to empty and expiration date to now
     res.cookie('github_token', '', { expires: new Date(0), httpOnly: true });
@@ -58,7 +58,7 @@ githubController.logout = (req, res, next) => {
   next();
 };
 
-githubController.userData = async (req, res, next) => {
+githubController.userData = async (req: any, res: any, next: any) => {
   const token = req.cookies.github_token;
   if (!token || token === 'undefined') {
     return res.status(401).json('Unauthorized');
@@ -84,7 +84,7 @@ githubController.userData = async (req, res, next) => {
     const userData = await userResponse.json();
     const emailsData = await emailsResponse.json();
 
-    const email = emailsData.find(email => email.primary)?.email || userData.email;
+    const email = emailsData.find((email: any) => email.primary)?.email || userData.email;
     const name = userData.name || userData.login || email;
     const avatarUrl = userData.avatar_url;
     const githubId = userData.id;
@@ -136,7 +136,7 @@ githubController.userData = async (req, res, next) => {
 };
 
 // Get user repos
-githubController.userRepos = async (req, res, next) => {
+githubController.userRepos = async (req: any, res: any, next: any) => {
   const token = req.cookies.github_token;
   await fetch('https://api.github.com/user/repos', {
     method: 'GET',
@@ -153,7 +153,7 @@ githubController.userRepos = async (req, res, next) => {
 };
 
 // Get public repos
-githubController.publicRepos = async (req, res, next) => {
+githubController.publicRepos = async (req: any, res: any, next: any) => {
   const token = req.cookies.github_token;
   const { input } = req.body;
   await fetch(
@@ -176,7 +176,7 @@ githubController.publicRepos = async (req, res, next) => {
 };
 
 // Get user branches
-githubController.branches = async (req, res, next) => {
+githubController.branches = async (req: any, res: any, next: any) => {
   const { repo } = req.body;
   const token = req.cookies.github_token;
   await fetch(`https://api.github.com/repos/${repo}/branches`, {
@@ -187,14 +187,14 @@ githubController.branches = async (req, res, next) => {
   })
     .then((res) => res.json())
     .then((data) => {
-      res.locals.data = data.map((el) => el.name);
+      res.locals.data = data.map((el: any) => el.name);
       return next();
     })
     .catch((err) => next(err));
 };
 
 // (not currently used) Dockerize and push repo to Docker Hub
-githubController.build = (req, res, next) => {
+githubController.build = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   if (!repo || !branch) console.log('Missing repo and/or branch');
 
@@ -212,7 +212,7 @@ githubController.build = (req, res, next) => {
 };
 
 // Find all env variables in repo
-githubController.scanRepo = (req, res, next) => {
+githubController.scanRepo = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
 
@@ -235,16 +235,16 @@ githubController.scanRepo = (req, res, next) => {
   const repoPath = path.join(tempsPath, repoName);
 
   // An array to hold the paths of all files nested within the repo
-  const filePaths = [];
+  const filePaths: string[] = [];
 
   // Recursive helper function to get all nested files
-  const getFiles = (dir) => {
+  const getFiles = (dir: string) => {
     const dirContents = fs.readdirSync(dir); // This will return an array with names of all files and directories in the *top* level of the directory
 
     // Ignoring anything within the .git directory, check if each content if a file or directory
     // If it's a file, push its path to filePaths
     // If it's a directory, send it recursively back into this function
-    dirContents.forEach((content) => {
+    dirContents.forEach((content: string) => {
       if (content !== '.git') {
         const contentPath = path.join(dir, content);
         const stats = fs.statSync(contentPath);
@@ -257,7 +257,7 @@ githubController.scanRepo = (req, res, next) => {
   // Execute function on the cloned repo
   getFiles(repoPath);
 
-  const fileContents = [];
+  const fileContents: any = [];
   const envs = new Set();
 
   // Push the text content of each file into the fileContents array
@@ -266,7 +266,7 @@ githubController.scanRepo = (req, res, next) => {
   });
 
   // Using regex, scan the text of each file for environmental variables and push them to envs array.
-  fileContents.forEach((fileString) => {
+  fileContents.forEach((fileString: string) => {
     const regexJs = /process.env.([\w$]+)/g;
     const regexPy = /os.environ.get\(['"](\w+)/g;
     const regexPy2 = /os.getenv\(['"](\w+)/g;
@@ -310,7 +310,7 @@ githubController.scanRepo = (req, res, next) => {
 };
 
 // Finds the exposed port in the GitHub repo
-githubController.findExposedPort = (req, res, next) => {
+githubController.findExposedPort = (req: any, res: any, next: any) => {
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
   const cloneUrl = `https://github.com/${repo}.git`;
@@ -325,14 +325,15 @@ githubController.findExposedPort = (req, res, next) => {
 
     // Scan repo for exposed port
     console.log('Scanning for exposed port');
-    try {
-      const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`);
-      const regex = /expose\s+(\d+)/i;
-      exposedPort = Number(regex.exec(dockerfile)[1]);
-      console.log('Exposed port:', exposedPort);
-    } catch {
-      console.log('Failed to find dockerfile');
-      exposedPort = undefined;
+    const dockerfile = fs.readFileSync(`${repoPath}/dockerfile`, 'utf-8');
+    const regex = /expose\s+(\d+)/i;
+    const match = regex.exec(dockerfile);
+    if (match) {
+        exposedPort = Number(match[1]);
+        console.log('Exposed port:', exposedPort);
+    } else {
+        exposedPort = undefined;
+        console.log('No exposed port found in the Dockerfile.');
     }
 
     // Delete cloned repo
