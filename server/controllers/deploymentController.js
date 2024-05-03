@@ -7,7 +7,6 @@ const execAsync = util.promisify(exec);
 const deploymentController = {};
 
 deploymentController.addVPC = async (req, res, next) => {
-  console.log('\n/api/deployment/addVPC:');
   const {
     userId,
     awsAccessKey,
@@ -74,8 +73,6 @@ deploymentController.addVPC = async (req, res, next) => {
       `cd ${projectPath} && terraform init && terraform apply --auto-approve`
     );
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -86,7 +83,6 @@ deploymentController.addVPC = async (req, res, next) => {
 };
 
 deploymentController.deleteVPC = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteVPC:');
   const { userId, projectId } = req.body;
   const projectPath = path.join(
     'server',
@@ -113,8 +109,6 @@ deploymentController.deleteVPC = async (req, res, next) => {
     console.log('Removing project directory');
     await fs.rm(projectPath, { recursive: true });
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -125,7 +119,6 @@ deploymentController.deleteVPC = async (req, res, next) => {
 };
 
 deploymentController.addCluster = async (req, res, next) => {
-  console.log('\n/api/deployment/addCluster:');
   const {
     userId,
     awsAccessKey,
@@ -255,8 +248,6 @@ deploymentController.addCluster = async (req, res, next) => {
       `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml`
     );
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -267,7 +258,6 @@ deploymentController.addCluster = async (req, res, next) => {
 };
 
 deploymentController.deleteCluster = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteCluster:');
   const { userId, projectId, clusterId } = req.body;
   const clusterPath = path.join(
     'server',
@@ -287,8 +277,6 @@ deploymentController.deleteCluster = async (req, res, next) => {
     console.log('Removing cluster directory');
     await fs.rm(clusterPath, { recursive: true });
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -300,7 +288,6 @@ deploymentController.deleteCluster = async (req, res, next) => {
 
 // Dockerize github repo and push to AWS ECR
 deploymentController.buildImage = async (req, res, next) => {
-  console.log('\n/api/deployment/buildImage:');
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
 
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
@@ -349,8 +336,6 @@ deploymentController.buildImage = async (req, res, next) => {
     await execAsync(`docker tag ${imageName} ${imageUrl}`);
     await execAsync(`docker push ${imageUrl}`);
 
-    // Log success and continue
-    console.log('Done');
     res.locals.data = { awsRepo, imageName: imageUrl, imageTag: 'latest' };
     return next();
   } catch (err) {
@@ -362,7 +347,6 @@ deploymentController.buildImage = async (req, res, next) => {
 };
 
 deploymentController.deleteImage = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteImage:');
   const {
     awsAccessKey,
     awsSecretKey,
@@ -395,8 +379,6 @@ deploymentController.deleteImage = async (req, res, next) => {
       `aws ecr delete-repository --repository-name ${awsRepo} --region ${vpcRegion}`
     );
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -407,7 +389,6 @@ deploymentController.deleteImage = async (req, res, next) => {
 };
 
 deploymentController.deployPod = async (req, res, next) => {
-  console.log('\n/api/deployment/deployPod:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
     req.body;
 
@@ -434,8 +415,6 @@ deploymentController.deployPod = async (req, res, next) => {
     });
     console.log(output);
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -446,7 +425,6 @@ deploymentController.deployPod = async (req, res, next) => {
 };
 
 deploymentController.deletePod = async (req, res, next) => {
-  console.log('\n/api/deployment/deletePod:');
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
     req.body;
 
@@ -470,8 +448,6 @@ deploymentController.deletePod = async (req, res, next) => {
     // Delete deployment
     await execAsync(`kubectl delete 'deployment' ${podName}`);
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -482,7 +458,6 @@ deploymentController.deletePod = async (req, res, next) => {
 };
 
 deploymentController.getURL = async (req, res, next) => {
-  console.log('\n/api/deployment/getURL:');
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
   try {
@@ -515,9 +490,6 @@ deploymentController.getURL = async (req, res, next) => {
       if (url) {
         console.log('URL:', url);
         res.locals.data = { url };
-
-        // Log success and continue
-        console.log('Done');
         return next();
       } else {
         if (attempts++ < 100) setTimeout(checkURL, 1000);

@@ -18,14 +18,14 @@ const DOCKER_PASSWORD = process.env.DOCKER_PASSWORD;
 
 const githubController = {};
 
-// redirect to github login
+// Redirect to GitHub login
 githubController.login = (req, res) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user%20repo%20repo_deployment%20user:email`,
   );
 };
 
-// set github_token and redirect home
+// Set github_token and redirect home
 githubController.callback = async (req, res, next) => {
   const auth_code = req.query.code;
   await fetch(
@@ -59,92 +59,83 @@ githubController.logout = (req, res, next) => {
 };
 
 githubController.userData = async (req, res, next) => {
-  if (req.cookies.github_token) {
-    const token = req.cookies.github_token;
+  const token = req.cookies.github_token;
+  if (!token || token === 'undefined') {
+    return res.status(401).json('Unauthorized');
+  }
 
-    // Fetch user data and emails from GitHub
-    const userDataFetch = fetch('https://api.github.com/user', {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const userEmailFetch = fetch('https://api.github.com/user/emails', {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const options = {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+  };
 
-    Promise.all([userDataFetch, userEmailFetch])
-      .then(async (responses) => {
-        if (!responses[0].ok || !responses[1].ok) {
-          throw new Error('Network response was not ok');
-        }
-        const githubData = await responses[0].json();
-        const githubEmails = await responses[1].json();
+  try {
+    // Fetch associated data from GitHub
+    console.log('Fetching data associated with token');
+    const [userResponse, emailsResponse] = await Promise.all([
+      fetch('https://api.github.com/user', options),
+      fetch('https://api.github.com/user/emails', options)
+    ]);
 
-        // Map data from Github
-        const email =
-          githubEmails.find((email) => email.primary)?.email ||
-          githubData.email;
-        const name = githubData.name || githubData.login || email;
-        const avatarUrl = githubData.avatar_url;
-        const githubId = githubData.id;
+    if (!userResponse.ok || !emailsResponse.ok) {
+      throw new Error('Failed to fetch data from GitHub');
+    }
 
-        // Check if the user exists in the database
-        const userCheckQuery = 'SELECT * FROM users WHERE email = $1';
-        const userExistsResult = await db.query(userCheckQuery, [email]);
+    const userData = await userResponse.json();
+    const emailsData = await emailsResponse.json();
 
-        if (userExistsResult.rows.length === 0) {
-          // If user does not exist, insert them into the database
-          const createUserQuery = `
-            INSERT INTO users (name, email, avatarurl, githubid)
-            VALUES ($1, $2, $3, $4)
-            RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
-          `;
-          const newUserResult = await db.query(createUserQuery, [
-            name,
-            email,
-            avatarUrl,
-            githubId,
-          ]);
+    const email = emailsData.find(email => email.primary)?.email || userData.email;
+    const name = userData.name || userData.login || email;
+    const avatarUrl = userData.avatar_url;
+    const githubId = userData.id;
 
-          const newUser = newUserResult.rows[0];
+    // Fetch user data from database
+    console.log('Fetching user data')
+    const userCheckQuery = 'SELECT * FROM users WHERE email = $1';
+    const userExistsResult = await db.query(userCheckQuery, [email]);
 
-          res.locals.data = {
-            id: newUser._id,
-            name: newUser.name,
-            email: newUser.email,
-            avatarUrl: newUser.avatarurl,
-            githubId: newUser.githubid,
-            theme: newUser.theme,
-            awsAccessKey: newUser.awsaccesskey,
-            awsSecretKey: newUser.awssecretkey,
-            state: newUser.state,
-          };
-        } else {
-          // User exists, return the database values
-          const user = userExistsResult.rows[0];
+    let user;
+    // If user does not exist, create it
+    if (userExistsResult.rows.length === 0) {
+      // Create new user
+      console.log('Creating new user');
+      const createUserQuery = `
+          INSERT INTO users (name, email, avatarurl, githubid)
+          VALUES ($1, $2, $3, $4)
+          RETURNING _id, name, email, avatarurl, githubid, theme, awsaccesskey, awssecretkey, state
+        `;
+      const newUserResult = await db.query(createUserQuery, [
+        name,
+        email,
+        avatarUrl,
+        githubId,
+      ]);
+      user = newUserResult.rows[0];
+    } else {
+      user = userExistsResult.rows[0];
+    }
 
-          res.locals.data = {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            avatarUrl: user.avatarurl,
-            githubId: user.githubid,
-            theme: user.theme,
-            awsAccessKey: cryptoUtils.decrypt(user.awsaccesskey),
-            awsSecretKey: cryptoUtils.decrypt(user.awssecretkey),
-            state: user.state && JSON.parse(user.state), // Parse JSONB state if it exists
-          };
-        }
+    // Map data from the database
+    res.locals.data = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarurl,
+      githubId: user.githubid,
+      theme: user.theme,
+      awsAccessKey: user.awsaccesskey ? cryptoUtils.decrypt(user.awsaccesskey) : null,
+      awsSecretKey: user.awssecretkey ? cryptoUtils.decrypt(user.awssecretkey) : null,
+      state: user.state ? JSON.parse(user.state) : null,
+    };
 
-        return next();
-      })
-      .catch((error) => next(error));
-  } else {
-    res.status(401).json('Unauthorized');
+    next();
+  } catch (error) {
+    console.error('Error processing request:', error);
+    next(error);
   }
 };
 
-// get user repos
+// Get user repos
 githubController.userRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
   await fetch('https://api.github.com/user/repos', {
@@ -161,7 +152,7 @@ githubController.userRepos = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-// get public repos
+// Get public repos
 githubController.publicRepos = async (req, res, next) => {
   const token = req.cookies.github_token;
   const { input } = req.body;
@@ -184,7 +175,7 @@ githubController.publicRepos = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-// get user branches
+// Get user branches
 githubController.branches = async (req, res, next) => {
   const { repo } = req.body;
   const token = req.cookies.github_token;
@@ -202,7 +193,7 @@ githubController.branches = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-// (not currently used) dockerize and push repo to Docker Hub
+// (not currently used) Dockerize and push repo to Docker Hub
 githubController.build = (req, res, next) => {
   const { repo, branch } = req.body;
   if (!repo || !branch) console.log('Missing repo and/or branch');
@@ -320,7 +311,6 @@ githubController.scanRepo = (req, res, next) => {
 
 // Finds the exposed port in the GitHub repo
 githubController.findExposedPort = (req, res, next) => {
-  console.log('\n/api/github/findExposedPort:');
   const { repo, branch } = req.body;
   const repoName = repo.split('/')[1];
   const cloneUrl = `https://github.com/${repo}.git`;
@@ -348,8 +338,6 @@ githubController.findExposedPort = (req, res, next) => {
     // Delete cloned repo
     execSync(`cd ${tempPath} && rm -r ${repoName}`);
 
-    // Log success and continue
-    console.log('Done');
     res.locals.data = { exposedPort };
     return next();
   } catch (err) {
