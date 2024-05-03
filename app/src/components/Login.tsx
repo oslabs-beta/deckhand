@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { } from "../deckhandSlice";
+import { useNavigate } from "react-router-dom";
+import { setUser, setState, setAuthStatus } from "../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiGithub } from "@mdi/js";
 const logo = require("../assets/logo.svg");
@@ -8,6 +9,7 @@ const logo = require("../assets/logo.svg");
 export default function Login() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
     <div id="login-container">
@@ -42,7 +44,7 @@ export default function Login() {
         </div>
         <div className="login-footer">
           <span>Copyright © 2024 Deckhand</span>
-          <span><a href="https://deckhand.dev/privacy">Privacy Policy</a> | <a href="https://deckhand.dev/terms">Terms of Service</a></span>
+          <span><a href="https://deckhand.dev/privacy" target="_blank" rel="noopener">Privacy Policy</a> | <a href="https://deckhand.dev/terms" target="_blank" rel="noopener">Terms of Service</a></span>
         </div>
       </div>
     </div>

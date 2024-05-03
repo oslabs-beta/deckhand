@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   showModal,
+  setProjectId,
   addNode,
   deleteNode,
   updateNode,
@@ -48,14 +50,23 @@ const nodeTypes = {
   volume: VolumeNode,
 };
 
-export default function Canvas() {
+export default function Project() {
   const state = useSelector((state: any) => state.deckhand);
+  const { projectId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+
+  // Redirect home if user directly navigates to /project/:projectId
+  useEffect(() => {
+    if (state.projectId !== projectId) {
+      navigate('/');
+    }
+  }, [])
 
   useEffect(() => {
     const projectNodes = state.nodes.filter(
@@ -117,6 +128,11 @@ export default function Canvas() {
   const onNodeDragStop = (event: any, node: any) => {
     dispatch(updateNode({ id: node.id, position: node.position }));
   };
+
+  if (state.projectId !== projectId) {
+    // Required to fail gracefully if user directly navigates to /project/:projectId
+    return <div></div>
+  }
 
   return (
     <div className="container">

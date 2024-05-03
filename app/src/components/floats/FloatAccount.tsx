@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setState, showModal, setProjectId } from "../../deckhandSlice";
+import { useNavigate } from 'react-router-dom';
+import { setUser, setState, showModal, setProjectId, setAuthStatus } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiChevronDown, mdiOpenInNew } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -8,6 +9,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 export default function FloatAccount() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     updateDatabase();
@@ -23,13 +25,11 @@ export default function FloatAccount() {
       theme: state.user.theme,
       awsAccessKey: state.user.awsAccessKey,
       awsSecretKey: state.user.awsSecretKey,
-      state: JSON.stringify(
-        JSON.stringify({
-          projects: state.projects,
-          nodes: state.nodes,
-          edges: state.edges,
-        })
-      ),
+      state: {
+        projects: state.projects,
+        nodes: state.nodes,
+        edges: state.edges,
+      },
     };
     fetch("/api/updateDatabase", {
       method: "POST",
@@ -56,9 +56,9 @@ export default function FloatAccount() {
         >
           <DropdownMenu.Item
             className="dropdown-item"
-        onClick={() => dispatch(setProjectId(null))}
+            onClick={() => navigate('/')}
           >
-            All Projects
+            Home
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item"
@@ -121,7 +121,7 @@ export default function FloatAccount() {
             className="dropdown-item"
             onClick={async () => {
               await fetch("/api/github/logout");
-              location.reload();
+              dispatch(setAuthStatus(false));
             }}
           >
             Log Out

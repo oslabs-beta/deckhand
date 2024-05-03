@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import {
   setProjectId,
   addProject,
@@ -16,6 +17,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 export default function Home() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function generateUniqueProjectId() {
     let uniqueId: any;
@@ -29,6 +31,7 @@ export default function Home() {
     const projectId = generateUniqueProjectId();
     dispatch(addProject(projectId));
     dispatch(setProjectId(projectId));
+    navigate(`/project/${projectId}`)
   };
 
   const timeAgo = (date: any) => {
@@ -54,7 +57,10 @@ export default function Home() {
       <div
         key={project.projectId}
         className="card"
-        onClick={() => dispatch(setProjectId(project.projectId))}
+        onClick={() => {
+          dispatch(setProjectId(project.projectId))
+          navigate(`/project/${project.projectId}`)
+        }}
       >
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>

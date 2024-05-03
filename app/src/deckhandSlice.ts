@@ -3,6 +3,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
+    authStatus: null,
+    projectId: null as any, // selected project id
+    modal: {} as any, // {name, ...}
+
     user: {} as any,
     // user: {
     //   id: 1,
@@ -14,9 +18,6 @@ export const deckhandSlice = createSlice({
     //   awsAccessKey: null,
     //   awsSecretKey: null,
     // },
-
-    projectId: null as any, // selected project id
-    modal: {} as any, // {name, ...}
 
     projects: [
       // {
@@ -158,13 +159,9 @@ export const deckhandSlice = createSlice({
     ] as any,
   },
   reducers: {
-    setUser: (state: any, action: PayloadAction<any>) => {
-      // payload: user (merge props)
-      Object.assign(state.user, action.payload);
-    },
-    setState: (state: any, action: PayloadAction<any>) => {
-      // payload: {projects, nodes, edges}
-      Object.assign(state, action.payload);
+    setAuthStatus: (state: any, action: PayloadAction<any>) => {
+      // payload: authStatus: boolean
+      state.authStatus = action.payload;
     },
     setProjectId: (state: any, action: PayloadAction<any>) => {
       // payload: projectId
@@ -173,6 +170,15 @@ export const deckhandSlice = createSlice({
     showModal: (state: any, action: PayloadAction<any>) => {
       // payload: {name, ...}
       state.modal = action.payload;
+    },
+    
+    setUser: (state: any, action: PayloadAction<any>) => {
+      // payload: user (merge props)
+      Object.assign(state.user, action.payload);
+    },
+    setState: (state: any, action: PayloadAction<any>) => {
+      // payload: {projects, nodes, edges}
+      Object.assign(state, action.payload);
     },
 
     // Project Reducers
@@ -254,10 +260,12 @@ export const deckhandSlice = createSlice({
 
 // Export actions for use in components
 export const {
-  setUser,
-  setState,
+  setAuthStatus,
   setProjectId,
   showModal,
+
+  setUser,
+  setState,
 
   addProject,
   deleteProject,
