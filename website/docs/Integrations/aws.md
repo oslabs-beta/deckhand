@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# Amazon Web Services (AWS)
+# Amazon Web Services
 
-Deckhand seamlessly deploys directly into your AWS account, leveraging a range of AWS services to ensure a robust and secure environment. Our automated deployment includes the configuration of AWS VPC, EKS, EC2, ECR, and EFS, with all keys securely encrypted using AES-256 encryption to safeguard your data.
+Deckhand seamlessly deploys directly into your Amazon Web Services (AWS) account, leveraging a range of AWS services to ensure a robust and secure environment. Our automated deployment includes the configuration of AWS VPC, EKS, EC2, ECR, and EFS, with all keys securely encrypted using AES-256 encryption to safeguard your data.
 
 ## Getting Started
 

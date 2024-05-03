@@ -2,11 +2,12 @@ import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
+import preview from "@site/static/img/preview2.png";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import Yaml from "@site/src/components/Yaml";
-import Features from "@site/src/components/Features";
 import ScrollingLogos from "@site/src/components/ScrollingLogos";
-import preview from "@site/static/img/preview2.png";
+import Features from "@site/src/components/Features";
+import FooterTransition from "@site/src/components/FooterTransition";
 import { motion, MotionConfig } from "framer-motion";
 import { useState, useEffect } from 'react';
 import styles from "./index.module.css";
@@ -42,7 +43,12 @@ function HomepageHeader() {
           animate={{ opacity: 1 }}
           transition={{ duration: 4, delay: 0.25 }}
         >
-          <div className={styles.fullLogo}>
+          <motion.div
+            className={styles.fullLogo}
+            initial={{ scale: 1.25 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+          >
             <motion.div
               animate={{
                 rotate: [0, 15, -15, 0],
@@ -69,7 +75,7 @@ function HomepageHeader() {
               </svg>
             </motion.div>
             <div className={styles.logoText}>Deckhand</div>
-          </div>
+          </motion.div>
           <div className={styles.tagline}>
             <p>No-code, drag and drop Kubernetes.<br />Quickly scale any app to <b>millions of users</b>.</p>
           </div>
@@ -156,6 +162,7 @@ export default function Home() {
           <Yaml />
           <ScrollingLogos />
           <Features />
+          <FooterTransition />
         </main>
       </Layout>
     </MotionConfig>

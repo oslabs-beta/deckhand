@@ -28,6 +28,10 @@ export default function Yaml() {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
   };
+  const variantShrink = {
+    hidden: { opacity: 0, scale: 1.25 },
+    visible: { opacity: 1, scale: 1 }
+  };
 
   const [isMobile, setIsMobile] = useState(() => {
     if (ExecutionEnvironment.canUseDOM) {
@@ -92,8 +96,8 @@ export default function Yaml() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            variants={variantFadeIn}
-            transition={isMobile ? { delay: 0.5, duration: 1 } : { delay: 0.5, duration: 2 }}
+            variants={variantShrink}
+            transition={isMobile ? { delay: 0.5, duration: 0.5 } : { delay: 0.5, duration: 0.5 }}
             viewport={{ once: true, amount: 0.5 }}
           >
             <h2 style={{ color: '#999' }}>Built by engineers for engineers.</h2>
