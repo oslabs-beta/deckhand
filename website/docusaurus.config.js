@@ -17,6 +17,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
+  trailingSlash: true,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -67,6 +68,12 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        appId: 'DSG1K0I33O',
+        apiKey: '760c58d2a1dd1fc9d0aecf48877d8b70', // safe to commit
+        indexName: 'deckhand',
+        contextualSearch: false,
+      },
       // Replace with your project's social card
       image: 'img/deckhand-social-card.png',
       navbar: {

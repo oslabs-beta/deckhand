@@ -90,7 +90,7 @@ function HomepageHeader() {
           >
             <Link
               className="button button--primary button--lg"
-              to="http://app.deckhand.dev"
+              to="https://app.deckhand.dev"
               style={{
                 border: 0,
                 borderRadius: 30,
