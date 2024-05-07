@@ -9,6 +9,7 @@ import {
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatAccount from "./floats/FloatAccount";
+import FloatTheme from "./floats/FloatTheme";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiDotsVertical } from "@mdi/js";
@@ -119,29 +120,30 @@ export default function Home() {
 
   return (
     <Transition>
-    <div className="container">
-      <FloatLogo />
-      <FloatAccount />
-      <Modals />
-      <div className="content-container">
-        <div className="content">
-          <h1>Home</h1>
-          <div id="project-cards">
-              <motion.div
-                key="new-project"
-                initial={{opacity: 0, x: 50, y: 50}}
-                className="card"
-                onClick={handleClickAddProject}>
-              <div className="new-project">
-                New
-                <br />
-                Project
-              </div>
-            </motion.div>
-            {projectBundle}
+      <div className="container">
+        <FloatTheme />
+        <FloatLogo />
+        <FloatAccount />
+        <Modals />
+        <div className="content-container">
+          <div className="content">
+            <h1>Home</h1>
+            <div id="project-cards">
+                <motion.div
+                  key="new-project"
+                  initial={{opacity: 0, x: 50, y: 50}}
+                  className="card"
+                  onClick={handleClickAddProject}>
+                <div className="new-project">
+                  New
+                  <br />
+                  Project
+                </div>
+              </motion.div>
+              {projectBundle}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </Transition>
   );

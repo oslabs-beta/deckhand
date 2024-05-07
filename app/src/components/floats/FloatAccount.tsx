@@ -68,28 +68,7 @@ export default function FloatAccount() {
           >
             Link AWS Account
           </DropdownMenu.Item>
-          {state.user.theme === "light" || !state.user.theme ? (
-            <DropdownMenu.Item
-              className="dropdown-item"
-              onClick={() => {
-                dispatch(setUser({ theme: "dark" }));
-                document.body.classList.toggle("dark-mode");
-              }}
-            >
-              Switch to Dark Mode
-            </DropdownMenu.Item>
-          ) : (
-            <DropdownMenu.Item
-              className="dropdown-item"
-              onClick={() => {
-                dispatch(setUser({ theme: "light" }));
-                document.body.classList.toggle("dark-mode");
-              }}
-            >
-              Switch to Light Mode
-            </DropdownMenu.Item>
-          )}
-          {!state.user.demoMode ? (
+          {(state.user.githubId === '146896900' || state.user.githubId === '8658681') && (!state.user.demoMode ? (
             <DropdownMenu.Item
               className="dropdown-item"
               onClick={() => {
@@ -107,7 +86,7 @@ export default function FloatAccount() {
             >
               Disable Demo Mode
             </DropdownMenu.Item>
-          )}
+          ))}
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() =>

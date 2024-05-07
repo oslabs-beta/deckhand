@@ -2,23 +2,16 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  showModal,
-  setProjectId,
   addNode,
-  deleteNode,
   updateNode,
   addNewEdge,
-  deleteEdge,
-  updateEdge,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
+import FloatTheme from "./floats/FloatTheme";
 import FloatToolbar from "./floats/FloatToolbar";
 import Modals from "./modals/Modals";
-import Icon from "@mdi/react";
-import { mdiDotsVertical } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   ReactFlow,
   ReactFlowInstance,
@@ -138,6 +131,7 @@ export default function Project() {
   return (
     <Transition>
     <div className="container">
+      <FloatTheme />
       <FloatLogo />
       <FloatProject />
       <FloatAccount />
@@ -165,6 +159,6 @@ export default function Project() {
         </ReactFlowProvider>
       </div>
       </div>
-      </Transition>
+    </Transition>
   );
 }
