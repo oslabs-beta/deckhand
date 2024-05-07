@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300,800');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 /* Light theme (default) */
 :root {
@@ -59,7 +59,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--page-background);
   color: var(--primary);
 }
@@ -139,7 +139,6 @@ button:active {
   z-index: 10;
   height: 40px;
   color: var(--primary);
-  font-family: 'Lato', sans-serif;
 }
 
 .float-logo .stroke {
@@ -152,8 +151,9 @@ button:active {
 
 .float-logo span {
   margin-left: 10px;
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 25px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
 }
 
 /* Theme Float */
@@ -188,18 +188,30 @@ button:active {
 
 /* Active Project */
 
-.active-project {
+.float-project {
   position: absolute;
   display: flex;
   align-items: center;
-  top: 10px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--primary);
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 1rem;
   padding: 10px;
   z-index: 10;
+}
+
+.float-project .name {
+  color: var(--primary);
+}
+
+.float-project .divider {
+  color: var(--secondary);
+}
+
+.float-project .region {
+  color: var(--primary);
+  cursor: pointer;
 }
 
 /* Account Float */
@@ -216,6 +228,7 @@ button:active {
   background-color: var(--component-background);
   cursor: pointer;
   z-index: 10;
+  font-family: 'Inter', sans-serif;
 }
 
 .float-account img {
@@ -227,7 +240,7 @@ button:active {
 .float-account span {
   margin-left: 10px;
   color: var(--primary);
-  font-weight: bold;
+  font-weight: 600;
   font-size: 18px;
 }
 
@@ -243,6 +256,8 @@ button:active {
 
 .dropdown-item {
   padding: 10px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
 }
 
 .dropdown-item:hover {
@@ -261,7 +276,7 @@ button:active {
   display: flex;
   height: 100vh;
   height: 100dvh;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .image-section {
@@ -306,7 +321,7 @@ button:active {
 .login-header span {
   margin-left: 15px;
   cursor: default;
-  font: bold 30px 'Lato', sans-serif;
+  font: 400 30px 'Inter', sans-serif;
   color: #333;
 }
 
@@ -413,6 +428,7 @@ button:active {
 
 #project-cards .card .new-project {
   font-size: 28px;
+  font-weight: 300;
   flex-grow: 1;
   border: 5px dotted var(--tertiary);
   border-radius: 10px;
@@ -424,7 +440,7 @@ button:active {
 
 #project-cards .card .name {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 300;
   flex-grow: 1;
   display: flex;
   align-items: center;
@@ -485,6 +501,7 @@ button:active {
 
 .float-toolbar div.float-toolbar-item span {
   margin-top: 10px 0px;
+  font-weight: 300;
 }
 
 .node-menu {
@@ -537,7 +554,6 @@ button:active {
   top: 22px;
   left: 50px;
   font-size: 16px;
-  font-weight: 800;
 }
 
 .node select {
@@ -602,7 +618,7 @@ button:active {
   display: flex;
   flex-direction: column;
   width: 20px;
-  font-weight: bold;
+  font-size: 1rem;
 }
 
 .replicas-content {
@@ -620,7 +636,7 @@ button:active {
 
 .modal {
   position: fixed;
-  z-index: 1;
+  z-index: 100;
   left: 0;
   top: 0;
   width: 100%;
@@ -663,6 +679,10 @@ button:active {
   transition:
     transform 0.3s ease,
     opacity 0.3s ease;
+}
+
+.modal-content h2 {
+  font-weight: 500;
 }
 
 .modal.show .modal-content {
@@ -745,6 +765,10 @@ button:active {
 .pod-source-container {
   display: flex;
   justify-content: space-between;
+}
+
+.pod-source-container b {
+  font-weight: 600;
 }
 
 .pod-source-text {

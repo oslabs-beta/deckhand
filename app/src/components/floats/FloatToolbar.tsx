@@ -30,9 +30,9 @@ export default function FloatNav() {
         draggable
         aria-label="Drag on cluster"
       >
-        <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1} />
+        <Icon path={mdiDotsHexagon} style={{ color: "red" }} size={1.25} />
         <br />
-        <b>Cluster</b>
+        <span>Cluster</span>
       </div>
       <div className="dropdown-separator" />
       <div
@@ -41,9 +41,9 @@ export default function FloatNav() {
         draggable
         aria-label="Drag on pod"
       >
-        <Icon path={mdiCircle} style={{ color: "#0db7ed" }} size={1} />
+        <Icon path={mdiCircle} style={{ color: "#0db7ed" }} size={1.25} />
         <br />
-        <b>Pod</b>
+        <span>Pod</span>
       </div>
       <div className="dropdown-separator" />
       <div
@@ -52,9 +52,9 @@ export default function FloatNav() {
         draggable
         aria-label="Drag on variables"
       >
-        <Icon path={mdiKeyVariant} style={{ color: "orange" }} size={1} />
+        <Icon path={mdiKeyVariant} style={{ color: "orange" }} size={1.25} />
         <br />
-        <b>Variables</b>
+        <span>Variables</span>
       </div>
       <div
         className="float-toolbar-item"
@@ -62,9 +62,9 @@ export default function FloatNav() {
         draggable
         aria-label="Drag on ingress"
       >
-        <Icon path={mdiImport} style={{ color: "green" }} size={1} />
+        <Icon path={mdiImport} style={{ color: "green" }} size={1.25} />
         <br />
-        <b>Ingress</b>
+        <span>Ingress</span>
       </div>
       <div
         className="float-toolbar-item"
@@ -72,9 +72,9 @@ export default function FloatNav() {
         draggable
         aria-label="Drag on volume"
       >
-        <Icon path={mdiDatabase} style={{ color: "violet" }} size={1} />
+        <Icon path={mdiDatabase} style={{ color: "violet" }} size={1.25} />
         <br />
-        <b>Volume</b>
+        <span>Volume</span>
       </div>
     </aside>
   );

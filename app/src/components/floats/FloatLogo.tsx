@@ -14,7 +14,7 @@ export default function FloatLogo() {
       dispatch(setProjectId(null))
       navigate('/');
     }}>
-      <img alt="logo" src={logo} height="36" />
+      <img alt="logo" src={logo} height="40" />
       <span>Deckhand</span>
     </div>
   );
