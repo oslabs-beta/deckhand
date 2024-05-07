@@ -13,13 +13,6 @@ const deploymentRouter = require(path.join(__dirname, './routes/deployment'));
 // Define variables
 const prod: boolean = process.env.NODE_ENV === 'production';
 
-// Initialize database
-const initDatabase = async () => {
-  try { await dbInit(); }
-  catch (err) { console.log('Failed to initialize database:', err); }
-};
-initDatabase();
-
 // Set middleware
 app.use((req: any, res: any, next: any) => {
   console.log(req.method, req.path);
