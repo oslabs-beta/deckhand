@@ -39,6 +39,7 @@ import DockerNode from "./nodes/DockerNode";
 import VariablesNode from "./nodes/VariablesNode";
 import IngressNode from "./nodes/IngressNode";
 import VolumeNode from "./nodes/VolumeNode";
+import Transition from "./Transition";
 
 const nodeTypes = {
   cluster: ClusterNode,
@@ -135,6 +136,7 @@ export default function Project() {
   }
 
   return (
+    <Transition>
     <div className="container">
       <FloatLogo />
       <FloatProject />
@@ -162,6 +164,7 @@ export default function Project() {
           <FloatToolbar />
         </ReactFlowProvider>
       </div>
-    </div>
+      </div>
+      </Transition>
   );
 }

@@ -13,11 +13,17 @@ import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Transition from "./Transition";
+import { motion, animate, stagger } from 'framer-motion';
 
 export default function Home() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect (() => {
+    animate(".card", { opacity: 1, x: 0, y: 0 }, { duration: 0.25, delay: stagger(0.1) })
+  }, [])
 
   function generateUniqueProjectId() {
     let uniqueId: any;
@@ -54,7 +60,8 @@ export default function Home() {
   });
   for (const project of sortedProjects) {
     projectBundle.push(
-      <div
+      <motion.div
+        initial={{opacity: 0, x:50, y: 50}}
         key={project.projectId}
         className="card"
         onClick={() => {
@@ -106,11 +113,12 @@ export default function Home() {
         >
           Last Modified: {timeAgo(project.modifiedDate)}
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
+    <Transition>
     <div className="container">
       <FloatLogo />
       <FloatAccount />
@@ -119,17 +127,22 @@ export default function Home() {
         <div className="content">
           <h1>Home</h1>
           <div id="project-cards">
-            <div className="card" onClick={handleClickAddProject}>
+              <motion.div
+                key="new-project"
+                initial={{opacity: 0, x: 50, y: 50}}
+                className="card"
+                onClick={handleClickAddProject}>
               <div className="new-project">
                 New
                 <br />
                 Project
               </div>
-            </div>
+            </motion.div>
             {projectBundle}
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </Transition>
   );
 }

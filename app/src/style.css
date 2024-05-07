@@ -373,7 +373,6 @@ button:active {
   width: 200px;
   text-align: center;
   background-color: var(--component-background);
-  transition: all 0.1s ease-in-out;
 }
 
 #project-cards .card:hover {

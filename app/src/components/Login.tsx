@@ -5,6 +5,7 @@ import { setUser, setState, setAuthStatus } from "../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiGithub } from "@mdi/js";
 const logo = require("../assets/logo.svg");
+import Transition from "./Transition";
 
 export default function Login() {
   const state = useSelector((state: any) => state.deckhand);
@@ -12,6 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   return (
+    <Transition>
     <div id="login-container">
       <div className="image-section"></div>
       <div className="login-section">
@@ -47,6 +49,7 @@ export default function Login() {
           <span><a href="https://deckhand.dev/privacy" target="_blank" rel="noopener">Privacy Policy</a> | <a href="https://deckhand.dev/terms" target="_blank" rel="noopener">Terms of Service</a></span>
         </div>
       </div>
-    </div>
+      </div>
+      </Transition>
   );
 }

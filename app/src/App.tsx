@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { setUser, setState, setAuthStatus } from "./deckhandSlice";
+import { AnimatePresence } from 'framer-motion';
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Project from "./components/Project";
@@ -39,11 +40,13 @@ export default function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={state.authStatus ? <Navigate replace to="/" /> : <Login />} />
-        <Route path="/" element={state.authStatus ? <Home /> : <Navigate replace to="/login" />} />
-        <Route path="/project/:projectId" element={state.authStatus ? <Project /> : <Navigate replace to="/login" />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route path="/login" element={state.authStatus ? <Navigate replace to="/" /> : <Login />} />
+          <Route path="/" element={state.authStatus ? <Home /> : <Navigate replace to="/login" />} />
+          <Route path="/project/:projectId" element={state.authStatus ? <Project /> : <Navigate replace to="/login" />} />
+        </Routes>
+      </AnimatePresence>
     </Router>
   );
 }
