@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {} from "../../deckhandSlice";
+import WelcomeAboard from "../modals/WelcomeAboard";
 import LinkedCloudProviders from "../modals/LinkedCloudProviders";
 import ConfigureProject from "../modals/ConfigureProject";
 import ConfigureCluster from "../modals/ConfigureCluster";
@@ -16,6 +17,7 @@ export default function Modals() {
 
   return (
     <>
+      {state.modal.name === "WelcomeAboard" && <WelcomeAboard />}
       {state.modal.name === "LinkedCloudProviders" && <LinkedCloudProviders />}
       {state.modal.name === "ConfigureProject" && <ConfigureProject />}
       {state.modal.name === "ConfigureCluster" && <ConfigureCluster />}

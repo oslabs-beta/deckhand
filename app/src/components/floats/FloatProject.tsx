@@ -12,6 +12,17 @@ export default function FloatNav() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [title, setTitle] = useState<string>(project.name)
 
+  useEffect(() => {
+    if (project.showTutorial) {
+      dispatch(showModal({ name: "WelcomeAboard" }))
+      dispatch(
+        configureProject({
+          projectId: project.projectId,
+          showTutorial: false,
+        }))
+    };
+  }, [])
+
   const handleTitleClick = () => {
     setIsEditing(true)
   }
@@ -30,8 +41,6 @@ export default function FloatNav() {
       configureProject({
         projectId: project.projectId,
         name: newTitle,
-        provider: project.provider,
-        vpcRegion: project.vpcRegion
       })
     )
     setIsEditing(false)

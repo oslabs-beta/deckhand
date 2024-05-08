@@ -28,6 +28,7 @@ export const deckhandSlice = createSlice({
       //   provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
       //   vpcRegion: 'us-east-1', // immutable once VPC provisioned (destroying and recreating will break external connections)
       //   vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
+      //   showTutorial: true, // show Welcome Aboard modal when starting project
       // },
     ] as any,
 
@@ -191,6 +192,7 @@ export const deckhandSlice = createSlice({
         modifiedDate: new Date().toString(),
         provider: 'aws', // default
         vpcRegion: 'us-east-1', // default
+        showTutorial: true,
       });
     },
     deleteProject: (state: any, action: PayloadAction<any>) => {
