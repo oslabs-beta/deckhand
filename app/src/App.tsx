@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { setUser, setState, setAuthStatus } from "./deckhandSlice";
-import { AnimatePresence } from 'framer-motion';
+import { MotionConfig, AnimatePresence } from 'framer-motion';
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Project from "./components/Project";
@@ -39,6 +39,7 @@ export default function App() {
   }
 
   return (
+    <MotionConfig reducedMotion='user'>
     <Router>
       <AnimatePresence mode="wait">
         <Routes>
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/project/:projectId" element={state.authStatus ? <Project /> : <Navigate replace to="/login" />} />
         </Routes>
       </AnimatePresence>
-    </Router>
+      </Router>
+    </MotionConfig>
   );
 }
