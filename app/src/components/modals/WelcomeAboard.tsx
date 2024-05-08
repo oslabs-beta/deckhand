@@ -41,8 +41,8 @@ const Modal: React.FC = () => {
     </div>,
     <div key="p2">
       <h1 className="header"><Icon className="header-icon"  path={mdiCircle} style={{ color: "#0db7ed" }} size={2} />Pod Element</h1>
-      <p>Next, drag over a <b>Pod</b> element and connect it to your cluster. Here, you can choose between pulling in a Docker image or a GitHub repository.</p>
-      <p>With your connected <b>GitHub</b> account, you can even pull in your private repositories. Deckhand automatically builds and stores your containerized application image. Do this for each of the microservices in your application.</p>
+      <p>Next, drag over a <b>Pod</b> element and connect it to your cluster. Here, you can choose between pulling in a <b>Docker Hub</b> image or a <b>GitHub</b> repository.</p>
+      <p>With your connected GitHub account, you can even pull in your private repositories. Deckhand automatically builds and stores your containerized application image. Do this for each of the microservices in your application.</p>
       <p>Do some parts of your application require particularly high availability and reliability? Simply adjust the number of <b>replicas</b> using the up and down arrows on the pod.</p>
     </div>,
       <div key="p3">
