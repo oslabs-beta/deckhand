@@ -138,15 +138,6 @@ button:active {
   cursor: pointer;
   z-index: 10;
   height: 40px;
-  color: var(--primary);
-}
-
-.float-logo .stroke {
-  stroke: var(--logo);
-}
-
-.float-logo .fill {
-  fill: var(--logo);
 }
 
 .float-logo span {
@@ -154,6 +145,7 @@ button:active {
   font-size: 25px;
   font-family: 'Inter', sans-serif;
   font-weight: 300;
+  color: var(--primary);
 }
 
 /* Theme Float */
@@ -799,6 +791,34 @@ button:active {
   font-size: 16px;
   background-color: var(--component-background);
   color: var(--primary);
+}
+
+/* Welcome Aboard Modal */
+
+.header {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.header-icon {
+  margin-right: 10px;
+}
+
+.progress-dots {
+  text-align: center;
+  padding: 10px;
+}
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: var(--tertiary);
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 5px;
+}
+.dot.active {
+  background-color: #5988da;
 }
 
 /* Animations */
