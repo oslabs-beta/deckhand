@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { setUser, setState, showModal, setProjectId, setAuthStatus } from "../../deckhandSlice";
+import { setUser, setState, showModal, setProjectId, setAuthStatus, configureProject } from "../../deckhandSlice";
 import Icon from "@mdi/react";
 import { mdiChevronDown, mdiOpenInNew } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -10,9 +10,14 @@ export default function FloatAccount() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const mounted = useRef(false);
 
   useEffect(() => {
-    updateDatabase();
+    if (mounted.current) {
+      updateDatabase();
+    } else {
+      mounted.current = true;
+    }
   }, [state.user, state.projects, state.nodes, state.edges]);
 
   const updateDatabase = () => {
@@ -87,6 +92,14 @@ export default function FloatAccount() {
               Disable Demo Mode
             </DropdownMenu.Item>
           ))}
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              dispatch(showModal({ name: "WelcomeAboard" }));
+            }}
+          >
+            Show Tutorial
+          </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() =>
