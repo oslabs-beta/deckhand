@@ -193,6 +193,33 @@ button:active {
   z-index: 10;
 }
 
+.title-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.rename-icon {
+  position: absolute;
+  left: 0;
+  display: none;
+}
+
+.title-container:hover .rename-icon {
+  display: inline;
+}
+
+.title-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
 .float-project .name {
   color: var(--primary);
 }
@@ -780,17 +807,6 @@ button:active {
 .modal-scroll {
   max-height: 300px;
   overflow: auto;
-}
-
-.title-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid var(--tertiary);
-  border-radius: 5px;
-  font-size: 16px;
-  background-color: var(--component-background);
-  color: var(--primary);
 }
 
 /* Welcome Aboard Modal */

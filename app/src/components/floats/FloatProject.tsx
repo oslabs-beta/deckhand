@@ -65,7 +65,10 @@ export default function FloatNav() {
           onKeyDown={handleKeyDown}
         />
       ) : (
-        <div onClick={handleTitleClick}>{project.name}</div>
+        <div className="title-container" onClick={handleTitleClick}>
+          <span className="rename-icon">{renameIcon}</span>
+          {project.name}
+        </div>
         )}</div>
       <div className="divider">{dividerIcon}</div>
       <div
