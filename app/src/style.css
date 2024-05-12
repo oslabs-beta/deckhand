@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300,800');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 /* Light theme (default) */
 :root {
@@ -59,7 +59,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--page-background);
   color: var(--primary);
 }
@@ -111,6 +111,7 @@ button:active {
 .container {
   position: relative;
   height: 100vh;
+  height: 100dvh;
 }
 
 .content-container {
@@ -137,38 +138,99 @@ button:active {
   cursor: pointer;
   z-index: 10;
   height: 40px;
-  color: var(--primary);
-  font-family: 'Lato', sans-serif;
-}
-
-.float-logo .stroke {
-  stroke: var(--logo);
-}
-
-.float-logo .fill {
-  fill: var(--logo);
 }
 
 .float-logo span {
   margin-left: 10px;
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 25px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  color: var(--primary);
+}
+
+/* Theme Float */
+
+.float-theme {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  background-color: var(--component-background);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.float-theme:hover {
+  filter: brightness(80%);
+}
+
+.float-theme:active {
+  transform: scale(0.98);
+}
+
+.float-theme svg {
+  height: 25px;
+  width: 25px;
 }
 
 /* Active Project */
 
-.active-project {
+.float-project {
   position: absolute;
   display: flex;
   align-items: center;
-  top: 10px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--primary);
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 1rem;
   padding: 10px;
   z-index: 10;
+}
+
+.title-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.rename-icon {
+  position: absolute;
+  left: 0;
+  display: none;
+}
+
+.title-container:hover .rename-icon {
+  display: inline;
+}
+
+.title-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid var(--tertiary);
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: var(--component-background);
+  color: var(--primary);
+}
+
+.float-project .name {
+  color: var(--primary);
+}
+
+.float-project .divider {
+  color: var(--secondary);
+}
+
+.float-project .region {
+  color: var(--primary);
+  cursor: pointer;
 }
 
 /* Account Float */
@@ -185,6 +247,7 @@ button:active {
   background-color: var(--component-background);
   cursor: pointer;
   z-index: 10;
+  font-family: 'Inter', sans-serif;
 }
 
 .float-account img {
@@ -196,7 +259,7 @@ button:active {
 .float-account span {
   margin-left: 10px;
   color: var(--primary);
-  font-weight: bold;
+  font-weight: 600;
   font-size: 18px;
 }
 
@@ -212,6 +275,8 @@ button:active {
 
 .dropdown-item {
   padding: 10px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
 }
 
 .dropdown-item:hover {
@@ -229,38 +294,115 @@ button:active {
 #login-container {
   display: flex;
   height: 100vh;
-  font-family: Arial, sans-serif;
+  height: 100dvh;
+  font-family: 'Inter', sans-serif;
 }
 
 .image-section {
   flex: 2;
   background-image: url('./assets/loginbackground.jpg');
   background-size: cover;
-  height: 100%;
+  background-position: center center;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.login-section, .login-section * {
+  box-sizing: border-box;
 }
 
 .login-section {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   background-color: #f4f4f4;
   box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  height: 100dvh;
+  min-width: 300px;
 }
 
-.login-section .button-container {
-  width: 80%;
-  max-width: 300px;
+@media (max-width: 768px) {
+  .image-section {
+    display: none;
+  }
+}
+
+.login-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2svh;
+}
+
+.login-header span {
+  margin-left: 15px;
+  cursor: default;
+  font: 400 30px 'Inter', sans-serif;
+  color: #333;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
   text-align: center;
+  padding: 0 10%;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.login-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12svh;
+  margin-bottom: 2svh;
 }
 
 #github-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
   width: 100%;
-  padding: 15px;
   border: none;
-  border-radius: 5px;
-  background-color: #333;
-  color: white;
+  border-radius: 60px;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 6svh;
+}
+
+.or {
+  width: 100%;
+  margin: 3svh;
+  text-align: center;
+  font-size: 16px;
+  color: #aaa;
+  background: linear-gradient(to right, transparent, #aaa) left,
+              linear-gradient(to left, transparent, #aaa) right;
+  background-size: 43% 1px;
+  background-repeat: no-repeat;
+}
+
+#create-github-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  width: 100%;
+  border: none;
+  border-radius: 60px;
+  border: 2px solid #999;
+  color: #222;
   cursor: pointer;
 }
 
@@ -268,7 +410,11 @@ button:active {
   background-color: #555;
 }
 
-#github-button:active {
+#create-github-button:hover {
+  background-color: #ddd;
+}
+
+#github-button:active, #create-github-button:active {
   transform: scale(0.98);
 }
 
@@ -291,7 +437,6 @@ button:active {
   width: 200px;
   text-align: center;
   background-color: var(--component-background);
-  transition: all 0.1s ease-in-out;
 }
 
 #project-cards .card:hover {
@@ -302,6 +447,7 @@ button:active {
 
 #project-cards .card .new-project {
   font-size: 28px;
+  font-weight: 300;
   flex-grow: 1;
   border: 5px dotted var(--tertiary);
   border-radius: 10px;
@@ -313,7 +459,7 @@ button:active {
 
 #project-cards .card .name {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 300;
   flex-grow: 1;
   display: flex;
   align-items: center;
@@ -344,11 +490,12 @@ button:active {
   transform: scale(0.98);
 }
 
-/* Canvas */
+/* Project */
 
 #container-react-flow {
   width: '100vw';
-  height: '100vh';
+  height: 100vh;
+  height: '100dvh';
 }
 
 .float-toolbar {
@@ -373,6 +520,7 @@ button:active {
 
 .float-toolbar div.float-toolbar-item span {
   margin-top: 10px 0px;
+  font-weight: 300;
 }
 
 .node-menu {
@@ -425,7 +573,6 @@ button:active {
   top: 22px;
   left: 50px;
   font-size: 16px;
-  font-weight: 800;
 }
 
 .node select {
@@ -490,7 +637,7 @@ button:active {
   display: flex;
   flex-direction: column;
   width: 20px;
-  font-weight: bold;
+  font-size: 1rem;
 }
 
 .replicas-content {
@@ -508,7 +655,7 @@ button:active {
 
 .modal {
   position: fixed;
-  z-index: 1;
+  z-index: 100;
   left: 0;
   top: 0;
   width: 100%;
@@ -551,6 +698,10 @@ button:active {
   transition:
     transform 0.3s ease,
     opacity 0.3s ease;
+}
+
+.modal-content h2 {
+  font-weight: 500;
 }
 
 .modal.show .modal-content {
@@ -635,6 +786,10 @@ button:active {
   justify-content: space-between;
 }
 
+.pod-source-container b {
+  font-weight: 600;
+}
+
 .pod-source-text {
   margin-top: 10px;
   color: var(--tertiary);
@@ -654,13 +809,41 @@ button:active {
   overflow: auto;
 }
 
-.title-input {
-  width: 100%;
+/* Welcome Aboard Modal */
+
+.header {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.header-icon {
+  margin-right: 10px;
+}
+
+.progress-dots {
+  text-align: center;
   padding: 10px;
-  margin: 10px 0;
-  border: 1px solid var(--tertiary);
-  border-radius: 5px;
-  font-size: 16px;
-  background-color: var(--component-background);
-  color: var(--primary);
+}
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: var(--tertiary);
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 5px;
+}
+.dot.active {
+  background-color: #5988da;
+}
+
+/* Animations */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

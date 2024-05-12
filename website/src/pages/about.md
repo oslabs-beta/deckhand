@@ -12,4 +12,4 @@ We believe that open source software is essential to the infrastructure of moder
 
 OSLabs is devoted to furthering high-impact open source software within a collaborative community of dedicated engineers and mentors. By doing so, we advance open source innovation as well as the education and careers of software developers.
 
-<p align="center"><img src="/img/deckhandlogoicon.png" width="200" /> <img src="https://media.licdn.com/dms/image/C4D0BAQFRbO45RONhTw/company-logo_200_200/0/1671742944712/oslabs_logo?e=1712793600&v=beta&t=6VqwRpFeiPV-jHEzLRGtSzPTV2HZrm0mSEGMLi0BQcg" alt="OSLabs logo" width="200" /></p>
+<p align="center"><img src="/img/deckhandlogoicon.png" alt="Deckhand Logo" width="200" style={{ marginRight: '50px' }} /> <img src="/img/oslabs.png" alt="OSLabs logo" width="190" /></p>

@@ -7,7 +7,8 @@
     "module": "CommonJS",
     "esModuleInterop": true,
     "outDir": "./build",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "moduleDetection": "force"
   },
   "include": ["app/**/*.ts", "app/**/*.tsx", "server/**/*.ts"],
   "exclude": ["node_modules"]

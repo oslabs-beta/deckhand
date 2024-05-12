@@ -141,6 +141,7 @@ dist
 
 # Compiled app
 /build
+/website/build
 
 # Private local folder
 /__local

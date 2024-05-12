@@ -7,6 +7,7 @@ module.exports = {
   entry: path.join(__dirname, 'app', 'src', 'index.tsx'),
   output: {
     path: path.join(__dirname, 'build'),
+    publicPath: '/',
     filename: 'index_bundle.js',
   },
   target: 'web',
@@ -20,6 +21,7 @@ module.exports = {
     proxy: {
       '/api': 'http://localhost:3000'
     },
+    historyApiFallback: true,
   },
   module: {
     rules: [

@@ -1,22 +1,17 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  showModal,
   addNode,
-  deleteNode,
   updateNode,
   addNewEdge,
-  deleteEdge,
-  updateEdge,
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatProject from "./floats/FloatProject";
 import FloatAccount from "./floats/FloatAccount";
+import FloatTheme from "./floats/FloatTheme";
 import FloatToolbar from "./floats/FloatToolbar";
 import Modals from "./modals/Modals";
-import Icon from "@mdi/react";
-import { mdiDotsVertical } from "@mdi/js";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   ReactFlow,
   ReactFlowInstance,
@@ -37,6 +32,7 @@ import DockerNode from "./nodes/DockerNode";
 import VariablesNode from "./nodes/VariablesNode";
 import IngressNode from "./nodes/IngressNode";
 import VolumeNode from "./nodes/VolumeNode";
+import Transition from "./Transition";
 
 const nodeTypes = {
   cluster: ClusterNode,
@@ -48,14 +44,23 @@ const nodeTypes = {
   volume: VolumeNode,
 };
 
-export default function Canvas() {
+export default function Project() {
   const state = useSelector((state: any) => state.deckhand);
+  const { projectId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+
+  // Redirect home if user directly navigates to /project/:projectId
+  useEffect(() => {
+    if (state.projectId !== projectId) {
+      navigate('/');
+    }
+  }, [])
 
   useEffect(() => {
     const projectNodes = state.nodes.filter(
@@ -118,8 +123,15 @@ export default function Canvas() {
     dispatch(updateNode({ id: node.id, position: node.position }));
   };
 
+  if (state.projectId !== projectId) {
+    // Required to fail gracefully if user directly navigates to /project/:projectId
+    return <div></div>
+  }
+
   return (
+    <Transition>
     <div className="container">
+      <FloatTheme />
       <FloatLogo />
       <FloatProject />
       <FloatAccount />
@@ -146,6 +158,7 @@ export default function Canvas() {
           <FloatToolbar />
         </ReactFlowProvider>
       </div>
-    </div>
+      </div>
+    </Transition>
   );
 }

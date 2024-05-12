@@ -2,15 +2,17 @@
 sidebar_position: 1
 ---
 
-# Amazon Web Services (AWS)
+# Amazon Web Services
+
+Deckhand seamlessly deploys directly into your Amazon Web Services (AWS) account, leveraging a range of AWS services to ensure a robust and secure environment. Our automated deployment includes the configuration of AWS VPC, EKS, EC2, ECR, and EFS, with all keys securely encrypted using AES-256 encryption to safeguard your data.
+
+## Getting Started
 
 <img align="right" src="/img/aws.svg" alt="AWS logo" width="175" />
 
-We deploy directly to your AWS account. The specific services automated include AWS VPC, EKS, EC2, ECR and EFS. All keys are encrypted with AES-256.
+If you haven't done so already, your first step is to [create an AWS account](https://portal.aws.amazon.com/billing/signup). Next, follow these steps to create an IAM user that Deckhand will use to deploy your app:
 
-If you haven't already, first create an AWS account. Then:
-
-## Create Deckhand IAM user
+### Create Deckhand IAM user
 
 1. Login to AWS account as a root
 2. Navigate to IAM -> Users -> Create User
@@ -23,7 +25,7 @@ If you haven't already, first create an AWS account. Then:
 9. Click "Create User"
 10. Save a record of your console sign-in URL, username, and password
 
-## Get credentials for Deckhand IAM user
+### Get credentials for Deckhand IAM user
 
 1. Visit console sign-in URL, login as IAM user, and change password on login
 2. Navigate IAM -> Users -> deckhand -> "Security credentials" tab

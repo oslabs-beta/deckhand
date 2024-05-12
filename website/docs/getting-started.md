@@ -6,7 +6,11 @@ sidebar_position: 2
 
 ## Cluster
 
-When you create a new project, you will be presented with an empty canvas. The ocean is yours, and fortunately the waves are miniscule. Drag a Cluster element on the screen and select the resources (instance type and number of nodes) you’d like to provide for your application. Want to scale vertically? Select a more powerful instance type. Want to scale horizontally? Increase the number of nodes.
+When you create a new project, you will be presented with an empty canvas. The ocean is yours, and the winds are favorable. Drag a Cluster element on the screen and select the resources (instance type and number of nodes) you’d like to provide for your application. Want to scale vertically? Select a more powerful instance type. Want to scale horizontally? Increase the number of nodes.
+
+:::tip
+For computationally intensive applications, ensure the instance type is powerful enough to support at least one replica of the largest pod in your cluster, and that there are enough nodes to support all pods collectively.
+:::
 
 ## Pod
 

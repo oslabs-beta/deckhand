@@ -3,6 +3,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export const deckhandSlice = createSlice({
   name: 'deckhand',
   initialState: {
+    authStatus: null,
+    projectId: null as any, // selected project id
+    modal: {} as any, // {name, ...}
+
     user: {} as any,
     // user: {
     //   id: 1,
@@ -15,9 +19,6 @@ export const deckhandSlice = createSlice({
     //   awsSecretKey: null,
     // },
 
-    projectId: null as any, // selected project id
-    modal: {} as any, // {name, ...}
-
     projects: [
       // {
       //   projectId: '5259',
@@ -27,6 +28,7 @@ export const deckhandSlice = createSlice({
       //   provider: 'aws', // immutable once VPC provisioned (destroying and recreating will break external connections)
       //   vpcRegion: 'us-east-1', // immutable once VPC provisioned (destroying and recreating will break external connections)
       //   vpcId: 'xyz', // unique identifier provided by AWS once VPC provisioned
+      //   showTutorial: true, // show Welcome Aboard modal when starting project
       // },
     ] as any,
 
@@ -158,6 +160,19 @@ export const deckhandSlice = createSlice({
     ] as any,
   },
   reducers: {
+    setAuthStatus: (state: any, action: PayloadAction<any>) => {
+      // payload: authStatus: boolean
+      state.authStatus = action.payload;
+    },
+    setProjectId: (state: any, action: PayloadAction<any>) => {
+      // payload: projectId
+      state.projectId = action.payload;
+    },
+    showModal: (state: any, action: PayloadAction<any>) => {
+      // payload: {name, ...}
+      state.modal = action.payload;
+    },
+    
     setUser: (state: any, action: PayloadAction<any>) => {
       // payload: user (merge props)
       Object.assign(state.user, action.payload);
@@ -165,19 +180,6 @@ export const deckhandSlice = createSlice({
     setState: (state: any, action: PayloadAction<any>) => {
       // payload: {projects, nodes, edges}
       Object.assign(state, action.payload);
-    },
-    setProjectId: (state: any, action: PayloadAction<any>) => {
-      // payload: projectId
-      state.projectId = action.payload;
-    },
-    toggleLayout: (state: any, action: PayloadAction<any>) => {
-      state.layout === 'cards'
-        ? (state.layout = 'canvas')
-        : (state.layout = 'cards');
-    },
-    showModal: (state: any, action: PayloadAction<any>) => {
-      // payload: {name, ...}
-      state.modal = action.payload;
     },
 
     // Project Reducers
@@ -190,6 +192,7 @@ export const deckhandSlice = createSlice({
         modifiedDate: new Date().toString(),
         provider: 'aws', // default
         vpcRegion: 'us-east-1', // default
+        showTutorial: true,
       });
     },
     deleteProject: (state: any, action: PayloadAction<any>) => {
@@ -259,11 +262,12 @@ export const deckhandSlice = createSlice({
 
 // Export actions for use in components
 export const {
+  setAuthStatus,
+  setProjectId,
+  showModal,
+
   setUser,
   setState,
-  setProjectId,
-  toggleLayout,
-  showModal,
 
   addProject,
   deleteProject,

@@ -3,12 +3,10 @@ const fs = require('fs/promises');
 const path = require('path');
 const { exec } = require('child_process');
 const execAsync = util.promisify(exec);
-const AWS = require('aws-sdk');
 
-const deploymentController = {};
+const deploymentController: any = {};
 
-deploymentController.addVPC = async (req, res, next) => {
-  console.log('\n/api/deployment/addVPC:');
+deploymentController.addVPC = async (req: any, res: any, next: any) => {
   const {
     userId,
     awsAccessKey,
@@ -75,8 +73,6 @@ deploymentController.addVPC = async (req, res, next) => {
       `cd ${projectPath} && terraform init && terraform apply --auto-approve`
     );
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -86,8 +82,7 @@ deploymentController.addVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteVPC = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteVPC:');
+deploymentController.deleteVPC = async (req: any, res: any, next: any) => {
   const { userId, projectId } = req.body;
   const projectPath = path.join(
     'server',
@@ -114,8 +109,6 @@ deploymentController.deleteVPC = async (req, res, next) => {
     console.log('Removing project directory');
     await fs.rm(projectPath, { recursive: true });
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -125,8 +118,7 @@ deploymentController.deleteVPC = async (req, res, next) => {
   }
 };
 
-deploymentController.addCluster = async (req, res, next) => {
-  console.log('\n/api/deployment/addCluster:');
+deploymentController.addCluster = async (req: any, res: any, next: any) => {
   const {
     userId,
     awsAccessKey,
@@ -256,8 +248,6 @@ deploymentController.addCluster = async (req, res, next) => {
       `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml`
     );
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -267,8 +257,7 @@ deploymentController.addCluster = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteCluster = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteCluster:');
+deploymentController.deleteCluster = async (req: any, res: any, next: any) => {
   const { userId, projectId, clusterId } = req.body;
   const clusterPath = path.join(
     'server',
@@ -288,8 +277,6 @@ deploymentController.deleteCluster = async (req, res, next) => {
     console.log('Removing cluster directory');
     await fs.rm(clusterPath, { recursive: true });
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -299,192 +286,8 @@ deploymentController.deleteCluster = async (req, res, next) => {
   }
 };
 
-// Use AWS CodeBuild to dockerize GitHub repo and push to AWS ECR
-deploymentController.buildImageNEW = async (req, res, next) => {
-  console.log('\n/api/deployment/buildImage:');
-  const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
-  const githubToken = req.cookies.github_token; // GitHub token
-
-  const repoName = repo.split('/').pop(); // Extract repo name from "user/repoName"
-  const awsRepoName = repoName.toLowerCase(); // ECR repository name
-  const imageTag = 'latest'; // Hardcoded image tag
-  const projectName = `${awsRepoName}-${branch}`; // CodeBuild project name
-
-  try {
-    // Configure AWS
-    console.log("Configuring AWS")
-    const awsConfig = {
-      accessKeyId: awsAccessKey,
-      secretAccessKey: awsSecretKey,
-      region: vpcRegion,
-    };
-    AWS.config.update(awsConfig);
-    const ecr = new AWS.ECR();
-    const codebuild = new AWS.CodeBuild();
-    const iam = new AWS.IAM();
-
-    // Configure CodeBuild Service Role
-    console.log("Configuring CodeBuild Service Role");
-    async function ensureCodeBuildServiceRole() {
-      const roleName = 'MyCodeBuildServiceRole';
-      const sts = new AWS.STS();
-
-      // Retrieve the AWS account ID
-      const accountIdData = await sts.getCallerIdentity({}).promise();
-      const awsAccountId = accountIdData.Account;
-
-      const assumeRolePolicyDocument = JSON.stringify({
-        Version: '2012-10-17',
-        Statement: [{
-          Effect: 'Allow',
-          Principal: {
-            Service: 'codebuild.amazonaws.com'
-          },
-          Action: 'sts:AssumeRole'
-        }]
-      });
-
-      try {
-        // Check if role exists
-        await iam.getRole({ RoleName: roleName }).promise();
-        console.log('Role already exists');
-      } catch (error) {
-        if (error.code === 'NoSuchEntity') {
-          // Role does not exist, create it
-          console.log('Creating role');
-          await iam.createRole({
-            RoleName: roleName,
-            AssumeRolePolicyDocument: assumeRolePolicyDocument,
-          }).promise();
-
-          // Attach policies to the role
-          await iam.attachRolePolicy({
-            RoleName: roleName,
-            PolicyArn: 'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess',
-          }).promise();
-
-          // Attach the CloudWatchLogs policy
-          const cloudWatchPolicy = {
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Action: [
-                  "logs:CreateLogGroup",
-                  "logs:CreateLogStream",
-                  "logs:PutLogEvents"
-                ],
-                Resource: `arn:aws:logs:${vpcRegion}:${awsAccountId}:log-group:/aws/codebuild/${projectName}:*`
-              }
-            ]
-          };
-
-          await iam.putRolePolicy({
-            RoleName: roleName,
-            PolicyName: 'CodeBuildCloudWatchLogsPolicy',
-            PolicyDocument: JSON.stringify(cloudWatchPolicy)
-          }).promise();
-        } else {
-          // Other errors
-          throw error;
-        }
-      }
-
-      return `arn:aws:iam::${awsAccountId}:role/${roleName}`;
-    }
-    const serviceRoleArn = await ensureCodeBuildServiceRole();
-
-    // Create ECR repository
-    console.log('Creating ECR repository');
-    await ecr.createRepository({ repositoryName: awsRepoName }).promise().catch(err => {
-      if (err.code !== 'RepositoryAlreadyExistsException') {
-        throw err;
-      }
-    });
-
-    // Get ECR repository URI
-    const { repositories } = await ecr.describeRepositories({ repositoryNames: [awsRepoName] }).promise();
-    const repositoryUri = repositories[0].repositoryUri;
-
-    // Define CodeBuild project
-    const buildProjectParams = {
-      name: projectName,
-      source: {
-        type: 'GITHUB',
-        location: `https://github.com/${repo}.git`,
-        auth: {
-          type: 'OAUTH',
-          resource: githubToken,
-        },
-        buildspec: `
-          version: 0.2
-          phases:
-            pre_build:
-              commands:
-                - echo Logging in to Amazon ECR...
-                - $(aws ecr get-login --no-include-email)
-            build:
-              commands:
-                - echo Building the Docker image...
-                - docker build -t ${repositoryUri}:${imageTag} .
-            post_build:
-              commands:
-                - echo Pushing the Docker image...
-                - docker push ${repositoryUri}:${imageTag}
-        `,
-      },
-      artifacts: {
-        type: 'NO_ARTIFACTS',
-      },
-      environment: {
-        type: 'LINUX_CONTAINER',
-        image: 'aws/codebuild/standard:4.0', // this base image has Docker access. update as needed
-        computeType: 'BUILD_GENERAL1_SMALL',
-      },
-      serviceRole: serviceRoleArn,
-    };
-
-    // Create or update CodeBuild project
-    console.log('Creating or updating CodeBuild project');
-    try {
-      // Attempt to create the CodeBuild project
-      await codebuild.createProject(buildProjectParams).promise();
-    } catch (error) {
-      if (error.code === 'ResourceAlreadyExistsException') {
-        // If project already exists, update it
-        console.log('Project already exists, updating existing project');
-        await codebuild.updateProject(buildProjectParams).promise();
-      } else {
-        // If other error, throw it
-        throw error;
-      }
-    }
-
-    // Start build
-    console.log('Starting build in CodeBuild');
-    const buildStartParams = {
-      projectName: projectName,
-      sourceVersion: branch, // Specify the branch
-    };
-    await codebuild.startBuild(buildStartParams).promise();
-
-    // Set response data
-    res.locals.data = { awsRepo: projectName, imageName: repositoryUri, imageTag };
-
-    // Log success and continue
-    console.log('Done');
-    return next();
-  } catch (err) {
-    return next({
-      log: `Error in buildImage: ${err}`,
-      message: { err: 'An error occurred trying to build an image' },
-    });
-  }
-};
-
-// OLD: Dockerize github repo and push to AWS ECR
-deploymentController.buildImage = async (req, res, next) => {
-  console.log('\n/api/deployment/buildImage:');
+// Dockerize github repo and push to AWS ECR
+deploymentController.buildImage = async (req: any, res: any, next: any) => {
   const { repo, branch, awsAccessKey, awsSecretKey, vpcRegion } = req.body;
 
   const awsRepo = repo.split('/').join('-').toLowerCase(); // format: "githubUser-repoName"
@@ -524,16 +327,15 @@ deploymentController.buildImage = async (req, res, next) => {
     // Dockerize and push image to ECR repository
     console.log('Dockerizing and pushing image to ECR repository');
     const cloneUrl = `https://github.com/${repo}.git#${branch}`;
-    const imageUrl = `${ecrUrl}/${awsRepo}`;
-    // await execAsync(`docker build -t ${imageName} ${cloneUrl}`);
+    const imageUrl = `${ecrUrl}/${awsRepo}:latest`;
+    // await execAsync(`echo ${process.env.DOCKER_PASSWORD} | docker login --username ${process.env.DOCKER_USERNAME} --password-stdin`);
+    // await execAsync(`docker buildx use cloud-deckhandapp-builder --global`);
     await execAsync(
       `docker buildx build --platform linux/amd64 -t ${imageName} ${cloneUrl} --load`
     );
     await execAsync(`docker tag ${imageName} ${imageUrl}`);
     await execAsync(`docker push ${imageUrl}`);
 
-    // Log success and continue
-    console.log('Done');
     res.locals.data = { awsRepo, imageName: imageUrl, imageTag: 'latest' };
     return next();
   } catch (err) {
@@ -544,49 +346,7 @@ deploymentController.buildImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deleteImageNew = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteImage:');
-  const {
-    awsAccessKey,
-    awsSecretKey,
-    vpcRegion,
-    awsRepo,
-    imageTag, // imageName is not needed for deleting the image
-  } = req.body;
-
-  try {
-    // Configure AWS
-    console.log('Configuring AWS');
-    AWS.config.update({
-      accessKeyId: awsAccessKey,
-      secretAccessKey: awsSecretKey,
-      region: vpcRegion
-    });
-
-    // Create ECR client
-    const ecr = new AWS.ECR();
-
-    // Delete image
-    console.log('Deleting image');
-    await ecr.batchDeleteImage({
-      repositoryName: awsRepo,
-      imageIds: [{ imageTag: imageTag }]
-    }).promise();
-
-    // Log success and continue
-    console.log('Image deleted successfully');
-    return next();
-  } catch (err) {
-    console.error('Error in deleteImage:', err);
-    return next({
-      log: `Error in deleteImage: ${err}`,
-      message: { err: 'An error occurred trying to delete an image' },
-    });
-  }
-};
-
-deploymentController.deleteImage = async (req, res, next) => {
-  console.log('\n/api/deployment/deleteImage:');
+deploymentController.deleteImage = async (req: any, res: any, next: any) => {
   const {
     awsAccessKey,
     awsSecretKey,
@@ -613,8 +373,12 @@ deploymentController.deleteImage = async (req, res, next) => {
       `aws ecr batch-delete-image --repository-name ${awsRepo} --image-ids imageTag=${imageTag} --region ${vpcRegion}`
     );
 
-    // Log success and continue
-    console.log('Done');
+    // Delete repository if empty
+    console.log('Deleting repository if empty');
+    await execAsync(
+      `aws ecr delete-repository --repository-name ${awsRepo} --region ${vpcRegion}`
+    );
+
     return next();
   } catch (err) {
     return next({
@@ -624,8 +388,7 @@ deploymentController.deleteImage = async (req, res, next) => {
   }
 };
 
-deploymentController.deployPod = async (req, res, next) => {
-  console.log('\n/api/deployment/deployPod:');
+deploymentController.deployPod = async (req: any, res: any, next: any) => {
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName, yaml } =
     req.body;
 
@@ -652,8 +415,6 @@ deploymentController.deployPod = async (req, res, next) => {
     });
     console.log(output);
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -663,8 +424,7 @@ deploymentController.deployPod = async (req, res, next) => {
   }
 };
 
-deploymentController.deletePod = async (req, res, next) => {
-  console.log('\n/api/deployment/deletePod:');
+deploymentController.deletePod = async (req: any, res: any, next: any) => {
   const { vpcRegion, awsAccessKey, awsSecretKey, awsClusterName, podName } =
     req.body;
 
@@ -688,8 +448,6 @@ deploymentController.deletePod = async (req, res, next) => {
     // Delete deployment
     await execAsync(`kubectl delete 'deployment' ${podName}`);
 
-    // Log success and continue
-    console.log('Done');
     return next();
   } catch (err) {
     return next({
@@ -699,8 +457,7 @@ deploymentController.deletePod = async (req, res, next) => {
   }
 };
 
-deploymentController.getURL = async (req, res, next) => {
-  console.log('\n/api/deployment/getURL:');
+deploymentController.getURL = async (req: any, res: any, next: any) => {
   const { awsAccessKey, awsSecretKey, vpcRegion, awsClusterName } = req.body;
 
   try {
@@ -733,9 +490,6 @@ deploymentController.getURL = async (req, res, next) => {
       if (url) {
         console.log('URL:', url);
         res.locals.data = { url };
-
-        // Log success and continue
-        console.log('Done');
         return next();
       } else {
         if (attempts++ < 100) setTimeout(checkURL, 1000);

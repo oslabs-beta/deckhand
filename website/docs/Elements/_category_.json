@@ -1,9 +1,9 @@
 {
   "label": "Elements",
-  "position": 4,
+  "position": 3,
   "link": {
     "type": "generated-index",
     "description": "Understand the elements in your Kubernetes project"
   },
-  "collapsed": true
+  "collapsed": false
 }

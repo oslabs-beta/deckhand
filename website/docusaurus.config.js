@@ -9,7 +9,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Deckhand',
-  tagline: 'Fully automated, drag and drop Kubernetes deployment',
+  tagline: 'No-code, drag and drop Kubernetes deployment.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -17,6 +17,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
+  trailingSlash: true,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -43,15 +44,15 @@ const config = {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/oslabs-beta/deckhand/website',
+          // editUrl:
+          //   'https://github.com/oslabs-beta/deckhand/website',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/oslabs-beta/deckhand/website',
+          // editUrl:
+          //   'https://github.com/oslabs-beta/deckhand/website',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -67,6 +68,12 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        appId: 'DSG1K0I33O',
+        apiKey: '760c58d2a1dd1fc9d0aecf48877d8b70', // safe to commit
+        indexName: 'deckhand',
+        contextualSearch: false,
+      },
       // Replace with your project's social card
       image: 'img/deckhand-social-card.png',
       navbar: {
@@ -78,7 +85,7 @@ const config = {
         items: [
           {
             type: 'dropdown', // 'docSidebar'
-            sidebarId: 'mySidebar',
+            sidebarid: 'mySidebar', // changed sidebarId to sidebarid due to console warning
             label: 'Docs',
             position: 'left',
             items: [
@@ -94,13 +101,13 @@ const config = {
               },
               {
                 type: 'doc',
-                label: 'Integrations',
-                docId: '/category/integrations',
+                label: 'Elements',
+                docId: '/category/elements',
               },
               {
                 type: 'doc',
-                label: 'Elements',
-                docId: '/category/elements',
+                label: 'Integrations',
+                docId: '/category/integrations',
               },
               {
                 type: 'doc',
@@ -129,6 +136,10 @@ const config = {
             title: 'Product',
             items: [
               {
+                label: 'Log In',
+                href: 'https://app.deckhand.dev',
+              },
+              {
                 label: 'Documentation',
                 to: '/docs/intro',
               },
@@ -142,8 +153,12 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Contribute',
+                label: 'Contributing',
                 to: '/contributing',
+              },
+              {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/deckhand-open-source',
               },
             ],
           },
@@ -158,14 +173,32 @@ const config = {
                 label: 'Blog',
                 to: '/blog',
               },
+            ],
+          },
+          {
+            title: 'Legal',
+            items: [
               {
-                label: 'LinkedIn',
-                href: 'https://www.linkedin.com/company/deckhand-open-source',
+                label: 'Privacy',
+                to: '/privacy',
+              },
+              {
+                label: 'Terms',
+                to: '/terms',
+              },
+              {
+                label: 'License',
+                to: '/license',
               },
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Deckhand | MIT License | Open Source`,
+        logo: {
+          alt: 'Deckhand Logo',
+          src: 'img/logo-gray.svg',
+          height: 80,
+        },
+        copyright: `Copyright © ${new Date().getFullYear()} Deckhand. All rights reserved.`,
       },
       prism: {
         theme: prismThemes.github,

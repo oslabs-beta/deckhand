@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setState, showModal } from "../../deckhandSlice";
+import { useNavigate } from 'react-router-dom';
+import { setUser, setState, showModal, setProjectId, setAuthStatus, configureProject } from "../../deckhandSlice";
 import Icon from "@mdi/react";
-import { mdiChevronDown } from "@mdi/js";
+import { mdiChevronDown, mdiOpenInNew } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function FloatAccount() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const mounted = useRef(false);
 
   useEffect(() => {
-    updateDatabase();
+    if (mounted.current) {
+      updateDatabase();
+    } else {
+      mounted.current = true;
+    }
   }, [state.user, state.projects, state.nodes, state.edges]);
 
   const updateDatabase = () => {
@@ -23,13 +30,11 @@ export default function FloatAccount() {
       theme: state.user.theme,
       awsAccessKey: state.user.awsAccessKey,
       awsSecretKey: state.user.awsSecretKey,
-      state: JSON.stringify(
-        JSON.stringify({
-          projects: state.projects,
-          nodes: state.nodes,
-          edges: state.edges,
-        })
-      ),
+      state: {
+        projects: state.projects,
+        nodes: state.nodes,
+        edges: state.edges,
+      },
     };
     fetch("/api/updateDatabase", {
       method: "POST",
@@ -56,42 +61,19 @@ export default function FloatAccount() {
         >
           <DropdownMenu.Item
             className="dropdown-item"
+            onClick={() => navigate('/')}
+          >
+            Home
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="dropdown-item"
             onClick={() => {
               dispatch(showModal({ name: "LinkedCloudProviders" }));
             }}
           >
             Link AWS Account
           </DropdownMenu.Item>
-          <DropdownMenu.Item
-            className="dropdown-item"
-            onClick={() =>
-              window.open("https://deckhand.dev/docs/intro", "_blank")
-            }
-          >
-            Show Documentation
-          </DropdownMenu.Item>
-          {state.user.theme === "light" || !state.user.theme ? (
-            <DropdownMenu.Item
-              className="dropdown-item"
-              onClick={() => {
-                dispatch(setUser({ theme: "dark" }));
-                document.body.classList.toggle("dark-mode");
-              }}
-            >
-              Switch to Dark Mode
-            </DropdownMenu.Item>
-          ) : (
-            <DropdownMenu.Item
-              className="dropdown-item"
-              onClick={() => {
-                dispatch(setUser({ theme: "light" }));
-                document.body.classList.toggle("dark-mode");
-              }}
-            >
-              Switch to Light Mode
-            </DropdownMenu.Item>
-          )}
-          {!state.user.demoMode ? (
+          {(state.user.githubId === '146896900' || state.user.githubId === '8658681') && (!state.user.demoMode ? (
             <DropdownMenu.Item
               className="dropdown-item"
               onClick={() => {
@@ -109,13 +91,29 @@ export default function FloatAccount() {
             >
               Disable Demo Mode
             </DropdownMenu.Item>
-          )}
+          ))}
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              dispatch(showModal({ name: "WelcomeAboard" }));
+            }}
+          >
+            Show Tutorial
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() =>
+              window.open("https://deckhand.dev/docs/intro", "_blank")
+            }
+          >
+            Documentation <Icon path={mdiOpenInNew} size={0.5} />
+          </DropdownMenu.Item>
           <DropdownMenu.Separator className="dropdown-separator" />
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={async () => {
               await fetch("/api/github/logout");
-              location.reload();
+              dispatch(setAuthStatus(false));
             }}
           >
             Log Out

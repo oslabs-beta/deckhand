@@ -1,5 +1,5 @@
 const db = require('../database/dbConnect');
-const cryptoUtilsAPI = require('../utils/cryptoUtils');
+const cryptoUtils = require('../utils/cryptoUtils');
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
@@ -12,7 +12,7 @@ apiController.updateDatabase = async (req: any, res: any, next: any) => {
   // Prepare the SQL query
   const updateQuery = `
     UPDATE users
-    SET name = $2, email = $3, avatarUrl = $4, githubId = $5, theme = $6, awsAccessKey = $7, awsSecretKey = $8, state = $9
+    SET name = $2, email = $3, avatarurl = $4, githubid = $5, theme = $6, awsaccesskey = $7, awssecretkey = $8, state = $9
     WHERE _id = $1
     RETURNING *
   `;
@@ -26,17 +26,18 @@ apiController.updateDatabase = async (req: any, res: any, next: any) => {
       avatarUrl,
       githubId,
       theme,
-      cryptoUtilsAPI.encrypt(awsAccessKey),
-      cryptoUtilsAPI.encrypt(awsSecretKey),
-      state
+      awsAccessKey ? cryptoUtils.encrypt(awsAccessKey) : null,
+      awsAccessKey ? cryptoUtils.encrypt(awsSecretKey) : null,
+      JSON.stringify(state),
     ]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found.' });
+      throw new Error('User not found.');
     }
 
     // Return the updated user data
     // res.locals.data = result.rows[0];
+
     return next();
   } catch (error) {
     next(error)

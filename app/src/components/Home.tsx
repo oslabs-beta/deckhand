@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import {
   setProjectId,
   addProject,
@@ -8,14 +9,22 @@ import {
 } from "../deckhandSlice";
 import FloatLogo from "./floats/FloatLogo";
 import FloatAccount from "./floats/FloatAccount";
+import FloatTheme from "./floats/FloatTheme";
 import Modals from "./modals/Modals";
 import Icon from "@mdi/react";
 import { mdiDotsVertical } from "@mdi/js";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Transition from "./Transition";
+import { motion, animate, stagger } from 'framer-motion';
 
 export default function Home() {
   const state = useSelector((state: any) => state.deckhand);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect (() => {
+    animate(".card", { opacity: 1, x: 0, y: 0 }, { duration: 0.25, delay: stagger(0.1) })
+  }, [])
 
   function generateUniqueProjectId() {
     let uniqueId: any;
@@ -29,6 +38,7 @@ export default function Home() {
     const projectId = generateUniqueProjectId();
     dispatch(addProject(projectId));
     dispatch(setProjectId(projectId));
+    navigate(`/project/${projectId}`)
   };
 
   const timeAgo = (date: any) => {
@@ -51,10 +61,14 @@ export default function Home() {
   });
   for (const project of sortedProjects) {
     projectBundle.push(
-      <div
+      <motion.div
+        initial={{opacity: 0, x:50, y: 50}}
         key={project.projectId}
         className="card"
-        onClick={() => dispatch(setProjectId(project.projectId))}
+        onClick={() => {
+          dispatch(setProjectId(project.projectId))
+          navigate(`/project/${project.projectId}`)
+        }}
       >
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -100,30 +114,37 @@ export default function Home() {
         >
           Last Modified: {timeAgo(project.modifiedDate)}
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="container">
-      <FloatLogo />
-      <FloatAccount />
-      <Modals />
-      <div className="content-container">
-        <div className="content">
-          <h1>Home</h1>
-          <div id="project-cards">
-            <div className="card" onClick={handleClickAddProject}>
-              <div className="new-project">
-                New
-                <br />
-                Project
-              </div>
+    <Transition>
+      <div className="container">
+        <FloatTheme />
+        <FloatLogo />
+        <FloatAccount />
+        <Modals />
+        <div className="content-container">
+          <div className="content">
+            <h1>Home</h1>
+            <div id="project-cards">
+                <motion.div
+                  key="new-project"
+                  initial={{opacity: 0, x: 50, y: 50}}
+                  className="card"
+                  onClick={handleClickAddProject}>
+                <div className="new-project">
+                  New
+                  <br />
+                  Project
+                </div>
+              </motion.div>
+              {projectBundle}
             </div>
-            {projectBundle}
           </div>
         </div>
       </div>
-    </div>
+    </Transition>
   );
 }
